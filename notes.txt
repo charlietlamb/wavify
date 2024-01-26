@@ -1,0 +1,80 @@
+--OLD SIGN IN COMPONENT--
+
+"use client"
+import { createClient } from "@supabase/supabase-js";
+import { Auth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
+
+import '../../styles/Geist/geist.css'
+import '../../styles/auth.css'
+import { twMerge } from 'tailwind-merge'
+
+export function LogInSignUpTabs() {
+    supabase.auth.onAuthStateChange(async (event) => {
+        if(event !== "SIGNED_OUT"){
+            //success url
+        }else{
+            //
+        }
+    })
+  return (
+    <Auth
+        supabaseClient = {supabase}
+        appearance={{theme: ThemeSupa,
+        variables: {
+            default: {
+                colors: {
+                    brand: '#facc15',
+                    brandAccent: '#597E52',
+                    brandButtonText: '#0F0F0F'
+                },
+                fonts: {
+                    bodyFontFamily: `"Geist VF", sans-serif`,
+                    buttonFontFamily: `"Geist VF", sans-serif`,
+                    inputFontFamily: `"Geist VF", sans-serif`,
+                    labelFontFamily: `"Geist VF", sans-serif`,
+                  },
+            },
+            dark: {
+                colors: {
+                    brand: '#facc15',
+                    brandAccent: '#597E52',
+                    brandButtonText: '#0F0F0F'
+                },
+                fonts: {
+                    bodyFontFamily: `"Geist VF", sans-serif`,
+                    buttonFontFamily: `"Geist VF", sans-serif`,
+                    inputFontFamily: `"Geist VF", sans-serif`,
+                    labelFontFamily: `"Geist VF", sans-serif`,
+                  },
+            },
+        }}}
+        theme = "dark"
+        providers = {["discord","apple","google"]}
+    />
+  )
+}

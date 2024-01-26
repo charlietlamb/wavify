@@ -1,0 +1,11 @@
+.accountLeft > div:first-of-type{
+    @apply w-[60%] min-h-[80vh] flex flex-col items-center justify-center;
+}
+
+.supabase-auth-ui_ui-button{
+    @apply text-primary;
+}
+
+.supabase-auth-ui_ui-container{
+    @apply min-w-[100%];
+}
