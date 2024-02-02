@@ -4,7 +4,8 @@ import s3 from "../../../../wasabiClient";
 export async function uploadFileToS3(
   base64: string,
   mimeType: string,
-  url: string
+  url: string,
+  fileName: string
 ) {
   // Assuming the base64 string includes the MIME type; if not, this line can be omitted
   const base64Data = Buffer.from(base64.split(",")[1], "base64");
@@ -14,6 +15,7 @@ export async function uploadFileToS3(
     Key: url, // Adjust the key as needed
     Body: base64Data,
     ContentType: mimeType,
+    ContentDeposition: `attachment; filename=${fileName}"`,
   };
 
   const command = new PutObjectCommand(params);

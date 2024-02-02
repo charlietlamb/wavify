@@ -40,4 +40,8 @@ declare global {
     };
   };
   type MessageAndAuthor = Message & MessageAuthor;
+
+  type MessagesToRender = {
+    pages: (MessageAndAuthor[] | null)[];
+  };
 }

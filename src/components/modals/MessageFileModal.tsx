@@ -71,7 +71,7 @@ export const MessageFileModal = () => {
           ext ? ext : ""
         }`;
         const base64File = await fileToBase64(file);
-        await uploadFileToS3(base64File, file.type, url);
+        await uploadFileToS3(base64File, file.type, url, file.name);
         toSetFiles.push({
           fileId,
           fileExt: ext,

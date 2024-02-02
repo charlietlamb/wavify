@@ -1,11 +1,9 @@
 import { Hash } from "lucide-react";
+import { useItemContext } from "./items/context";
 
-interface ChatWelcomeProps {
-  name: string;
-  type: "space" | "chat";
-}
-
-export const ChatWelcome = ({ name, type }: ChatWelcomeProps) => {
+export const ChatWelcome = () => {
+  const context = useItemContext();
+  const { type, name } = context;
   return (
     <div className="px-4 mb-4 space-y-2">
       {type === "space" && (
@@ -13,7 +11,7 @@ export const ChatWelcome = ({ name, type }: ChatWelcomeProps) => {
           <Hash className="w-12 h-12 text-white" />
         </div>
       )}
-      <p className="text-xl font-bold md:text-3xl">
+      <p className="text-xl font-bold text-white md:text-3xl">
         {type === "space" ? "Welcome to #" : ""}
         {name}
       </p>

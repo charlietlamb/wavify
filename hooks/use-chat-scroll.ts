@@ -5,7 +5,7 @@ type ChatScrollProps = {
   bottomRef: React.RefObject<HTMLDivElement>;
   shouldLoadMore: boolean;
   loadMore: () => void;
-  count: number;
+  newMessages: (MessageAndAuthor | null)[];
 };
 
 export const useChatScroll = ({
@@ -13,16 +13,16 @@ export const useChatScroll = ({
   bottomRef,
   shouldLoadMore,
   loadMore,
-  count,
+  newMessages,
 }: ChatScrollProps) => {
   const [hasInitialized, setHasInitialized] = useState(false);
 
   useEffect(() => {
     const topDiv = chatRef?.current;
-
+    console.log(topDiv);
+    console.log(topDiv && topDiv.scrollTop);
     const handleScroll = () => {
       const scrollTop = topDiv?.scrollTop;
-
       if (scrollTop === 0 && shouldLoadMore) {
         loadMore();
       }
@@ -60,5 +60,5 @@ export const useChatScroll = ({
         });
       }, 100);
     }
-  }, [bottomRef, chatRef, count, hasInitialized]);
+  }, [bottomRef, chatRef, newMessages, hasInitialized]);
 };

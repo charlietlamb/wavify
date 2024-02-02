@@ -5,6 +5,14 @@ import getUser from "@/app/actions/getUser";
 import { ChatHeader } from "@/components/chat/ChatHeader";
 import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatInput } from "@/components/chat/ChatInput";
+import isObject from "@/lib/isObject";
+import { getMessageIds } from "@/app/user/[user_id]/chat/(functions)/getMessageIds";
+import { getFileIds } from "@/app/user/[user_id]/chat/(functions)/getFileIds";
+import { getSearchFilesData } from "@/app/user/[user_id]/chat/(functions)/getSearchFilesData";
+import { getSpace } from "./(functions)/getSpace";
+import { getChatSpace } from "./(functions)/getChatSpace";
+import { getCollective } from "./(functions)/getCollective";
+import { getHasSpace } from "./(functions)/getHasSpace";
 
 interface spacePageParams {
   unique: string;
@@ -18,77 +26,65 @@ interface spacePageProps {
 export default async function page({ params }: spacePageProps) {
   const supabase = createServerComponentClient({ cookies });
   const user = await getUser();
-  const { data: collective } = (await supabase
-    .from("collectives")
-    .select()
-    .eq("unique", params.unique)
-    .single()) as { data: Json };
-  var hasSpace = false;
-  if (
-    collective &&
-    !Array.isArray(collective) &&
-    typeof collective === "object" &&
-    Array.isArray(collective.spaces)
-  ) {
-    hasSpace = collective.spaces.some(
-      (space: Json) =>
-        space &&
-        !Array.isArray(space) &&
-        typeof space === "object" &&
-        space.slug === params.space_slug
-    );
-  }
-  if (!hasSpace) {
-    console.log("no space found!");
+  if (!user) redirect("/account");
+  const collective = await getCollective(supabase, params.unique);
+  var hasSpace = getHasSpace(collective, params.space_slug);
+  if (!hasSpace) redirect(`/collective/${params.unique}`);
+  const space = getSpace(collective, params.space_slug);
+  if (!isObject(space) || !isObject(collective))
     redirect(`/collective/${params.unique}`);
+  var chat: Chat | null = null;
+  var messageIds;
+  var fileIds;
+  var searchFilesData;
+  if (space.type === "text") {
+    chat = await getChatSpace(collective);
+    if (!chat) return redirect(`/`);
+    messageIds = await getMessageIds(chat);
+    fileIds = await getFileIds(supabase, messageIds);
+    searchFilesData = await getSearchFilesData(supabase, messageIds);
   }
-  const space =
-    collective &&
-    !Array.isArray(collective) &&
-    typeof collective === "object" &&
-    Array.isArray(collective.spaces)
-      ? collective.spaces.find(
-          (space: Json) =>
-            space &&
-            !Array.isArray(space) &&
-            typeof space === "object" &&
-            space.slug === params.space_slug
-        )
-      : null;
-  function isObject(space: any): space is Record<string, unknown> {
-    return typeof space === "object" && space !== null && !Array.isArray(space);
-  }
+  if (!chat) return redirect(`/`);
+
   return (
     <div className="bg-white dark:bg-[#313338] flex flex-col h-full">
       <ChatHeader
-        name={isObject(space) ? space.name : ""}
-        collectiveId={isObject(space) ? space.collectiveId : ""}
-        type="space"
+        user={user}
+        type={"space"}
+        imageUrl={
+          isObject(collective) && typeof collective.image_url === "string"
+            ? collective.image_url
+            : ""
+        }
+        space={space}
       />
       {isObject(space) && space.type === "text" && (
         <>
           <ChatMessages
+            name={
+              isObject(space) && typeof space.name === "string"
+                ? space.name
+                : ""
+            }
             user={user}
-            name={isObject(space) ? space.name : ""}
-            chatId={isObject(space) ? space.id : ""}
-            type="space"
-            apiUrl="/api/messages"
-            socketUrl="/api/socket/messages"
-            socketQuery={{
-              spaceId: isObject(space) ? space.id : "",
-              collectiveId: isObject(collective) ? collective.id : "",
-            }}
-            paramKey="spaceId"
-            paramValue={isObject(space) ? space.id : ""}
+            chat={chat}
+            space={space}
+            type={"space"}
+            collective={collective}
+            fileTab={true}
+            messageIds={messageIds ? messageIds : []}
+            fileIds={fileIds ? fileIds : []}
+            searchData={searchFilesData}
           />
           <ChatInput
-            name={isObject(space) ? space.name : ""}
+            chat={chat}
             type="space"
-            apiUrl="/api/socket/messages"
-            query={{
-              spaceId: isObject(space) ? space.id : "",
-              collectiveId: isObject(collective) ? collective.id : "",
-            }}
+            user={user}
+            name={
+              isObject(space) && typeof space.name === "string"
+                ? space.name
+                : ""
+            }
           />
         </>
       )}

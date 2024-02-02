@@ -3,14 +3,25 @@ import { Hash } from "lucide-react";
 import { ChatVideoButton } from "./ChatVideoButton";
 import { UserAvatar } from "../me/UserAvatar";
 import { MobileToggle } from "../util/MobileToggle";
+import isObject from "@/lib/isObject";
 
-interface ChatHeaderProps {
+interface BaseChatHeaderProps {
   user: User;
-  otherUser: User;
   type: "space" | "conversation";
   imageUrl?: string;
-  space?: Json;
 }
+
+interface ChatHeaderPropsWithOtherUser extends BaseChatHeaderProps {
+  otherUser: User;
+  space?: never; // This ensures that 'space' cannot be provided when 'otherUser' is provided
+}
+
+interface ChatHeaderPropsWithSpace extends BaseChatHeaderProps {
+  otherUser?: never; // This ensures that 'otherUser' cannot be provided when 'space' is provided
+  space: Json;
+}
+
+type ChatHeaderProps = ChatHeaderPropsWithOtherUser | ChatHeaderPropsWithSpace;
 
 export const ChatHeader = ({
   user,
@@ -31,8 +42,10 @@ export const ChatHeader = ({
       <p className="font-semibold text-black text-md dark:text-white">
         {space && !Array.isArray(space) && typeof space === "object" ? (
           <>space.name</>
-        ) : (
+        ) : isObject(otherUser) ? (
           otherUser.username
+        ) : (
+          "no name found"
         )}
       </p>
       <div className="flex items-center ml-auto">
