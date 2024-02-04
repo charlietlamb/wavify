@@ -34,7 +34,7 @@ const ChatPage = async ({ params, searchParams }: MemberIdPageProps) => {
   const searchFilesData = await getSearchFilesData(supabase, messageIds);
 
   return (
-    <div className="bg-background flex flex-col h-[80vh]">
+    <div className="bg-background flex flex-col h-[80vh] w-full">
       <ChatHeader
         imageUrl="https://github.com/shadcn.png"
         otherUser={otherUser}

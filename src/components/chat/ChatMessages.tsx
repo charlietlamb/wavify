@@ -1,9 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useChatScroll } from "../../../hooks/use-chat-scroll";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import ChatFilesWrap from "./files/ChatFilesWrap";
 import ChatItemWrap from "./items/ChatItemWrap";
 import { FilesContext } from "./files/context";
@@ -17,6 +16,7 @@ import { isMessagesToRender } from "./utilityFunctions";
 import useStatusMessageEffect from "./hooks/useStatusMessageEffect";
 import { getFiles } from "./functions/getFiles";
 import { getMessages } from "./functions/getMessages";
+import { v4 as uuidv4 } from "uuid";
 
 interface ChatMessagesProps {
   name: string;
@@ -50,7 +50,6 @@ export function ChatMessages({
   const filesRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const bottomRefFiles = useRef<HTMLDivElement>(null);
-  const supabase = createClientComponentClient();
   const [messagesToRender, setMessagesToRender] = useState<MessagesToRender>();
   const [messagesToRenderFiles, setMessagesToRenderFiles] =
     useState<MessagesToRender>();
@@ -71,6 +70,11 @@ export function ChatMessages({
   const [lastFetched, setLastFetched] = useState("");
   const [lastFetchedFiles, setLastFetchedFiles] = useState("");
 
+  const messagesToRenderStore = useRef<MessagesToRender>();
+  const messagesToRenderFilesStore = useRef<MessagesToRender>();
+  const newMessagesToRenderStore = useRef<(MessageAndAuthor | null)[]>();
+  const newMessagesToRenderFilesStore = useRef<(MessageAndAuthor | null)[]>();
+
   const {
     data: messages,
     fetchNextPage,
@@ -79,7 +83,8 @@ export function ChatMessages({
     status,
   } = useInfiniteQuery({
     queryKey: ["messages"],
-    queryFn: () => getMessages({ pageParam: 1, messageIds, setLastFetched }),
+    queryFn: ({ pageParam = 1 }) =>
+      getMessages({ pageParam, messageIds, setLastFetched }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: MessageAndAuthor[], allPages) => {
       if (lastPage?.length === 0) return undefined;
@@ -102,7 +107,8 @@ export function ChatMessages({
     status: statusFiles,
   } = useInfiniteQuery({
     queryKey: ["files"],
-    queryFn: () => getFiles({ pageParam: 1, fileIds, setLastFetchedFiles }),
+    queryFn: ({ pageParam = 1 }) =>
+      getFiles({ pageParam, fileIds, setLastFetchedFiles }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: MessageAndAuthor[], allPages) => {
       if (lastPage?.length === 0) return undefined;
@@ -124,7 +130,8 @@ export function ChatMessages({
     bottomRef,
     isMessagesToRender(messages) ? messages : { pages: [] },
     setMessagesToRender,
-    lastFetched
+    lastFetched,
+    messagesToRenderStore
   );
 
   useStatusFilesEffect(
@@ -134,22 +141,32 @@ export function ChatMessages({
     bottomRefFiles,
     isMessagesToRender(files) ? files : { pages: [] },
     setMessagesToRenderFiles,
-    lastFetchedFiles
+    lastFetchedFiles,
+    messagesToRenderFilesStore
   );
 
   useMessageSentEffect(
     chat,
     messageIds,
     setNewMessagesToRender,
-    setNewMessagesToRenderFiles
+    setNewMessagesToRenderFiles,
+    newMessagesToRender,
+    newMessagesToRenderFiles,
+    newMessagesToRenderStore,
+    newMessagesToRenderFilesStore
   );
 
   useMessageDeletedEffect(
     chat,
     renderStore,
-    setRender,
-    renderFilesStore,
-    setRenderFiles
+    setMessagesToRender,
+    setNewMessagesToRender,
+    setMessagesToRenderFiles,
+    setNewMessagesToRenderFiles,
+    messagesToRenderStore,
+    messagesToRenderFilesStore,
+    newMessagesToRenderStore,
+    newMessagesToRenderFilesStore
   );
 
   useMessageUpdateEffect(
@@ -166,8 +183,11 @@ export function ChatMessages({
     renderFilesStore
   );
 
+  useEffect(() => {
+    console.log(render);
+  }, [render]);
   return (
-    <div className="flex w-full h-full">
+    <div className="flex flex-grow w-full max-h-full overflow-hidden">
       {fileTab && (
         <FilesContext.Provider
           value={{

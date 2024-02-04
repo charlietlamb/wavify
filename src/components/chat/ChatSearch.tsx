@@ -1,6 +1,6 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { ArrowBigUp, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import downloadChatImage from "./actions/downloadFile";
@@ -53,7 +53,7 @@ export default function ChatSearch({ searchData, className }: ChatSearchProps) {
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+      if (e.key === "f" && e.shiftKey && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((open) => !open);
       }
@@ -97,7 +97,11 @@ export default function ChatSearch({ searchData, className }: ChatSearchProps) {
           Search
         </p>
         <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground ml-auto">
-          <span className="text-xs">⌘</span>K
+          <div className="flex">
+            <span className="text-xs">⌘</span>
+            <ArrowBigUp strokeWidth={1.5} className="w-auto h-3 mt-[1px]" />
+          </div>
+          F
         </kbd>
       </button>
       <CommandDialog open={open} onOpenChange={setOpen}>

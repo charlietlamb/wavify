@@ -1,5 +1,6 @@
 "use client";
 import {
+  Castle,
   ChevronDown,
   LogOut,
   PlusCircle,
@@ -17,9 +18,24 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useModal } from "../../../hooks/use-modal-store";
-import { useEffect } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import isObject from "@/lib/isObject";
+import { useHeaderChangeEffect } from "./(header)/(hooks)/useHeaderChangeEffect";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import CollectiveRoles from "./CollectiveRoles";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 interface CollectiveHeaderProps {
   collective: Collective;
@@ -36,53 +52,15 @@ export const CollectiveHeader = ({
 }: CollectiveHeaderProps) => {
   const supabase = createClientComponentClient();
   const { onOpen } = useModal();
-  const isFounder =
-    colUser && !Array.isArray(colUser) && typeof colUser === "object"
-      ? collective.founder === colUser?.id
-      : null;
-  const role =
-    colUser && !Array.isArray(colUser) && typeof colUser === "object"
-      ? colUser?.role
-      : null;
-  var userRole: Json | undefined = [];
+  if (!isObject(colUser) || !Array.isArray(collective.roles))
+    return redirect("/");
+  const isFounder = collective.founder === colUser?.id;
   var router = useRouter();
-  if (Array.isArray(collective.roles)) {
-    userRole = collective?.roles?.find(
-      (colRole) =>
-        colRole !== null &&
-        typeof colRole === "object" &&
-        !Array.isArray(colRole) &&
-        colRole.id === role
-    );
-  }
-
-  useEffect(() => {
-    const channel = supabase
-      .channel("collectives_nav")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "collectives",
-        },
-        (payload) => {
-          const newPayload = payload.new as { id: string; [key: string]: any };
-          if (
-            newPayload &&
-            typeof newPayload === "object" &&
-            newPayload.id === collective.id
-          ) {
-            router.refresh();
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [supabase, router, user.id]);
+  const userRole = collective?.roles?.find(
+    (colRole: Json) => isObject(colRole) && colRole.id === colUser.roleId
+  );
+  if (!isObject(userRole)) return redirect("/");
+  useHeaderChangeEffect(supabase, user, collective, router);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none" asChild>
@@ -92,7 +70,7 @@ export const CollectiveHeader = ({
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 text-xs font-medium text-black dark:text-neutral-400 space-y-[2px]">
-        {(isFounder || true) && (
+        {(isFounder || userRole.canInvite) && (
           <DropdownMenuItem
             onClick={() => onOpen("invite", { collective })}
             className="px-3 py-2 text-sm text-indigo-600 cursor-pointer dark:text-indigo-400"
@@ -101,7 +79,7 @@ export const CollectiveHeader = ({
             <UserPlus className="w-4 h-4 ml-auto" />
           </DropdownMenuItem>
         )}
-        {(isFounder || true) && (
+        {(isFounder || userRole.canSettings) && (
           <DropdownMenuItem
             onClick={() => onOpen("editCollective", { collective })}
             className="px-3 py-2 text-sm cursor-pointer"
@@ -110,7 +88,29 @@ export const CollectiveHeader = ({
             <Settings className="w-4 h-4 ml-auto" />
           </DropdownMenuItem>
         )}
-        {(isFounder || true) && (
+        {(isFounder || userRole.canRoles) && (
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                className="justify-between min-w-full px-3 py-2"
+              >
+                Manage Roles
+                <Castle className="w-4 h-4 ml-auto"></Castle>
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="w-[50vw] max-w-[50vw]">
+              <SheetHeader>
+                <SheetTitle>Manage Roles</SheetTitle>
+                <SheetDescription>
+                  Add, edit or delete roles for this collective.
+                </SheetDescription>
+              </SheetHeader>
+              <CollectiveRoles></CollectiveRoles>
+            </SheetContent>
+          </Sheet>
+        )}
+        {(isFounder || userRole.canMembers) && (
           <DropdownMenuItem
             onClick={() => onOpen("members", { collective, userData })}
             className="px-3 py-2 text-sm cursor-pointer"
@@ -119,7 +119,7 @@ export const CollectiveHeader = ({
             <Users className="w-4 h-4 ml-auto" />
           </DropdownMenuItem>
         )}
-        {(isFounder || true) && (
+        {(isFounder || userRole.canCreate) && (
           <DropdownMenuItem
             onClick={() => onOpen("createSpace", { collective })}
             className="px-3 py-2 text-sm cursor-pointer"
@@ -128,8 +128,8 @@ export const CollectiveHeader = ({
             <PlusCircle className="w-4 h-4 ml-auto" />
           </DropdownMenuItem>
         )}
-        {(isFounder || true) && <DropdownMenuSeparator />}
-        {(isFounder || true) && (
+        <DropdownMenuSeparator />
+        {isFounder && (
           <DropdownMenuItem
             onClick={() => onOpen("deleteCollective", { collective })}
             className="px-3 py-2 text-sm cursor-pointer text-rose-500"

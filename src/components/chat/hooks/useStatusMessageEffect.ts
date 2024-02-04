@@ -7,7 +7,8 @@ export default function useStatusMessageEffect(
   bottomRef: React.RefObject<HTMLDivElement>,
   messages: MessagesToRender,
   setMessagesToRender: Dispatch<SetStateAction<MessagesToRender | undefined>>,
-  lastFetched: string
+  lastFetched: string,
+  messageToRenderStore: React.MutableRefObject<MessagesToRender | undefined>
 ) {
   useEffect(() => {
     if (status === "success") {
@@ -19,6 +20,7 @@ export default function useStatusMessageEffect(
           });
         }, 100);
       }
+      if(messageToRenderStore) messageToRenderStore.current = messages;
       setMessagesToRender(messages);
     }
   }, [lastFetched]);

@@ -10,18 +10,13 @@ import {
   Trash,
 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { UserAvatar } from "../../me/UserAvatar";
 import { useModal } from "../../../../hooks/use-modal-store";
 import { ActionTooltip } from "../../util/ActionTooltip";
 import isObject from "@/lib/isObject";
-import Link from "next/link";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { formatDistanceToNow } from "date-fns";
-import { motion } from "framer-motion";
-import { useMeasure } from "react-use";
 import ResizableDiv from "../../me/ResizableDiv";
 import downloadChatImage from "../actions/downloadFile";
 interface ChatItemProps {
@@ -94,7 +89,7 @@ export function ChatItem({
     canDeleteAny = true;
   }
 
-  const fileClasses = "w-10 h-10 fill-transparent stroke-primary";
+  const fileClasses = "w-10 h-10 fill-transparent stroke-primary min-w-10";
   const imageExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"];
   const musicExtensions = [
     "mp3",
@@ -201,7 +196,7 @@ export function ChatItem({
                                   : ""
                               );
                             }}
-                            className="relative flex items-center w-48 h-48 mt-2 overflow-hidden border rounded-md aspect-square bg-secondary"
+                            className="relative flex items-center justify-start w-48 h-48 mt-2 overflow-hidden border rounded-md aspect-square bg-secondary"
                           >
                             <Image
                               src={
@@ -263,7 +258,7 @@ export function ChatItem({
                                 );
                               }}
                               className={cn(
-                                "ml-2 text-sm text-primary dark:text-primary hover:underline"
+                                "ml-2 text-sm text-primary dark:text-primary hover:underline text-left"
                               )}
                             >
                               {typeof file.fileName === "string"
@@ -285,7 +280,7 @@ export function ChatItem({
                       message: message,
                     })
                   }
-                  className="w-4 h-4 ml-auto transition cursor-pointer text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300"
+                  className="h-auto transition cursor-pointer min-w-5 max-w-5 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300"
                 />
               )}
             </div>
@@ -303,16 +298,14 @@ export function ChatItem({
                 <>
                   <div className="flex-grow">{message.content}</div>
                   {canDeleteAny && (
-                    <div className="w-4 h-4">
-                      <Trash
-                        onClick={() =>
-                          onOpen("deleteMessage", {
-                            message: message,
-                          })
-                        }
-                        className="w-4 h-4 transition cursor-pointer text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300"
-                      />
-                    </div>
+                    <Trash
+                      onClick={() =>
+                        onOpen("deleteMessage", {
+                          message: message,
+                        })
+                      }
+                      className="h-auto transition cursor-pointer min-w-5 max-w-5 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300"
+                    />
                   )}
                 </>
               ) : (

@@ -57,60 +57,61 @@ export const MessageFileModal = () => {
   }
 
   const onSubmit = async () => {
-    console.log("ON SUBMIT");
-    console.log(files);
-    setLoading(true);
+    if (files.length > 0) {
+      setLoading(true);
+      try {
+        var toSetFiles: Json[] = []; // Assuming Json is a type that can represent your file objects
 
-    try {
-      var toSetFiles: Json[] = []; // Assuming Json is a type that can represent your file objects
+        for (const file of files) {
+          var fileId = uuidv4();
+          var ext = file.name.split(".").pop();
+          var url = `${isObject(chatData) ? chatData.id : ""}/${fileId}.${
+            ext ? ext : ""
+          }`;
+          const base64File = await fileToBase64(file);
+          await uploadFileToS3(base64File, file.type, url, file.name);
+          toSetFiles.push({
+            fileId,
+            fileExt: ext,
+            fileName: file.name,
+            fileSize: file.size / 1024 / 1024,
+            fileUrl: `${
+              isObject(chatData) ? chatData.id : ""
+            }/${fileId}.${ext}`,
+          });
+        }
 
-      for (const file of files) {
-        var fileId = uuidv4();
-        var ext = file.name.split(".").pop();
-        var url = `${isObject(chatData) ? chatData.id : ""}/${fileId}.${
-          ext ? ext : ""
-        }`;
-        const base64File = await fileToBase64(file);
-        await uploadFileToS3(base64File, file.type, url, file.name);
-        toSetFiles.push({
-          fileId,
-          fileExt: ext,
-          fileName: file.name,
-          fileSize: file.size / 1024 / 1024,
-          fileUrl: `${isObject(chatData) ? chatData.id : ""}/${fileId}.${ext}`,
-        });
+        setFiles([]);
+        const messageId = uuidv4();
+        var newMessage: Json = {
+          id: messageId,
+          author: user ? user.id : "undefined",
+          files: toSetFiles,
+          chat: chatData?.id,
+        };
+
+        await supabase.from("messages").insert(newMessage);
+        var newMessageArray: Json;
+        var date = new Date().toISOString();
+        if (chatData && Array.isArray(chatData.messages)) {
+          newMessageArray = [
+            ...chatData.messages,
+            { id: messageId, createdAt: date },
+          ];
+        } else {
+          newMessageArray = [{ id: messageId, createdAt: date }];
+        }
+        await supabase
+          .from("chats")
+          .update({ messages: newMessageArray })
+          .eq("id", chatData ? chatData.id : "");
+        setLoading(false);
+        router.refresh();
+        handleClose();
+      } catch (error) {
+        console.error(error);
+        setLoading(false);
       }
-
-      setFiles([]);
-      const messageId = uuidv4();
-      var newMessage: Json = {
-        id: messageId,
-        author: user ? user.id : "undefined",
-        files: toSetFiles,
-        chat: chatData?.id,
-      };
-
-      await supabase.from("messages").insert(newMessage);
-      var newMessageArray: Json;
-      var date = new Date().toISOString();
-      if (chatData && Array.isArray(chatData.messages)) {
-        newMessageArray = [
-          ...chatData.messages,
-          { id: messageId, createdAt: date },
-        ];
-      } else {
-        newMessageArray = [{ id: messageId, createdAt: date }];
-      }
-      await supabase
-        .from("chats")
-        .update({ messages: newMessageArray })
-        .eq("id", chatData ? chatData.id : "");
-      setLoading(false);
-      router.refresh();
-      handleClose();
-    } catch (error) {
-      console.error(error);
-      setLoading(false);
     }
   };
 

@@ -44,6 +44,7 @@ export const useMessageUpdateEffect = (
           const filteredToSetSorted = toSetSorted.filter(
             (item): item is MessageAndAuthor => item !== null
           );
+          //error here
           setRender(filteredToSetSorted);
           renderStore.current = toSetSorted;
         }

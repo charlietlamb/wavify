@@ -17,6 +17,7 @@ export interface Database {
           edited_at: string | null
           id: string
           messages: Json | null
+          space: string | null
           type: string | null
           user1: string | null
           user2: string | null
@@ -28,6 +29,7 @@ export interface Database {
           edited_at?: string | null
           id?: string
           messages?: Json | null
+          space?: string | null
           type?: string | null
           user1?: string | null
           user2?: string | null
@@ -39,6 +41,7 @@ export interface Database {
           edited_at?: string | null
           id?: string
           messages?: Json | null
+          space?: string | null
           type?: string | null
           user1?: string | null
           user2?: string | null

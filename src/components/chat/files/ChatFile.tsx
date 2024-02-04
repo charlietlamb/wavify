@@ -34,7 +34,7 @@ export default function ChatFile({
   };
   const isSender = user.id === message.author;
 
-  const fileClasses = "w-10 h-10 fill-transparent stroke-primary";
+  const fileClasses = "w-10 h-10 fill-transparent stroke-primary min-w-10";
   const imageExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"];
   const musicExtensions = [
     "mp3",

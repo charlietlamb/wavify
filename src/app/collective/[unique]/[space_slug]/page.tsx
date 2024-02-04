@@ -38,16 +38,15 @@ export default async function page({ params }: spacePageProps) {
   var fileIds;
   var searchFilesData;
   if (space.type === "text") {
-    chat = await getChatSpace(collective);
+    chat = await getChatSpace(collective, space);
     if (!chat) return redirect(`/`);
     messageIds = await getMessageIds(chat);
     fileIds = await getFileIds(supabase, messageIds);
     searchFilesData = await getSearchFilesData(supabase, messageIds);
   }
-  if (!chat) return redirect(`/`);
 
   return (
-    <div className="bg-white dark:bg-[#313338] flex flex-col h-full">
+    <div className="flex flex-col w-full h-full bg-white dark:bg-background_content">
       <ChatHeader
         user={user}
         type={"space"}

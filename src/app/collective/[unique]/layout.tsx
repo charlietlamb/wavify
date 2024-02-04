@@ -4,6 +4,14 @@ import getUser from "@/app/actions/getUser";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import CollectiveSidebar from "@/components/collective/CollectiveSidebar";
+import { getCollective } from "./[space_slug]/(functions)/getCollective";
+import isObject from "@/lib/isObject";
+import { removeCollective } from "./(functions)/removeCollective";
+import { getColUser } from "./(functions)/getColUser";
+import { handleNewUser } from "./(functions)/handleNewUser";
+import { collectiveHasUser } from "./(functions)/collectiveHasUser";
+import { getUserIds } from "./(functions)/getUserIds";
+import { handleKickedUser } from "./(functions)/handleKickedUser";
 
 const CollectiveLayout = async ({
   children,
@@ -12,118 +20,34 @@ const CollectiveLayout = async ({
   children: React.ReactNode;
   params: { unique: string };
 }) => {
+  //redirects to / when user joins
   const supabase = createServerComponentClient({ cookies });
   const user = await getUser();
-  if (!user) {
-    return redirect("/account");
-  }
-  let { data: collective, error } = await supabase
-    .from("collectives")
-    .select()
-    .eq("unique", params.unique)
-    .single();
+  if (!isObject(user)) return redirect("/account");
+  const collective = await getCollective(supabase, params.unique);
   if (!collective) {
-    if (Array.isArray(user.collectives)) {
-      var updatedCollectives: Json = user.collectives.filter(
-        (collective) =>
-          collective &&
-          typeof collective === "object" &&
-          !Array.isArray(collective) &&
-          collective.unique !== params.unique
-      );
-      if (user.collectives !== updatedCollectives) {
-        await supabase
-          .from("users")
-          .update({ collectives: updatedCollectives })
-          .eq("id", user.id);
-      }
-    }
+    removeCollective(user, params.unique, supabase);
+    redirect("/");
+  }
+  if (!Array.isArray(collective.users) || !Array.isArray(collective.roles))
     return redirect("/");
-  }
-  interface ColUser {
-    id: string;
-  }
-  var colUser = null;
-
-  if (
-    collective.users &&
-    collective.users.some((col_user: ColUser) => col_user.id === user.id)
-  ) {
-    colUser = collective.users.find(
-      (col_user: ColUser) => col_user.id === user.id
+  await handleKickedUser(user, collective, supabase);
+  if (!collectiveHasUser(user, collective)) {
+    const newUser = await handleNewUser(
+      user,
+      collective,
+      supabase,
+      params.unique
     );
-  } else {
-    if (
-      Array.isArray(user.collectives) &&
-      user.collectives.some(
-        (collectiveToCheck: Json) =>
-          collectiveToCheck &&
-          !Array.isArray(collectiveToCheck) &&
-          typeof collectiveToCheck === "object" &&
-          collective.id === collectiveToCheck.id
-      )
-    ) {
-      const updatedCollectives = user?.collectives.filter(
-        (collectiveToGo): collectiveToGo is Json => {
-          return (
-            collectiveToGo != null &&
-            typeof collectiveToGo === "object" &&
-            !Array.isArray(collectiveToGo) &&
-            collective.id !== collectiveToGo.id
-          );
-        }
-      );
-      await supabase
-        .from("users")
-        .update({ collectives: updatedCollectives })
-        .eq("id", user.id);
-      return redirect("/");
-    } else {
-      if (collective.type === "public") {
-        const defaultRole = collective.roles.find(
-          (role: Role) => role.isDefault === true
-        );
-        var updateUsers = [
-          ...collective.users,
-          {
-            id: user.id,
-            role: defaultRole.name,
-            roleId: defaultRole.id,
-            username: user.username,
-          },
-        ];
-        await supabase
-          .from("collectives")
-          .update({ users: updateUsers })
-          .eq("id", collective.id);
-        if (Array.isArray(user.collectives)) {
-          await supabase
-            .from("users")
-            .update({
-              collectives: [
-                ...user.collectives,
-                { id: collective.id, unique: params.unique },
-              ],
-            })
-            .eq("id", user.id);
-        } else {
-          await supabase
-            .from("users")
-            .update({
-              collectives: [{ id: collective.id, unique: params.unique }],
-            })
-            .eq("id", user.id);
-        }
-      } else {
-        return redirect("/");
-      }
-    }
+    if (newUser) collective.users.push(newUser);
   }
-  const userIds = collective.users.map((user: colUser) => user.id);
+  const userIds = getUserIds(collective);
   const { data } = await supabase.from("users").select().in("id", userIds);
   const users: User[] = data as User[];
+  const colUser = getColUser(user, collective);
+  if (!colUser) return redirect("/");
   return (
-    <div className="flex flex-row h-full">
+    <div className="flex flex-grow max-h-[80vh] min-h-[80vh]">
       <div className="flex-col hidden h-full md:flex w-60">
         <CollectiveSidebar
           unique={params.unique}
@@ -133,7 +57,7 @@ const CollectiveLayout = async ({
           userData={users}
         />
       </div>
-      <main className="h-full">{children}</main>
+      <div className="w-full h-full">{children}</div>
     </div>
   );
 };

@@ -4,7 +4,7 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,7 @@ import isObject from "@/lib/isObject";
 
 interface ChatInputProps {
   type: "conversation" | "space";
-  chat: Chat;
+  chat: Chat | null;
   user: User;
   name: string;
   collective?: Collective;
@@ -34,6 +34,7 @@ export const ChatInput = ({
   collective,
   space,
 }: ChatInputProps) => {
+  if (!chat) return redirect(`/`);
   const { onOpen } = useModal();
   const router = useRouter();
   const supabase = createClientComponentClient();
@@ -74,7 +75,7 @@ export const ChatInput = ({
       form.reset();
       router.refresh();
     } catch (error) {
-      console.log(error);
+      throw new Error(String(error.message));
     }
   };
 

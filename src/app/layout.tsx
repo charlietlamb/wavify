@@ -24,7 +24,9 @@ export default async function RootLayout({
   return (
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
       <body
-        className={cn("min-h-screen bg-background antialiased debug-screens")}
+        className={cn(
+          "min-h-screen bg-background antialiased debug-screens flex flex-col"
+        )}
       >
         <ReactQueryProvider>
           <ThemeProvider
@@ -38,7 +40,7 @@ export default async function RootLayout({
                 <header className=" bg-background fixed top-0 w-full z-50 min-h-[100h]">
                   <Navbar></Navbar>
                 </header>
-                <main className="bg-background_content relative z-1 top-0 left-0 w-[100%] min-h-[100vh] py-[10vh] flex flex-col">
+                <main className="bg-background_content relative z-1 top-0 left-0 w-[100%] min-h-[100vh] py-[10vh]">
                   {children}
                 </main>
                 {/*<footer className=" bg-background fixed bottom-0 w-full z-50 min-h-[10vh]">
@@ -51,7 +53,7 @@ export default async function RootLayout({
                 <header className=" bg-background w-full  min-h-[20h]">
                   <AppNavBar user={user}></AppNavBar>
                 </header>
-                <main className="bg-background_content relative z-1 top-0 left-0 w-[100%] min-h-[80vh]">
+                <main className="bg-background_content relative z-1 top-0 left-0 w-[100%] flex-grow flex">
                   {children}
                 </main>
                 {/*<footer className=" bg-background fixed bottom-0 w-full z-50 min-h-[10vh]">

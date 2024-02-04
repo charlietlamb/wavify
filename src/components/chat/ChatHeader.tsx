@@ -41,7 +41,7 @@ export const ChatHeader = ({
       )}
       <p className="font-semibold text-black text-md dark:text-white">
         {space && !Array.isArray(space) && typeof space === "object" ? (
-          <>space.name</>
+          <>{space.name}</>
         ) : isObject(otherUser) ? (
           otherUser.username
         ) : (

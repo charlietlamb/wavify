@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, MutableRefObject, SetStateAction, useEffect } from "react";
 
 export function useStatusFilesEffect(
   statusFiles: "success" | "pending" | "error",
@@ -9,7 +9,8 @@ export function useStatusFilesEffect(
   setMessagesToRenderFiles: Dispatch<
     SetStateAction<MessagesToRender | undefined>
   >,
-  lastFetchedFiles: string
+  lastFetchedFiles: string,
+  messagesToRenderFilesStore: MutableRefObject<MessagesToRender | undefined>
 ) {
   useEffect(() => {
     if (statusFiles === "success") {
@@ -21,6 +22,8 @@ export function useStatusFilesEffect(
           });
         }, 100);
       }
+      if (messagesToRenderFilesStore)
+        messagesToRenderFilesStore.current = files;
       setMessagesToRenderFiles(files);
     }
   }, [lastFetchedFiles]);

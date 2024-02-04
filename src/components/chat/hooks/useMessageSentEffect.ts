@@ -6,7 +6,15 @@ export function useMessageSentEffect(
   chat: Chat,
   messageIds: string[],
   setNewMessagesToRender: (messages: MessageAndAuthor[]) => void,
-  setNewMessagesToRenderFiles: (messages: MessageAndAuthor[]) => void
+  setNewMessagesToRenderFiles: (messages: MessageAndAuthor[]) => void,
+  newMessagesToRender: MessageAndAuthor[],
+  newMessagesToRenderFiles: MessageAndAuthor[],
+  newMessagesToRenderStore: React.MutableRefObject<
+    (MessageAndAuthor | null)[] | undefined
+  >,
+  newMessagesToRenderStoreFiles: React.MutableRefObject<
+    (MessageAndAuthor | null)[] | undefined
+  >
 ) {
   const supabase = createClientComponentClient();
   useEffect(() => {
@@ -31,7 +39,11 @@ export function useMessageSentEffect(
               supabase,
               messageIds,
               setNewMessagesToRender,
-              setNewMessagesToRenderFiles
+              setNewMessagesToRenderFiles,
+              newMessagesToRender,
+              newMessagesToRenderFiles,
+              newMessagesToRenderStore,
+              newMessagesToRenderStoreFiles
             );
           }
         }

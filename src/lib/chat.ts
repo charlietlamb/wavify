@@ -8,16 +8,16 @@ var conversation: Chat[] | Chat | null = null;
 
 type ConversationProps =
   | { memberOneId: string; memberTwoId: string }
-  | { collectiveId: string };
+  | { collectiveId: string; space: string };
 
 export const getOrCreateConversation = async (props: ConversationProps) => {
   const supabase = createServerComponentClient({ cookies });
   if ("collectiveId" in props) {
-    const { collectiveId } = props;
-    if (await findConversationCollective(collectiveId, supabase)) {
+    const { collectiveId, space } = props;
+    if (await findConversationCollective(collectiveId, space, supabase)) {
       return conversation;
     } else {
-      await createNewConversationCollective(collectiveId, supabase);
+      await createNewConversationCollective(collectiveId, space, supabase);
       return conversation as Chat | null;
     }
   } else {
@@ -55,7 +55,9 @@ const createNewConversation = async (
 ) => {
   const { data, error } = await supabase
     .from("chats")
-    .insert({ user1: memberOneId, user2: memberTwoId, type: "user" });
+    .insert({ user1: memberOneId, user2: memberTwoId, type: "user" })
+    .select();
+
   if (data) {
     conversation = data;
   }
@@ -64,23 +66,27 @@ const createNewConversation = async (
 
 const findConversationCollective = async (
   collectiveId: string,
+  space: string,
   supabase: SupabaseClient<any, "public", any>
 ) => {
   const { data } = await supabase
     .from("chats")
     .select()
-    .filter("collective", "eq", collectiveId);
+    .filter("collective", "eq", collectiveId)
+    .filter("space", "eq", space);
   conversation = data && data.length > 0 ? data[0] : null;
   return !!conversation;
 };
 
 const createNewConversationCollective = async (
   collectiveId: string,
+  space: string,
   supabase: SupabaseClient<any, "public", any>
 ) => {
   const { data, error } = await supabase
     .from("chats")
-    .insert({ collective: collectiveId, type: "collective" });
+    .insert({ collective: collectiveId, space: space, type: "collective" })
+    .select();
   if (data) {
     conversation = data;
   }

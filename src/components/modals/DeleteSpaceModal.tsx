@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useModal } from "../../../hooks/use-modal-store";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import isObject from "@/lib/isObject";
 
 export const DeleteSpaceModal = () => {
   const { isOpen, onClose, type, data } = useModal();
@@ -45,12 +46,22 @@ export const DeleteSpaceModal = () => {
             .from("collectives")
             .update({ spaces: spacesToUpdate })
             .eq("id", collective.id);
+          await supabase
+            .from("chats")
+            .delete()
+            .eq("id", collective.id)
+            .eq(
+              "space",
+              isObject(space) && typeof space.slug === "string"
+                ? space.slug
+                : ""
+            );
         }
       }
 
       onClose();
     } catch (error) {
-      console.log(error);
+      throw new Error(String(error));
     } finally {
       setIsLoading(false);
     }

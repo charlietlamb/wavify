@@ -1,13 +1,22 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { isJson, isMessageAuthor } from "../utilityFunctions";
 import isObject from "@/lib/isObject";
+import { getNewRenders } from "./getNewRenders";
 
 export async function newMessageSent(
   chat: Chat,
   supabase: SupabaseClient<any, "public", any>,
   messageIds: string[],
   setNewMessagesToRender: (messages: MessageAndAuthor[]) => void,
-  setNewMessagesToRenderFiles: (messages: MessageAndAuthor[]) => void
+  setNewMessagesToRenderFiles: (messages: MessageAndAuthor[]) => void,
+  newMessagesToRender: MessageAndAuthor[],
+  newMessagesToRenderFiles: MessageAndAuthor[],
+  newMessagesToRenderStore: React.MutableRefObject<
+    (MessageAndAuthor | null)[] | undefined
+  >,
+  newMessagesToRenderStoreFiles: React.MutableRefObject<
+    (MessageAndAuthor | null)[] | undefined
+  >
 ) {
   const { data: newMessageIdArray } = await supabase
     .from("chats")
@@ -21,65 +30,41 @@ export async function newMessageSent(
       typeof item.id === "string" &&
       !messageIds.includes(item.id)
   );
-  var newRenders: MessageAndAuthor[] = [];
-  await newArray.forEach(async (message: Json) => {
-    const response = await supabase
-      .from("messages")
-      .select(
-        `
-            *,
-            users ( username, profile_pic_url)
-        `
-      )
-      .eq("id", isObject(message) ? message.id : "")
-      .single();
-    if (response.error) {
-      throw new Error(response.error.message);
-    }
-    if (isObject(response.data)) {
-      const messageAndAuthorNew: MessageAndAuthor = {
-        author:
-          typeof response.data.author === "string" ? response.data.author : "",
-        chat: typeof response.data.chat === "string" ? response.data.chat : "",
-        content:
-          typeof response.data.content === "string"
-            ? response.data.content
-            : null,
-        createdAt:
-          typeof response.data.createdAt === "string"
-            ? response.data.createdAt
-            : null,
-        deleted:
-          typeof response.data.deleted === "boolean"
-            ? response.data.deleted
-            : null,
-        edited:
-          typeof response.data.edited === "boolean"
-            ? response.data.edited
-            : null,
-        editedAt:
-          typeof response.data.editedAt === "string"
-            ? response.data.editedAt
-            : null,
-        files: isJson(response.data.files) ? response.data.files : null,
-        id: typeof response.data.id === "string" ? response.data.id : "",
-        users: isMessageAuthor(response.data.users)
-          ? {
-              username: response.data.users.users.username,
-              profile_pic_url: response.data.users.users.profile_pic_url,
-            }
-          : isMessageAuthor(response.data)
-          ? {
-              username: response.data.users.username,
-              profile_pic_url: response.data.users.profile_pic_url,
-            }
-          : { username: "", profile_pic_url: "" },
-      };
-      newRenders = [...newRenders, messageAndAuthorNew];
-      setNewMessagesToRender(newRenders);
-      if (messageAndAuthorNew.files !== null) {
-        setNewMessagesToRenderFiles(newRenders);
-      }
+  const newRenders: MessageAndAuthor[] = await getNewRenders(
+    newArray,
+    supabase
+  );
+
+  const uniqueNewRenders: MessageAndAuthor[] = newRenders.filter(
+    (item: MessageAndAuthor, index, self) =>
+      index === self.findIndex((t) => t.id === item.id)
+  );
+
+  const toSetNewMessagesToRender = newMessagesToRenderStore.current
+    ? ([...newMessagesToRenderStore.current, ...uniqueNewRenders].filter(
+        Boolean
+      ) as MessageAndAuthor[])
+    : ([...newMessagesToRender, ...uniqueNewRenders].filter(
+        Boolean
+      ) as MessageAndAuthor[]);
+  const toSet = toSetNewMessagesToRender.filter(
+    (item: MessageAndAuthor, index, self) =>
+      index === self.findIndex((t) => t.id === item.id)
+  );
+  setNewMessagesToRender(toSet);
+
+  if (newMessagesToRenderStore) newMessagesToRenderStore.current = toSet;
+  //if this fixes any issues then could be issues with setting files
+  uniqueNewRenders.forEach((item) => {
+    if (item.files) {
+      const toSetFiles = [...newMessagesToRenderFiles, ...uniqueNewRenders];
+      const toSet = toSetFiles.filter(
+        (item: MessageAndAuthor, index, self) =>
+          index === self.findIndex((t) => t.id === item.id)
+      );
+      setNewMessagesToRenderFiles(toSet);
+      if (newMessagesToRenderStoreFiles)
+        newMessagesToRenderStoreFiles.current = toSet;
     }
   });
 }

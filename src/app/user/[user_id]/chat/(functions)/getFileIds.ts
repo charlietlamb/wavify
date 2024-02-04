@@ -15,5 +15,5 @@ export async function getFileIds(
   } else {
     fileIds = [];
   }
-  return fileIds;
+  return fileIds.reverse();
 }

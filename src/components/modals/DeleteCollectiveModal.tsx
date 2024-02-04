@@ -34,8 +34,12 @@ export const DeleteCollectiveModal = () => {
       onClose();
       router.refresh();
       router.push("/");
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(String(error.message));
+      } else {
+        throw new Error("An unknown error occurred.");
+      }
     } finally {
       setIsLoading(false);
     }

@@ -25,14 +25,12 @@ export const CollectiveSpace = ({
   collective,
   user,
 }: CollectiveSpaceProps) => {
-  console.log("here we are");
   const { onOpen } = useModal();
   const params = useParams();
   const router = useRouter();
 
   var role = getRole(user, collective);
   if (!isObject(space) || !isObject(role)) return;
-  console.log("get here");
   const isValidKey = (key: any): key is keyof typeof iconMap => {
     return key in iconMap;
   };

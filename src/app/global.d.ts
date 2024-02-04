@@ -1,7 +1,9 @@
+import { SupabaseClient } from "@supabase/supabase-js";
 import { Database as DB } from "./types/supabase";
 declare module "@emoji-mart/data";
 declare global {
   type Database = DB;
+  type Supabase = SupabaseClient;
   type User = DB["public"]["Tables"]["users"]["Row"];
   type Collective = DB["public"]["Tables"]["collectives"]["Row"];
   type Chat = DB["public"]["Tables"]["chats"]["Row"];
@@ -29,6 +31,7 @@ declare global {
     canInvite: boolean;
     canMembers: boolean;
     canSettings: boolean;
+    canRoles: boolean;
     isDefault: boolean;
   };
   type SpaceType = "text" | "audio" | "video";

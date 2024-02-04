@@ -1,14 +1,26 @@
 import isObject from "@/lib/isObject";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { MutableRefObject, useEffect } from "react";
-import { isJson, isMessageAuthor } from "../utilityFunctions";
-
+import { Dispatch, MutableRefObject, SetStateAction, useEffect } from "react";
+import { updateWithDeleted } from "../functions/updateWithDeleted";
+import { updateWithDeletedNew } from "../functions/updateWithDeletedNew";
+import { getMessageFromPayload } from "../functions/getMessageFromPayload";
 export function useMessageDeletedEffect(
   chat: Chat,
   renderStore: MutableRefObject<(MessageAndAuthor | null)[]>,
-  setRender: (messages: MessageAndAuthor[]) => void,
-  renderFilesStore: MutableRefObject<(MessageAndAuthor | null)[]>,
-  setRenderFiles: (messages: MessageAndAuthor[]) => void
+  setMessagesToRender: Dispatch<SetStateAction<MessagesToRender | undefined>>,
+  setNewMessagesToRender: (messages: MessageAndAuthor[]) => void,
+  setMessagesToRenderFiles: Dispatch<
+    SetStateAction<MessagesToRender | undefined>
+  >,
+  setNewMessagesToRenderFiles: (messages: MessageAndAuthor[]) => void,
+  messagesToRenderStore: MutableRefObject<MessagesToRender | undefined>,
+  messagesToRenderFilesStore: MutableRefObject<MessagesToRender | undefined>,
+  newMessagesToRenderStore: React.MutableRefObject<
+    (MessageAndAuthor | null)[] | undefined
+  >,
+  newMessagesToRenderStoreFiles: React.MutableRefObject<
+    (MessageAndAuthor | null)[] | undefined
+  >
 ) {
   const supabase = createClientComponentClient();
   useEffect(() => {
@@ -32,47 +44,12 @@ export function useMessageDeletedEffect(
               typeof newPayload === "object" &&
               renderIds.includes(newPayload.id)
             ) {
-              const messageAndAuthorNew: MessageAndAuthor = {
-                author:
-                  typeof newPayload.author === "string"
-                    ? newPayload.author
-                    : "",
-                chat:
-                  typeof newPayload.chat === "string" ? newPayload.chat : "",
-                content:
-                  typeof newPayload.content === "string"
-                    ? newPayload.content
-                    : null,
-                createdAt:
-                  typeof newPayload.createdAt === "string"
-                    ? newPayload.createdAt
-                    : null,
-                deleted:
-                  typeof newPayload.deleted === "boolean"
-                    ? newPayload.deleted
-                    : null,
-                edited:
-                  typeof newPayload.edited === "boolean"
-                    ? newPayload.edited
-                    : null,
-                editedAt:
-                  typeof newPayload.editedAt === "string"
-                    ? newPayload.editedAt
-                    : null,
-                files: isJson(newPayload.files) ? newPayload.files : null,
-                id: typeof newPayload.id === "string" ? newPayload.id : "",
-                users: isMessageAuthor(newPayload.users)
-                  ? {
-                      username: newPayload.users.users.username,
-                      profile_pic_url: newPayload.users.users.profile_pic_url,
-                    }
-                  : isMessageAuthor(newPayload)
-                  ? {
-                      username: newPayload.users.username,
-                      profile_pic_url: newPayload.users.profile_pic_url,
-                    }
-                  : { username: "", profile_pic_url: "" },
-              };
+              const messageAndAuthorNew: MessageAndAuthor =
+                getMessageFromPayload(
+                  newPayload,
+                  messagesToRenderStore.current,
+                  newMessagesToRenderStore.current
+                );
               const messageToDelete = await supabase
                 .from("messages")
                 .select(
@@ -83,49 +60,43 @@ export function useMessageDeletedEffect(
                 )
                 .eq("id", isObject(newPayload) ? newPayload.id : "")
                 .single();
-              const newMessages = [
-                ...(renderStore.current.filter(
-                  (message) =>
-                    isObject(message) && message.id !== messageToDelete.data.id
-                ) ?? []),
-                messageToDelete.data,
-              ].sort(
-                (a, b) =>
-                  new Date(
-                    isObject(b) && typeof b.createdAt === "string"
-                      ? b?.createdAt
-                      : ""
-                  ).getTime() -
-                  new Date(
-                    isObject(a) && typeof a.createdAt === "string"
-                      ? a?.createdAt
-                      : ""
-                  ).getTime()
+              //need to change both so that code is maintainable and future changes to setRender are up to date
+
+              const messagesToRenderPrev = updateWithDeleted(
+                messagesToRenderStore.current
+                  ? messagesToRenderStore.current
+                  : { pages: [] },
+                messageAndAuthorNew
               );
-              setRender(newMessages);
+              setMessagesToRender((prev) => messagesToRenderPrev);
+              messagesToRenderStore.current = messagesToRenderPrev;
+              const messagesToRenderNew = updateWithDeletedNew(
+                newMessagesToRenderStore.current
+                  ? newMessagesToRenderStore.current
+                  : [],
+                messageAndAuthorNew
+              );
+              setNewMessagesToRender(messagesToRenderNew);
+              newMessagesToRenderStore.current = messagesToRenderNew;
 
               if (messageToDelete.data.files !== null) {
-                const newFiles = [
-                  ...(renderFilesStore.current.filter(
-                    (message) =>
-                      isObject(message) &&
-                      message.id !== messageToDelete.data.id
-                  ) ?? []),
-                  messageToDelete.data,
-                ].sort(
-                  (a, b) =>
-                    new Date(
-                      isObject(b) && typeof b.createdAt === "string"
-                        ? b?.createdAt
-                        : ""
-                    ).getTime() -
-                    new Date(
-                      isObject(a) && typeof a.createdAt === "string"
-                        ? a?.createdAt
-                        : ""
-                    ).getTime()
+                const messagesToRenderFilesPrev = updateWithDeleted(
+                  messagesToRenderFilesStore.current
+                    ? messagesToRenderFilesStore.current
+                    : { pages: [] },
+                  messageAndAuthorNew
                 );
-                setRenderFiles(newFiles);
+                setMessagesToRenderFiles((prev) => messagesToRenderFilesPrev);
+                messagesToRenderFilesStore.current = messagesToRenderFilesPrev;
+                const messagesToRenderFilesNew = updateWithDeletedNew(
+                  newMessagesToRenderStoreFiles.current
+                    ? newMessagesToRenderStoreFiles.current
+                    : [],
+                  messageAndAuthorNew
+                );
+                setNewMessagesToRenderFiles(messagesToRenderFilesNew);
+                newMessagesToRenderStoreFiles.current =
+                  messagesToRenderFilesNew;
               }
             }
           }

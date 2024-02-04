@@ -33,7 +33,7 @@ export const DeleteMessageModal = () => {
         .eq("id", message.id);
       onClose();
     } catch (error) {
-      console.log(error);
+      throw new Error(String(error));
     } finally {
       setIsLoading(false);
     }

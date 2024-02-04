@@ -14,6 +14,8 @@ import {
 import { useModal } from "../../../hooks/use-modal-store";
 import { Button } from "../ui/button";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import isObject from "@/lib/isObject";
+import { handleLeaveCollective } from "./functions/handleLeaveCollective";
 
 export const LeaveCollectiveModal = () => {
   const supabase = createClientComponentClient();
@@ -27,59 +29,19 @@ export const LeaveCollectiveModal = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const onClick = async () => {
-    console.log("trying to leave");
     try {
       setIsLoading(true);
-      if (collective && user && Array.isArray(collective.users)) {
-        const updatedUsers = collective.users.filter(
-          (user1): user1 is colUser => {
-            return (
-              user1 != null &&
-              typeof user1 === "object" &&
-              !Array.isArray(user1) &&
-              user.id !== user1.id
-            );
-          }
-        );
-        const { data, error } = await supabase
-          .from("collectives")
-          .update({ users: updatedUsers })
-          .eq("id", collective.id);
-        const { data: userToGo } = await supabase
-          .from("users")
-          .select()
-          .eq("id", user.id)
-          .single();
-        if (userToGo && Array.isArray(userToGo.collectives)) {
-          const updatedCollectives = userToGo?.collectives.filter(
-            (collectiveToGo: Json) => {
-              return (
-                collectiveToGo != null &&
-                typeof collectiveToGo === "object" &&
-                !Array.isArray(collectiveToGo) &&
-                collective.id !== collectiveToGo.id
-              );
-            }
-          );
-          console.log(updatedCollectives);
-          const { data: data2, error: error2 } = await supabase
-            .from("users")
-            .update({ collectives: updatedCollectives })
-            .eq("id", user.id)
-            .select();
-          console.log("please update");
-          console.log(data2);
-          console.log(error2);
-
-          if (!error) {
-            collective.users = updatedUsers;
-          }
-        }
+      if (collective && user) {
+        await handleLeaveCollective(user, collective, supabase);
       }
       onClose();
       router.push("/");
     } catch (error) {
-      console.log(error);
+      throw new Error(
+        isObject(error) && typeof error.message === "string"
+          ? error.message
+          : "error in leave collective modal"
+      );
     } finally {
       setIsLoading(false);
     }

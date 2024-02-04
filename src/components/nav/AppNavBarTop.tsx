@@ -23,9 +23,7 @@ export default async function AppNavBarTop({ user }: appNavBarTopProps) {
 
   var hasCollectives = false;
   var collectives = [];
-  if (!user.collectives) {
-    console.log("no collectives found!");
-  } else {
+  if (user.collectives) {
     var collectiveIds;
     if (Array.isArray(user.collectives)) {
       collectiveIds = user.collectives.map(

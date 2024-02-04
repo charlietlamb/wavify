@@ -91,13 +91,12 @@ export const MembersModal = ({ user }: { user: User }) => {
               );
             }
           );
-          console.log(updatedCollectives);
           const { data: data2, error: error2 } = await supabase
             .from("users")
             .update({ collectives: updatedCollectives })
             .eq("id", userId);
           if (error2) {
-            console.log("error updating user collectives");
+            throw new Error(String(error2.message));
           }
           if (!error) {
             collective.users = updatedUsers;
@@ -107,7 +106,7 @@ export const MembersModal = ({ user }: { user: User }) => {
         }
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(String(error));
     } finally {
       setLoadingId("");
     }
@@ -143,7 +142,7 @@ export const MembersModal = ({ user }: { user: User }) => {
         }
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(String(error));
     } finally {
       setLoadingId("");
     }

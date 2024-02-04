@@ -37,7 +37,6 @@ export default async function CollectiveSidebar({
   const { textSpaces, audioSpaces, videoSpaces } = Array.isArray(spaces)
     ? { textSpaces: [], audioSpaces: [], videoSpaces: [] }
     : spaces;
-  console.log(textSpaces);
   return (
     <div className="flex flex-col w-full h-full text-primary bg-background_content">
       <CollectiveHeader

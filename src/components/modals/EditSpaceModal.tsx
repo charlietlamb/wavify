@@ -129,7 +129,6 @@ export const EditSpaceModal = ({ user }: { user: User }) => {
             : space1
         );
       }
-      console.log(updatedSpaces);
       const { data, error } = await supabase
         .from("collectives")
         .update({
@@ -138,7 +137,6 @@ export const EditSpaceModal = ({ user }: { user: User }) => {
             : updatedSpaces,
         })
         .eq("id", collective.id);
-      console.log(data);
       if (error) {
         setErrorMessage("There was an error editing your space.");
       } else {

@@ -7,7 +7,7 @@ export const getMessages = async ({
 }: {
   pageParam: number | undefined;
   messageIds: string[];
-  setLastFetched: (id: string) => void;
+  setLastFetched: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   if (pageParam === undefined) throw new Error("No page param");
   const supabase = createClientComponentClient();
