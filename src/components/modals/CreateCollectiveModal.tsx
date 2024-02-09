@@ -10,17 +10,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FileUpload } from "@/components/util/FileUpload";
 import { useRouter } from "next/navigation";
 import UploadDropZone from "../util/UploadDropZone";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -28,6 +19,7 @@ import { AnimatedCheckIcon } from "../icons/check";
 import { AnimatedXIcon } from "../icons/x";
 import { uploadCollectiveImageToS3 } from "./modal-actions/createCollectiveActions";
 import { useModal } from "../../../hooks/use-modal-store";
+import { createCollective } from "./functions/createCollective";
 
 const iconProps = {
   height: "40",
@@ -101,70 +93,10 @@ export const CreateCollectiveModal = ({ user }: { user: User }) => {
           !Array.isArray(image) ? image : null
         );
         await uploadCollectiveImageToS3(base64Image ? base64Image : null, id);
-        var newCollective = null;
-        var updatedCollectives;
-        if (!Array.isArray(user.collectives)) {
-          newCollective = [{ id, unique: username }];
-        } else {
-          updatedCollectives = [...user.collectives, { id, unique: username }];
-        }
-        const roleId = uuidv4();
-        const roleId2 = uuidv4();
-        const { data, error } = await supabase.from("collectives").insert({
-          id,
-          unique: username,
-          users: [
-            {
-              id: user.id,
-              role: "founder",
-              roleId: roleId,
-              username: user.username,
-            },
-          ],
-          roles: [
-            {
-              id: roleId,
-              name: "founder",
-              icon: "founder",
-              authority: 0,
-              canInvite: true,
-              canSettings: true,
-              canRoles: true,
-              canMembers: true,
-              canCreate: true,
-              canDelete: true,
-              canLeave: false,
-              manageMessages: true,
-              isDefault: false,
-              iconKey: "founder",
-            },
-            {
-              id: roleId2,
-              name: "other",
-              icon: "other",
-              authority: 0,
-              canInvite: true,
-              canSettings: true,
-              canRoles: true,
-              canMembers: true,
-              canCreate: true,
-              canDelete: true,
-              canLeave: false,
-              manageMessages: false,
-              isDefault: true,
-              iconKey: "other",
-            },
-          ],
-          founder: user.id,
-        });
-        if (updatedCollectives) {
-          await supabase
-            .from("users")
-            .update({ collectives: updatedCollectives })
-            .eq("id", user.id);
-        }
+        const error = await createCollective(user, id, supabase, username);
+
         if (error) {
-          setErrorMessage("There was an error creating your account.");
+          setErrorMessage("There was an error creating your collective.");
         } else {
           setErrorMessage("");
           setUsername("");

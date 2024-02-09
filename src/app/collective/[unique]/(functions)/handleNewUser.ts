@@ -5,10 +5,11 @@ export async function handleNewUser(
   user: User,
   collective: Collective,
   supabase: Supabase,
-  unique: string
+  unique: string,
+  defaultRole: Role
 ) {
   if (collective.type === "public") {
-    return await addUser(user, collective, supabase, unique);
+    return await addUser(user, collective, supabase, unique, defaultRole);
   } else {
     redirect("/");
     return undefined;

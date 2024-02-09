@@ -1,14 +1,19 @@
-export function getSpace(collective: Collective, space_slug: string) {
-  return collective &&
-    !Array.isArray(collective) &&
-    typeof collective === "object" &&
-    Array.isArray(collective.spaces)
-    ? collective.spaces.find(
-        (space: Json) =>
-          space &&
-          !Array.isArray(space) &&
-          typeof space === "object" &&
-          space.slug === space_slug
-      )
-    : null;
+export async function getSpace(
+  collective: Collective,
+  space_slug: string,
+  supabase: Supabase
+) {
+  const { data, error } = await supabase
+    .from("spaces")
+    .select()
+    .eq("slug", space_slug)
+    .eq("collective", collective.id);
+  if (error) throw error;
+  let returnData = [];
+  if (Array.isArray(data)) {
+    returnData = data[0];
+  } else {
+    returnData = data;
+  }
+  return data as unknown as Space;
 }

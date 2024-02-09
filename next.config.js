@@ -7,6 +7,7 @@ const nextConfig = {
       "s3.us-east-1.wasabisys.com",
     ],
   },
+  reactStrictMode: false,
 };
 
 module.exports = nextConfig;

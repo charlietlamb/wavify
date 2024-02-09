@@ -1,13 +1,55 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Database as DB } from "./types/supabase";
 declare module "@emoji-mart/data";
+
+import { init } from "emoji-mart";
+init({ data });
+interface EmojiProps
+  extends React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLElement>,
+    HTMLElement
+  > {
+  id?: string;
+  shortcodes?: string;
+  native?: string;
+  size?: string;
+  fallback?: string;
+  set?: string;
+  skin?: string;
+}
+import { init } from "emoji-mart";
+init({ data });
+interface EmojiProps
+  extends React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLElement>,
+    HTMLElement
+  > {
+  id?: string;
+  shortcodes?: string;
+  native?: string;
+  size?: string;
+  fallback?: string;
+  set?: string;
+  skin?: string;
+}
 declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      "em-emoji": EmojiProps;
+    }
+  }
+}
+declare global {
+  type TODO = any;
   type Database = DB;
   type Supabase = SupabaseClient;
   type User = DB["public"]["Tables"]["users"]["Row"];
   type Collective = DB["public"]["Tables"]["collectives"]["Row"];
   type Chat = DB["public"]["Tables"]["chats"]["Row"];
   type Message = DB["public"]["Tables"]["messages"]["Row"];
+  type Role = DB["public"]["Tables"]["roles"]["Row"];
+  type Space = DB["public"]["Tables"]["spaces"]["Row"];
+  type ColUser = DB["public"]["Tables"]["colUsers"]["Row"];
   type Json =
     | string
     | number
@@ -15,25 +57,6 @@ declare global {
     | null
     | { [key: string]: Json | undefined }
     | Json[];
-  type colUser = {
-    id?: string;
-    username?: string;
-    role?: string;
-  };
-  type Role = {
-    id: string;
-    icon: string;
-    name: string;
-    canLeave: boolean;
-    authority: number;
-    canCreate: boolean;
-    canDelete: boolean;
-    canInvite: boolean;
-    canMembers: boolean;
-    canSettings: boolean;
-    canRoles: boolean;
-    isDefault: boolean;
-  };
   type SpaceType = "text" | "audio" | "video";
 
   type MessageAuthor = {
@@ -47,4 +70,14 @@ declare global {
   type MessagesToRender = {
     pages: (MessageAndAuthor[] | null)[];
   };
+
+  type AndRole = {
+    roles: Role;
+  };
+  type AndUser = {
+    users: User;
+  };
+
+  type ColUserAndRole = ColUser & AndRole;
+  type ColUserAndData = ColUser & AndRole & AndUser;
 }

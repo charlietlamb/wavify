@@ -1,6 +1,6 @@
 "use client";
 import {
-  Castle,
+  Award,
   ChevronDown,
   LogOut,
   PlusCircle,
@@ -19,29 +19,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useModal } from "../../../hooks/use-modal-store";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter, redirect } from "next/navigation";
 import isObject from "@/lib/isObject";
 import { useHeaderChangeEffect } from "./(header)/(hooks)/useHeaderChangeEffect";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import CollectiveRoles from "./CollectiveRoles";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
 
 interface CollectiveHeaderProps {
   collective: Collective;
-  colUser?: Json;
+  colUser?: ColUser;
   userData: User[];
   user: User;
+  userRole: Role;
 }
 
 export const CollectiveHeader = ({
@@ -49,16 +36,16 @@ export const CollectiveHeader = ({
   colUser,
   userData,
   user,
+  userRole,
 }: CollectiveHeaderProps) => {
   const supabase = createClientComponentClient();
   const { onOpen } = useModal();
-  if (!isObject(colUser) || !Array.isArray(collective.roles))
-    return redirect("/");
+  const router = useRouter();
+  function redirectToRoles(collective: Collective) {
+    router.push(`/collective/${collective.unique}/roles`);
+  }
+  if (!Array.isArray(collective.roles)) return redirect("/");
   const isFounder = collective.founder === colUser?.id;
-  var router = useRouter();
-  const userRole = collective?.roles?.find(
-    (colRole: Json) => isObject(colRole) && colRole.id === colUser.roleId
-  );
   if (!isObject(userRole)) return redirect("/");
   useHeaderChangeEffect(supabase, user, collective, router);
   return (
@@ -73,7 +60,7 @@ export const CollectiveHeader = ({
         {(isFounder || userRole.canInvite) && (
           <DropdownMenuItem
             onClick={() => onOpen("invite", { collective })}
-            className="px-3 py-2 text-sm text-indigo-600 cursor-pointer dark:text-indigo-400"
+            className="px-3 py-2 text-sm text-primary"
           >
             Invite People
             <UserPlus className="w-4 h-4 ml-auto" />
@@ -89,26 +76,13 @@ export const CollectiveHeader = ({
           </DropdownMenuItem>
         )}
         {(isFounder || userRole.canRoles) && (
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                className="justify-between min-w-full px-3 py-2"
-              >
-                Manage Roles
-                <Castle className="w-4 h-4 ml-auto"></Castle>
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="w-[50vw] max-w-[50vw]">
-              <SheetHeader>
-                <SheetTitle>Manage Roles</SheetTitle>
-                <SheetDescription>
-                  Add, edit or delete roles for this collective.
-                </SheetDescription>
-              </SheetHeader>
-              <CollectiveRoles></CollectiveRoles>
-            </SheetContent>
-          </Sheet>
+          <DropdownMenuItem
+            onClick={() => redirectToRoles(collective)}
+            className="px-3 py-2 text-sm cursor-pointer"
+          >
+            Manage Roles
+            <Award className="w-4 h-4 ml-auto"></Award>
+          </DropdownMenuItem>
         )}
         {(isFounder || userRole.canMembers) && (
           <DropdownMenuItem

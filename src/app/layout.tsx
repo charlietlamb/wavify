@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
-
+import "./tailwind.css";
 import "./globals.css";
 import { cn } from "../lib/utils";
-import Footer from "@/components/me/Footer";
-import { ThemeProvider } from "./providers";
+import { NextProvider, ThemeProvider } from "./providers";
 import "react-image-crop/dist/ReactCrop.css";
 import getUser from "./actions/getUser";
 import Navbar from "@/components/nav/Navbar";
@@ -21,6 +20,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const user = await getUser();
+
   return (
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
       <body
@@ -28,41 +28,43 @@ export default async function RootLayout({
           "min-h-screen bg-background antialiased debug-screens flex flex-col"
         )}
       >
-        <ReactQueryProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem={false}
-            storageKey="wavify-theme"
-          >
-            {!user ? (
-              <>
-                <header className=" bg-background fixed top-0 w-full z-50 min-h-[100h]">
-                  <Navbar></Navbar>
-                </header>
-                <main className="bg-background_content relative z-1 top-0 left-0 w-[100%] min-h-[100vh] py-[10vh]">
-                  {children}
-                </main>
-                {/*<footer className=" bg-background fixed bottom-0 w-full z-50 min-h-[10vh]">
+        <NextProvider>
+          <ReactQueryProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem={false}
+              storageKey="wavify-theme"
+            >
+              {!user ? (
+                <>
+                  <header className=" bg-background fixed top-0 w-full z-50 min-h-[100h]">
+                    <Navbar></Navbar>
+                  </header>
+                  <main className="bg-background_content relative z-1 top-0 left-0 w-[100%] min-h-[100vh] py-[10vh]">
+                    {children}
+                  </main>
+                  {/*<footer className=" bg-background fixed bottom-0 w-full z-50 min-h-[10vh]">
                   <Footer></Footer>
             </footer>*/}
-              </>
-            ) : (
-              <>
-                <ModalProvider user={user} />
-                <header className=" bg-background w-full  min-h-[20h]">
-                  <AppNavBar user={user}></AppNavBar>
-                </header>
-                <main className="bg-background_content relative z-1 top-0 left-0 w-[100%] flex-grow flex">
-                  {children}
-                </main>
-                {/*<footer className=" bg-background fixed bottom-0 w-full z-50 min-h-[10vh]">
+                </>
+              ) : (
+                <>
+                  <ModalProvider user={user} />
+                  <header className=" bg-background w-full  min-h-[20h]">
+                    <AppNavBar user={user}></AppNavBar>
+                  </header>
+                  <main className="bg-background_content relative z-1 top-0 left-0 w-[100%] flex-grow flex">
+                    {children}
+                  </main>
+                  {/*<footer className=" bg-background fixed bottom-0 w-full z-50 min-h-[10vh]">
                   <Footer></Footer>
             </footer>*/}
-              </>
-            )}
-          </ThemeProvider>
-        </ReactQueryProvider>
+                </>
+              )}
+            </ThemeProvider>
+          </ReactQueryProvider>
+        </NextProvider>
       </body>
     </html>
   );

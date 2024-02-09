@@ -1,16 +1,15 @@
-import isObject from "@/lib/isObject";
-
-export async function getColUser(
-  user: User,
+export async function getColUserFromId(
+  user: string,
   collective: Collective,
   supabase: Supabase
 ) {
   const { data, error } = await supabase
     .from("colUsers")
     .select()
-    .eq("user", user.id)
+    .eq("id", user)
     .eq("collective", collective.id)
     .single();
+
   if (error) throw error;
-  return data;
+  return data as unknown as ColUser;
 }

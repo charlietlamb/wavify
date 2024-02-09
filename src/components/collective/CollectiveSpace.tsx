@@ -5,13 +5,12 @@ import { useParams, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ModalType, useModal } from "../../../hooks/use-modal-store";
 import { ActionTooltip } from "../util/ActionTooltip";
-import isObject from "@/lib/isObject";
-import { getRole } from "./(space)/(functions)/getRole";
 
 interface CollectiveSpaceProps {
-  space: Json;
+  spaces: Space[];
+  space: Space;
   collective: Collective;
-  user: User;
+  userRole: Role;
 }
 
 const iconMap = {
@@ -21,16 +20,14 @@ const iconMap = {
 };
 
 export const CollectiveSpace = ({
+  spaces,
   space,
   collective,
-  user,
+  userRole,
 }: CollectiveSpaceProps) => {
   const { onOpen } = useModal();
   const params = useParams();
   const router = useRouter();
-
-  var role = getRole(user, collective);
-  if (!isObject(space) || !isObject(role)) return;
   const isValidKey = (key: any): key is keyof typeof iconMap => {
     return key in iconMap;
   };
@@ -41,7 +38,7 @@ export const CollectiveSpace = ({
 
   const onAction = (e: React.MouseEvent, action: ModalType) => {
     e.stopPropagation();
-    onOpen(action, { space, collective });
+    onOpen(action, { space, collective, spaces });
   };
 
   return (
@@ -62,7 +59,7 @@ export const CollectiveSpace = ({
       >
         {<>{space.name}</>}
       </p>
-      {space.name !== "general" && role.canCreate && (
+      {space.name !== "general" && userRole.canCreate && (
         <div className="flex items-center ml-auto gap-x-2">
           <ActionTooltip label="Edit">
             <Edit

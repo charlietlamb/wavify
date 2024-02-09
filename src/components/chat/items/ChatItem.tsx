@@ -81,7 +81,7 @@ export function ChatItem({
     return "";
   };
   var canDeleteAny = false;
-  if (collective && isObject(role) && role.manageMessages) {
+  if (collective && isObject(role) && role.canMessages) {
     canDeleteAny = true;
   }
   const isSender = user.id === message.author;

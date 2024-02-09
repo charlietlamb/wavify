@@ -9,7 +9,10 @@ import { CollectiveMember } from "./CollectiveMember";
 import { getSpaces } from "./(sidebar)/(functions)/getSpaces";
 import { getData } from "./(sidebar)/(functions)/getData";
 import isObject from "@/lib/isObject";
-
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { getUserRole } from "./(sidebar)/(functions)/getUserRole";
+import { getUserRoleFromId } from "./member/getUserRoleFromId";
 interface RoleIconMap {
   [key: string]: JSX.Element;
 }
@@ -30,13 +33,18 @@ export default async function CollectiveSidebar({
   unique?: string;
   user: User;
   collective: Collective;
-  colUser: Json;
+  colUser: ColUser;
   userData: User[];
 }) {
-  const spaces = getSpaces(collective);
-  const { textSpaces, audioSpaces, videoSpaces } = Array.isArray(spaces)
-    ? { textSpaces: [], audioSpaces: [], videoSpaces: [] }
-    : spaces;
+  const supabase = createServerComponentClient({ cookies });
+  const userRole = await getUserRole(colUser, supabase);
+  const spaces = await getSpaces(collective, supabase);
+  const { textSpaces, audioSpaces, videoSpaces } = spaces
+    ? spaces
+    : { textSpaces: [], audioSpaces: [], videoSpaces: [] };
+  const spacesToPass: Space[] = spaces
+    ? [...textSpaces, ...audioSpaces, ...videoSpaces]
+    : [];
   return (
     <div className="flex flex-col w-full h-full text-primary bg-background_content">
       <CollectiveHeader
@@ -44,6 +52,7 @@ export default async function CollectiveSidebar({
         colUser={colUser}
         userData={userData}
         user={user}
+        userRole={userRole}
       />
       <ScrollArea className="flex-1 px-3">
         <div className="mt-2">
@@ -74,8 +83,9 @@ export default async function CollectiveSidebar({
                     <CollectiveSpace
                       key={typeof space.id === "string" ? space.id : ""}
                       space={space}
-                      user={user}
                       collective={collective}
+                      userRole={userRole}
+                      spaces={spacesToPass}
                     />
                   )
               )}
@@ -98,8 +108,9 @@ export default async function CollectiveSidebar({
                     <CollectiveSpace
                       key={typeof space.id === "string" ? space.id : ""}
                       space={space}
-                      user={user}
+                      userRole={userRole}
                       collective={collective}
+                      spaces={spacesToPass}
                     />
                   )
               )}
@@ -122,8 +133,9 @@ export default async function CollectiveSidebar({
                     <CollectiveSpace
                       key={typeof space.id === "string" ? space.id : ""}
                       space={space}
-                      user={user}
+                      userRole={userRole}
                       collective={collective}
+                      spaces={spacesToPass}
                     />
                   )
               )}
@@ -141,16 +153,19 @@ export default async function CollectiveSidebar({
                 collective={collective}
               />
               <div className="space-y-[2px]">
-                {collective?.users.map(
-                  (user1) =>
-                    isObject(user1) && (
-                      <CollectiveMember
-                        key={typeof user1.id === "string" ? user1.id : ""}
-                        user={user1}
-                        collective={collective}
-                      />
-                    )
-                )}
+                {collective?.users.map(async (user1) => {
+                  const colUser = await getUserRoleFromId(
+                    typeof user1 === "string" ? user1 : "",
+                    collective,
+                    supabase
+                  );
+                  return (
+                    <CollectiveMember
+                      key={typeof user1 === "string" ? user1 : ""}
+                      colUserAndData={colUser}
+                    />
+                  );
+                })}
               </div>
             </div>
           )}

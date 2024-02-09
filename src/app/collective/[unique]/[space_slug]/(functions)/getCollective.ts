@@ -4,10 +4,11 @@ export async function getCollective(
   supabase: SupabaseClient<any, "public", any>,
   unique: string
 ) {
-  const { data: collective } = (await supabase
+  const { data: collective, error } = await supabase
     .from("collectives")
     .select()
     .eq("unique", unique)
-    .single()) as { data: Collective };
-  return collective;
+    .single();
+  if (error) throw error;
+  return collective as unknown as Collective;
 }

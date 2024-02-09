@@ -1,8 +1,5 @@
 export function getHasSpace(collective: Collective, space_slug: string) {
-  return collective &&
-    !Array.isArray(collective) &&
-    typeof collective === "object" &&
-    Array.isArray(collective.spaces)
+  return Array.isArray(collective.spaces)
     ? collective.spaces.some(
         (space: Json) =>
           space &&

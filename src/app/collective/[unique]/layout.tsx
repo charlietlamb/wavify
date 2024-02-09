@@ -12,6 +12,7 @@ import { handleNewUser } from "./(functions)/handleNewUser";
 import { collectiveHasUser } from "./(functions)/collectiveHasUser";
 import { getUserIds } from "./(functions)/getUserIds";
 import { handleKickedUser } from "./(functions)/handleKickedUser";
+import { getDefaultRole } from "./(functions)/getDefaultRole";
 
 const CollectiveLayout = async ({
   children,
@@ -32,19 +33,21 @@ const CollectiveLayout = async ({
   if (!Array.isArray(collective.users) || !Array.isArray(collective.roles))
     return redirect("/");
   await handleKickedUser(user, collective, supabase);
+  const defaultRole: Role = await getDefaultRole(collective, supabase);
   if (!collectiveHasUser(user, collective)) {
-    const newUser = await handleNewUser(
+    const updatedUsers = await handleNewUser(
       user,
       collective,
       supabase,
-      params.unique
+      params.unique,
+      defaultRole
     );
-    if (newUser) collective.users.push(newUser);
+    if (updatedUsers) collective.users = updatedUsers;
   }
   const userIds = getUserIds(collective);
   const { data } = await supabase.from("users").select().in("id", userIds);
   const users: User[] = data as User[];
-  const colUser = getColUser(user, collective);
+  const colUser = await getColUser(user, collective, supabase);
   if (!colUser) return redirect("/");
   return (
     <div className="flex flex-grow max-h-[80vh] min-h-[80vh]">
@@ -57,7 +60,7 @@ const CollectiveLayout = async ({
           userData={users}
         />
       </div>
-      <div className="w-full h-full">{children}</div>
+      <div className="flex w-full h-full">{children}</div>
     </div>
   );
 };

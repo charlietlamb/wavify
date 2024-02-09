@@ -73,37 +73,31 @@ export const CreateSpaceModal = ({ user }: { user: User }) => {
 
   async function submitSpaceDetails() {
     setLoading(true);
-    if (spaceName !== "") {
+    if (spaceName !== "" && spaceName !== "roles") {
       const id = uuidv4();
-      var newSpace = null;
-      var updatedSpaces;
-      if (!Array.isArray(collective.spaces)) {
-        var space: Json = {
-          id,
-          name: spaceName,
-          type: spaceType,
-          slug: username,
-        };
-        newSpace = [space];
-      } else {
-        updatedSpaces = [
-          ...collective.spaces,
-          { id, name: spaceName, type: spaceType, slug: username },
-        ];
-      }
-      const { data, error } = await supabase
-        .from("collectives")
-        .update({ spaces: newSpace ? newSpace : updatedSpaces })
-        .eq("id", collective.id);
+      const space: Json = {
+        id,
+        name: spaceName,
+        type: spaceType,
+        slug: username,
+      };
+      const { error } = await supabase.from("spaces").insert({
+        id: typeof space.id === "string" ? space.id : "",
+        name: typeof space.name === "string" ? space.name : "",
+        type: typeof space.type === "string" ? space.type : "",
+        slug: typeof space.slug === "string" ? space.slug : "",
+        collective: typeof collective.id === "string" ? collective.id : "",
+        open: true,
+      });
       if (error) {
-        setErrorMessage("There was an error creating your account.");
+        throw error;
+        setErrorMessage("There was an error creating space.");
       } else {
         setErrorMessage("");
         setSpaceName("");
         setUsername("");
         onClose();
         router.refresh();
-        //router.push(`/collective/${collective.unique}/${username}`);
       }
     } else {
       setErrorMessage("Please enter a valid spaceName.");
@@ -112,7 +106,7 @@ export const CreateSpaceModal = ({ user }: { user: User }) => {
   }
 
   const isUsernameAvailable = async (usernameToCheck: string) => {
-    if (usernameToCheck === "") {
+    if (usernameToCheck === "" || usernameToCheck === "roles") {
       setUsernameAvailable(false);
       return;
     }

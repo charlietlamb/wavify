@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       chats: {
@@ -55,6 +55,13 @@ export interface Database {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "chats_space_fkey"
+            columns: ["space"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "chats_user1_fkey"
             columns: ["user1"]
             isOneToOne: false
@@ -79,12 +86,12 @@ export interface Database {
           id: string
           image_url: string | null
           inviteCode: string | null
-          roles: Json | null
+          roles: string[]
           score: number | null
-          spaces: Json | null
+          spaces: string[]
           type: string | null
           unique: string
-          users: Json | null
+          users: string[]
         }
         Insert: {
           banner_url?: string | null
@@ -94,12 +101,12 @@ export interface Database {
           id?: string
           image_url?: string | null
           inviteCode?: string | null
-          roles?: Json | null
+          roles?: string[]
           score?: number | null
-          spaces?: Json | null
+          spaces?: string[]
           type?: string | null
           unique: string
-          users?: Json | null
+          users?: string[]
         }
         Update: {
           banner_url?: string | null
@@ -109,14 +116,60 @@ export interface Database {
           id?: string
           image_url?: string | null
           inviteCode?: string | null
-          roles?: Json | null
+          roles?: string[]
           score?: number | null
-          spaces?: Json | null
+          spaces?: string[]
           type?: string | null
           unique?: string
-          users?: Json | null
+          users?: string[]
         }
         Relationships: []
+      }
+      colUsers: {
+        Row: {
+          collective: string | null
+          id: string
+          role: string | null
+          roleId: string | null
+          user: string
+        }
+        Insert: {
+          collective?: string | null
+          id: string
+          role?: string | null
+          roleId?: string | null
+          user: string
+        }
+        Update: {
+          collective?: string | null
+          id?: string
+          role?: string | null
+          roleId?: string | null
+          user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "colUsers_collective_fkey"
+            columns: ["collective"]
+            isOneToOne: false
+            referencedRelation: "collectives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "colUsers_roleId_fkey"
+            columns: ["roleId"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "colUsers_user_fkey"
+            columns: ["user"]
+            isOneToOne: false
+            referencedRelation: "colUsers"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       messages: {
         Row: {
@@ -169,6 +222,100 @@ export interface Database {
           }
         ]
       }
+      roles: {
+        Row: {
+          authority: number
+          canCreate: boolean
+          canDelete: boolean
+          canInvite: boolean
+          canMembers: boolean
+          canMessages: boolean
+          canRoles: boolean
+          canSettings: boolean
+          collective: string | null
+          color: string | null
+          emoji: string | null
+          id: string
+          name: string | null
+        }
+        Insert: {
+          authority: number
+          canCreate?: boolean
+          canDelete?: boolean
+          canInvite?: boolean
+          canMembers?: boolean
+          canMessages?: boolean
+          canRoles?: boolean
+          canSettings?: boolean
+          collective?: string | null
+          color?: string | null
+          emoji?: string | null
+          id?: string
+          name?: string | null
+        }
+        Update: {
+          authority?: number
+          canCreate?: boolean
+          canDelete?: boolean
+          canInvite?: boolean
+          canMembers?: boolean
+          canMessages?: boolean
+          canRoles?: boolean
+          canSettings?: boolean
+          collective?: string | null
+          color?: string | null
+          emoji?: string | null
+          id?: string
+          name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roles_collective_fkey"
+            columns: ["collective"]
+            isOneToOne: false
+            referencedRelation: "collectives"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      spaces: {
+        Row: {
+          allowed: string[] | null
+          collective: string
+          id: string
+          name: string
+          open: boolean
+          slug: string
+          type: string
+        }
+        Insert: {
+          allowed?: string[] | null
+          collective: string
+          id: string
+          name: string
+          open?: boolean
+          slug: string
+          type?: string
+        }
+        Update: {
+          allowed?: string[] | null
+          collective?: string
+          id?: string
+          name?: string
+          open?: boolean
+          slug?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spaces_collective_fkey"
+            columns: ["collective"]
+            isOneToOne: false
+            referencedRelation: "collectives"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       users: {
         Row: {
           collectives: Json | null
@@ -198,7 +345,7 @@ export interface Database {
           featured?: string | null
           followers?: string[] | null
           following?: string[] | null
-          id?: string
+          id: string
           instagram?: string | null
           profile_pic_url?: string | null
           role?: string | null
@@ -227,7 +374,15 @@ export interface Database {
           twitter?: string | null
           username?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "users_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {

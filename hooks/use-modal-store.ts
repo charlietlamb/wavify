@@ -17,12 +17,13 @@ interface ModalData {
   collective?: Collective;
   userData?: User[];
   user?: User;
-  space?: Json;
-  spaceType?: SpaceType;
+  space?: Space;
+  spaces?: Space[];
+  spaceType?: string;
   apiUrl?: string;
   query?: Record<string, any>;
   chat?: Chat;
-  message?: Json;
+  message?: Message;
   setFiles?: (files: Json) => void;
 }
 

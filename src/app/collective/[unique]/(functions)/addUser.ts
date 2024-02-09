@@ -1,25 +1,14 @@
 import isObject from "@/lib/isObject";
+import { v4 as uuidv4 } from "uuid";
 
 export async function addUser(
   user: User,
   collective: Collective,
   supabase: Supabase,
-  unique: string
+  unique: string,
+  defaultRole: Role
 ) {
-  const defaultRole = Array.isArray(collective.roles)
-    ? collective.roles.find(
-        (role: Json) => isObject(role) && role.isDefault === true
-      )
-    : [];
-  const newUser = {
-    id: isObject(user) ? user.id : "",
-    role: isObject(defaultRole) ? defaultRole.name : "",
-    roleId: isObject(defaultRole) ? defaultRole.id : "",
-    username: user.username,
-  };
-  var updateUsers = Array.isArray(collective.users)
-    ? [...collective.users, newUser]
-    : [];
+  var updateUsers = [...collective.users, user.id];
   const { error } = await supabase
     .from("collectives")
     .update({ users: updateUsers })
@@ -34,5 +23,18 @@ export async function addUser(
     })
     .eq("id", user.id);
   if (error2) throw error2;
-  return newUser;
+  /*currently just changed the way colUsers work by adding users to be foreign key and giving each colUser a unique id
+    so now just fixing that implementaion */
+  const { error: error3 } = await supabase
+    .from("colUsers")
+    .insert({
+      id: uuidv4(),
+      role: defaultRole.name,
+      roleId: defaultRole.id,
+      collective: collective.id,
+      user: user.id,
+    })
+    .select();
+  if (error3) throw error3;
+  return updateUsers;
 }

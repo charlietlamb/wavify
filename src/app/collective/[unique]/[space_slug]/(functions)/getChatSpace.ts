@@ -1,10 +1,9 @@
 import { getOrCreateConversation } from "@/lib/chat";
-import isObject from "@/lib/isObject";
 
-export async function getChatSpace(collective: Collective, space: Json) {
+export async function getChatSpace(collective: Collective, space: Space) {
   var conversation: Chat[] | Chat | null = await getOrCreateConversation({
     collectiveId: collective.id,
-    space: isObject(space) && typeof space.slug === "string" ? space.slug : "",
+    space: space.id,
   });
   if (Array.isArray(conversation)) {
     conversation = conversation[0];

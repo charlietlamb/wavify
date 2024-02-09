@@ -16,7 +16,6 @@ import { isMessagesToRender } from "./utilityFunctions";
 import useStatusMessageEffect from "./hooks/useStatusMessageEffect";
 import { getFiles } from "./functions/getFiles";
 import { getMessages } from "./functions/getMessages";
-import { v4 as uuidv4 } from "uuid";
 
 interface ChatMessagesProps {
   name: string;
@@ -183,9 +182,6 @@ export function ChatMessages({
     renderFilesStore
   );
 
-  useEffect(() => {
-    console.log(render);
-  }, [render]);
   return (
     <div className="flex flex-grow w-full max-h-full overflow-hidden">
       {fileTab && (

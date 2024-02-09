@@ -1,27 +1,20 @@
-export function getSpaces(collective: Collective) {
-  if (Array.isArray(collective.spaces)) {
-    const textSpaces = collective.spaces.filter(
-      (space) =>
-        space != null &&
-        typeof space === "object" &&
-        !Array.isArray(space) &&
-        space.type === "text"
-    ) as Json[];
-    const audioSpaces = collective.spaces.filter(
-      (space) =>
-        space != null &&
-        typeof space === "object" &&
-        !Array.isArray(space) &&
-        space.type === "audio"
-    ) as Json[];
-    const videoSpaces = collective.spaces.filter(
-      (space) =>
-        space != null &&
-        typeof space === "object" &&
-        !Array.isArray(space) &&
-        space.type === "video"
-    ) as Json[];
-    return { textSpaces, audioSpaces, videoSpaces };
-  }
-  return [];
+import isObject from "@/lib/isObject";
+
+export async function getSpaces(collective: Collective, supabase: Supabase) {
+  const { data: spaces, error } = await supabase
+    .from("spaces")
+    .select()
+    .eq("collective", collective.id);
+  if (error) throw error;
+  if (!spaces) return;
+  const textSpaces = spaces.filter(
+    (space) => isObject(space) && space.type === "text"
+  ) as Space[];
+  const audioSpaces = spaces.filter(
+    (space) => isObject(space) && space.type === "audio"
+  ) as Space[];
+  const videoSpaces = spaces.filter(
+    (space) => isObject(space) && space.type === "video"
+  ) as Space[];
+  return { textSpaces, audioSpaces, videoSpaces };
 }

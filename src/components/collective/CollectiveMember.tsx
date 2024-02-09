@@ -1,59 +1,26 @@
 "use client";
 
-import { ShieldAlert, ShieldCheck } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import { UserAvatar } from "../me/UserAvatar";
+import isObject from "@/lib/isObject";
 
 interface CollectiveUserProps {
-  user: Json;
-  collective: Collective;
+  colUserAndData: ColUserAndData;
 }
 
-interface RoleIconMap {
-  [key: string]: JSX.Element;
-}
-
-const roleIconMap: RoleIconMap = {
-  other: <ShieldCheck className="w-4 h-4 ml-2 text-indigo-500" />,
-  founder: <ShieldAlert className="w-4 h-4 text-rose-500" />,
-};
-
-export const CollectiveMember = ({ user, collective }: CollectiveUserProps) => {
-  var colUser: Json | undefined = undefined;
-  if (user && collective && Array.isArray(collective.users)) {
-    colUser = collective.users.find(
-      (user1: Json) =>
-        user1 &&
-        typeof user1 === "object" &&
-        !Array.isArray(user1) &&
-        user &&
-        typeof user === "object" &&
-        !Array.isArray(user) &&
-        user1.id === user.id
-    );
-  }
+export const CollectiveMember = ({ colUserAndData }: CollectiveUserProps) => {
   const params = useParams();
   const router = useRouter();
-
-  const icon =
-    roleIconMap[
-      colUser &&
-      !Array.isArray(colUser) &&
-      typeof colUser === "object" &&
-      typeof colUser.role === "string"
-        ? colUser.role
-        : ""
-    ];
+  /* trying to render colUserAndData however I think that it is returning an empty array after I changed lots in the supabase postgres */
+  console.log("rendering member?");
+  console.log(colUserAndData);
+  if (!isObject(colUserAndData)) return null;
 
   const onClick = () => {
     router.push(
-      `/collective/${params?.unique}/chat/${
-        user && !Array.isArray(user) && typeof user === "object"
-          ? user.username
-          : ""
-      }`
+      `/collective/${params?.unique}/chat/${colUserAndData.users.username}`
     );
   };
 
@@ -62,10 +29,8 @@ export const CollectiveMember = ({ user, collective }: CollectiveUserProps) => {
       onClick={onClick}
       className={cn(
         "group px-2 py-2 rounded-md flex items-center gap-x-2 w-full hover:bg-zinc-700/10 dark:hover:bg-zinc-700/50 transition mb-1",
-        user &&
-          typeof user === "object" &&
-          !Array.isArray(user) &&
-          params?.userId === user.id &&
+
+        params?.userId === colUserAndData.users.id &&
           "bg-zinc-700/20 dark:bg-zinc-700"
       )}
     >
@@ -76,22 +41,14 @@ export const CollectiveMember = ({ user, collective }: CollectiveUserProps) => {
       <p
         className={cn(
           "font-semibold text-sm text-zinc-500 group-hover:text-zinc-600 dark:text-zinc-400 dark:group-hover:text-zinc-300 transition",
-          user &&
-            typeof user === "object" &&
-            !Array.isArray(user) &&
-            params?.userId === user.id &&
+
+          params?.userId === colUserAndData.users.id &&
             "text-primary dark:text-zinc-200 dark:group-hover:text-white"
         )}
       >
-        {
-          <>
-            {user && typeof user === "object" && !Array.isArray(user)
-              ? user.username
-              : ""}
-          </>
-        }
+        {<>{colUserAndData.users.username}</>}
       </p>
-      {icon}
+      {colUserAndData.roles.emoji}
     </button>
   );
 };

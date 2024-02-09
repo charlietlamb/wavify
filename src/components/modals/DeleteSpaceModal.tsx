@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 import {
   Dialog,
@@ -14,57 +13,35 @@ import {
 import { Button } from "@/components/ui/button";
 import { useModal } from "../../../hooks/use-modal-store";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import isObject from "@/lib/isObject";
+import ButtonLoader from "../me/ButtonLoader";
 
 export const DeleteSpaceModal = () => {
   const { isOpen, onClose, type, data } = useModal();
-  const router = useRouter();
   const supabase = createClientComponentClient<Database>();
   const isModalOpen = isOpen && type === "deleteSpace";
-  const { collective, space } = data;
+  const { collective, space, spaces } = data;
 
   const [isLoading, setIsLoading] = useState(false);
-
+  if (!spaces || !space || !collective || !Array.isArray(collective.spaces))
+    return null;
   const onClick = async () => {
-    try {
-      setIsLoading(true);
-      if (
-        space &&
-        typeof space === "object" &&
-        !Array.isArray(space) &&
-        space.id
-      ) {
-        if (collective && Array.isArray(collective.spaces)) {
-          const spacesToUpdate = collective.spaces.filter(
-            (item: Json) =>
-              item &&
-              !Array.isArray(item) &&
-              typeof item === "object" &&
-              item.id !== space.id
-          );
-          await supabase
-            .from("collectives")
-            .update({ spaces: spacesToUpdate })
-            .eq("id", collective.id);
-          await supabase
-            .from("chats")
-            .delete()
-            .eq("id", collective.id)
-            .eq(
-              "space",
-              isObject(space) && typeof space.slug === "string"
-                ? space.slug
-                : ""
-            );
-        }
-      }
-
-      onClose();
-    } catch (error) {
-      throw new Error(String(error));
-    } finally {
-      setIsLoading(false);
-    }
+    setIsLoading(true);
+    const spacesToUpdate =
+      collective.spaces && Array.isArray(collective.spaces)
+        ? collective.spaces.filter((item) => item !== space.id)
+        : [];
+    const { error } = await supabase
+      .from("collectives")
+      .update({ spaces: spacesToUpdate })
+      .eq("id", collective.id);
+    if (error) throw error;
+    const { error: spaceError } = await supabase
+      .from("spaces")
+      .delete()
+      .eq("id", space.id);
+    if (spaceError) throw spaceError;
+    onClose();
+    setIsLoading(false);
   };
 
   return (
@@ -76,7 +53,7 @@ export const DeleteSpaceModal = () => {
           </DialogTitle>
           <DialogDescription className="text-center text-zinc-500">
             Are you sure you want to do this? <br />
-            <span className="font-semibold text-indigo-500">
+            <span className="font-semibold text-primary">
               {collective?.unique}
             </span>{" "}
             will be permanently deleted.
@@ -87,9 +64,11 @@ export const DeleteSpaceModal = () => {
             <Button disabled={isLoading} onClick={onClose} variant="ghost">
               Cancel
             </Button>
-            <Button disabled={isLoading} variant="primary" onClick={onClick}>
-              Confirm
-            </Button>
+            <ButtonLoader
+              isLoading={isLoading}
+              onClick={onClick}
+              text="Confirm"
+            ></ButtonLoader>
           </div>
         </DialogFooter>
       </DialogContent>

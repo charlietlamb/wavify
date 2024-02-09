@@ -28,11 +28,8 @@ export default async function page({ params }: spacePageProps) {
   const user = await getUser();
   if (!user) redirect("/account");
   const collective = await getCollective(supabase, params.unique);
-  var hasSpace = getHasSpace(collective, params.space_slug);
-  if (!hasSpace) redirect(`/collective/${params.unique}`);
-  const space = getSpace(collective, params.space_slug);
-  if (!isObject(space) || !isObject(collective))
-    redirect(`/collective/${params.unique}`);
+  const space = await getSpace(collective, params.space_slug, supabase);
+  if (!space || Array.isArray(space)) redirect(`/collective/${params.unique}`);
   var chat: Chat | null = null;
   var messageIds;
   var fileIds;

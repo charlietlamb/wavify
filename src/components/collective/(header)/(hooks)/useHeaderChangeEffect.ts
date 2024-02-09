@@ -1,5 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { NextRouter } from "next/router";
 import { useEffect } from "react";
 
 export function useHeaderChangeEffect(

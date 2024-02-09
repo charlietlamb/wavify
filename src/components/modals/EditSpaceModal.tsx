@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -18,13 +16,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useModal } from "../../../hooks/use-modal-store";
 import { AnimatedCheckIcon } from "../icons/check";
 import { AnimatedXIcon } from "../icons/x";
 import { Label } from "../ui/label";
+import isObject from "@/lib/isObject";
+import { spaceTypes } from "../collective/(space)/(functions)/spaceTypes";
+import ButtonLoader from "../me/ButtonLoader";
 
 const iconProps = {
   height: "40",
@@ -32,111 +31,73 @@ const iconProps = {
   color: "hsl(var(--background-content))",
 };
 
-type SpaceType = "text" | "audio" | "video";
-const spaceTypes: SpaceType[] = ["text", "audio", "video"];
-
 export const EditSpaceModal = ({ user }: { user: User }) => {
-  const { isOpen, onClose, type, data } = useModal();
-  const { space } = data as {
-    space: Json;
-  };
   const [loading, setLoading] = useState(false);
-  const [spaceName, setSpaceName] = useState<string>(
-    space &&
-      !Array.isArray(space) &&
-      typeof space === "object" &&
-      typeof space.name === "string"
-      ? space.name
-      : ""
-  );
-  const [spaceType, setSpaceType] = useState<SpaceType>(
-    space &&
-      !Array.isArray(space) &&
-      typeof space === "object" &&
-      spaceTypes.includes(space.type as SpaceType)
-      ? (space.type as SpaceType)
-      : "text"
-  );
-  const [username, setUsername] = useState<string>(
-    space &&
-      !Array.isArray(space) &&
-      typeof space === "object" &&
-      typeof space.slug === "string"
-      ? space.slug
-      : ""
-  );
+  const [spaceName, setSpaceName] = useState<string>("");
+  const [spaceType, setSpaceType] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
   const [usernameAvailable, setUsernameAvailable] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const supabase = createClientComponentClient<Database>();
-  const router = useRouter();
-
-  const isModalOpen = isOpen && type === "editSpace";
-
-  const { collective } = data as {
+  const { isOpen, onClose, type, data } = useModal();
+  const { collective, space, spaces } = data as {
+    space: Space;
     collective: Collective;
+    spaces: Space[];
   };
-
   useEffect(() => {
     if (space) {
-      setUsername(
-        !Array.isArray(space) &&
-          typeof space === "object" &&
-          typeof space.slug === "string"
-          ? space.slug
-          : ""
-      );
-      setSpaceName(
-        !Array.isArray(space) &&
-          typeof space === "object" &&
-          typeof space.name === "string"
-          ? space.name
-          : ""
-      );
-      setSpaceType(
-        !Array.isArray(space) &&
-          typeof space === "object" &&
-          spaceTypes.includes(space.type as SpaceType)
-          ? (space.type as SpaceType)
-          : "text"
-      );
+      setSpaceName(space.name);
+      setSpaceType(space.type);
+      setUsername(space.slug);
     }
   }, [isOpen]);
 
+  const isUsernameAvailable = async (usernameToCheck: string) => {
+    if (usernameToCheck === "" || usernameToCheck === "roles") {
+      setUsernameAvailable(false);
+      return;
+    }
+    if (usernameToCheck === space.slug) {
+      setUsernameAvailable(true);
+      return;
+    }
+    if (Array.isArray(spaces)) {
+      setUsernameAvailable(
+        spaces.every((space: Space) => space.slug !== usernameToCheck)
+      );
+    } else {
+      setUsernameAvailable(true);
+    }
+  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      isUsernameAvailable(username);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [username]);
+
+  if (!isObject(space) || !isObject(collective)) return null;
+  const supabase = createClientComponentClient();
+  const isModalOpen = isOpen && type === "editSpace";
   async function submitSpaceDetails() {
     setLoading(true);
     if (spaceName !== "") {
-      var newSpace: Json | null = null;
-      var updatedSpaces;
-      var newSpace: Json = {
-        id:
-          space && typeof space === "object" && !Array.isArray(space)
-            ? space.id
-            : uuidv4(),
+      const newSpace = {
+        id: space.id,
         name: spaceName,
         type: spaceType,
         slug: username,
       };
-      if (Array.isArray(collective.spaces)) {
-        updatedSpaces = collective.spaces.map((space1) =>
-          space1 &&
-          !Array.isArray(space1) &&
-          typeof space1 === "object" &&
-          space &&
-          !Array.isArray(space) &&
-          typeof space === "object" &&
-          space1.id === space.id
-            ? newSpace
-            : space1
-        );
-      }
       const { data, error } = await supabase
-        .from("collectives")
+        .from("spaces")
         .update({
-          spaces: !Array.isArray(collective.spaces)
-            ? [newSpace]
-            : updatedSpaces,
+          id: newSpace.id,
+          name: typeof newSpace.name === "string" ? newSpace.name : "undefined",
+          type: typeof newSpace.type === "string" ? newSpace.type : "undefined",
+          slug: typeof newSpace.slug === "string" ? newSpace.slug : "undefined",
         })
-        .eq("id", collective.id);
+        .eq("id", isObject(space) && space.id ? space.id : "");
       if (error) {
         setErrorMessage("There was an error editing your space.");
       } else {
@@ -152,34 +113,6 @@ export const EditSpaceModal = ({ user }: { user: User }) => {
     }
     setLoading(false);
   }
-
-  const isUsernameAvailable = async (usernameToCheck: string) => {
-    if (usernameToCheck === "") {
-      setUsernameAvailable(false);
-      return;
-    }
-    if (Array.isArray(collective.spaces)) {
-      setUsernameAvailable(
-        collective.spaces.every(
-          (space: Json) =>
-            space &&
-            typeof space === "object" &&
-            !Array.isArray(space) &&
-            space.slug !== usernameToCheck
-        )
-      );
-    } else {
-      setUsernameAvailable(true);
-    }
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      isUsernameAvailable(username);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [username]);
 
   const debounce = (func: (...args: any[]) => void, delay: number) => {
     let debounceTimer: NodeJS.Timeout;
@@ -208,11 +141,6 @@ export const EditSpaceModal = ({ user }: { user: User }) => {
     setSpaceType("text");
     onClose();
   };
-
-  function isSpaceType(str: string): str is SpaceType {
-    return spaceTypes.includes(str as SpaceType);
-  }
-
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
       <DialogContent className="p-0 overflow-hidden bg-white text-background_content">
@@ -257,8 +185,8 @@ export const EditSpaceModal = ({ user }: { user: User }) => {
             <Label>Space Type</Label>
             <Select
               disabled={loading}
-              onValueChange={(e) => setSpaceType(isSpaceType(e) ? e : "text")}
-              defaultValue={spaceType}
+              onValueChange={(e) => setSpaceType(e)}
+              value={spaceType}
             >
               <SelectTrigger className="text-black capitalize border-0 outline-none bg-zinc-300/50 focus:ring-0 ring-offset-0 focus:ring-offset-0">
                 <SelectValue placeholder="Select a channel type" />
@@ -274,30 +202,11 @@ export const EditSpaceModal = ({ user }: { user: User }) => {
           </div>
         </div>
         <DialogFooter className="flex flex-col px-6 py-4 bg-gray-100">
-          <Button type="submit" className="w-full" onClick={submitSpaceDetails}>
-            {loading ? (
-              <svg
-                width="24"
-                height="24"
-                stroke="#0f0f0f"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                className="spinner"
-              >
-                <g>
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="9.5"
-                    fill="none"
-                    strokeWidth="3"
-                  ></circle>
-                </g>
-              </svg>
-            ) : (
-              "Edit"
-            )}
-          </Button>
+          <ButtonLoader
+            onClick={submitSpaceDetails}
+            text="Edit"
+            isLoading={loading}
+          ></ButtonLoader>
           {!!errorMessage && (
             <p className="w-full mt-2 text-sm text-center text-red-500 text-muted-foreground">
               {errorMessage}
