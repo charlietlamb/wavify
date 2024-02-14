@@ -15,5 +15,5 @@ export async function getSpace(
   } else {
     returnData = data;
   }
-  return data as unknown as Space;
+  return returnData as unknown as Space;
 }

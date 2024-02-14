@@ -7,38 +7,13 @@ import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import Link from "next/link";
 import Image from "next/image";
 import AppNavBarTopCollectives from "./AppNavBarTopCollectives";
+import { getUserCollectives } from "./functions/getUserCollectives";
 
-interface appNavBarTopProps {
-  user: User;
-}
-
-type UserCollective = {
-  id: string;
-  unique: string;
-};
-
-export default async function AppNavBarTop({ user }: appNavBarTopProps) {
+export default async function AppNavBarTop({ user }: { user: User }) {
   const cookieStore = cookies();
   const supabase = createServerComponentClient({ cookies: () => cookieStore });
 
-  var hasCollectives = false;
-  var collectives = [];
-  if (user.collectives) {
-    var collectiveIds;
-    if (Array.isArray(user.collectives)) {
-      collectiveIds = user.collectives.map(
-        (col) => col && typeof col === "object" && !Array.isArray(col) && col.id
-      );
-    }
-    const { data } = await supabase
-      .from("collectives")
-      .select("*")
-      .in("id", Array.isArray(collectiveIds) ? collectiveIds : []);
-    if (data) {
-      hasCollectives = true;
-      collectives = Array.isArray(data) ? data : [data];
-    }
-  }
+  const collectives: Collective[] = await getUserCollectives(supabase, user);
   return (
     <div className="flex flex-row items-center w-full space-x-4 text-primary bg-background min-h-[5vh] px-8">
       <div className="flex flex-row items-center justify-center navbar-left">
@@ -58,11 +33,7 @@ export default async function AppNavBarTop({ user }: appNavBarTopProps) {
       <Separator className="w-[2px] bg-primary_light dark:bg-primary_dark rounded-md h-10 my-auto"></Separator>
       <ScrollArea className="flex-row flex-1 h-full">
         <div className="flex flex-row justify-start">
-          {!!hasCollectives ? (
-            <AppNavBarTopCollectives collectives={collectives} user={user} />
-          ) : (
-            <div>no collectives</div>
-          )}
+          <AppNavBarTopCollectives collectives={collectives} user={user} />
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>

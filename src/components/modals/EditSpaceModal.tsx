@@ -22,16 +22,19 @@ import { AnimatedCheckIcon } from "../icons/check";
 import { AnimatedXIcon } from "../icons/x";
 import { Label } from "../ui/label";
 import isObject from "@/lib/isObject";
-import { spaceTypes } from "../collective/(space)/(functions)/spaceTypes";
 import ButtonLoader from "../me/ButtonLoader";
+import { spaceTypes } from "../collective/space/data";
+import SpaceRoles from "../collective/space/SpaceRoles";
+import { useRoleUpdateEffect } from "./hooks/useRoleUpdateEffect";
 
 const iconProps = {
   height: "40",
   width: "40",
-  color: "hsl(var(--background-content))",
+  color: "white",
 };
 
-export const EditSpaceModal = ({ user }: { user: User }) => {
+export const EditSpaceModal = () => {
+  const supabase = createClientComponentClient();
   const [loading, setLoading] = useState(false);
   const [spaceName, setSpaceName] = useState<string>("");
   const [spaceType, setSpaceType] = useState<string>("");
@@ -39,16 +42,25 @@ export const EditSpaceModal = ({ user }: { user: User }) => {
   const [usernameAvailable, setUsernameAvailable] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { isOpen, onClose, type, data } = useModal();
-  const { collective, space, spaces } = data as {
+  const {
+    collective,
+    space,
+    spaces,
+    rolesAndAllowed: initRolesAndAllowed,
+  } = data as {
     space: Space;
     collective: Collective;
     spaces: Space[];
+    rolesAndAllowed: RoleAndAllowed[];
   };
+  const [rolesAndAllowed, setRolesAndAllowed] = useState<RoleAndAllowed[]>([]);
+
   useEffect(() => {
-    if (space) {
+    if (space && rolesAndAllowed) {
       setSpaceName(space.name);
       setSpaceType(space.type);
       setUsername(space.slug);
+      setRolesAndAllowed(initRolesAndAllowed);
     }
   }, [isOpen]);
 
@@ -78,7 +90,6 @@ export const EditSpaceModal = ({ user }: { user: User }) => {
   }, [username]);
 
   if (!isObject(space) || !isObject(collective)) return null;
-  const supabase = createClientComponentClient();
   const isModalOpen = isOpen && type === "editSpace";
   async function submitSpaceDetails() {
     setLoading(true);
@@ -88,6 +99,9 @@ export const EditSpaceModal = ({ user }: { user: User }) => {
         name: spaceName,
         type: spaceType,
         slug: username,
+        allowed: rolesAndAllowed
+          .filter((role) => role.allowed)
+          .map((role) => role.id),
       };
       const { data, error } = await supabase
         .from("spaces")
@@ -96,6 +110,9 @@ export const EditSpaceModal = ({ user }: { user: User }) => {
           name: typeof newSpace.name === "string" ? newSpace.name : "undefined",
           type: typeof newSpace.type === "string" ? newSpace.type : "undefined",
           slug: typeof newSpace.slug === "string" ? newSpace.slug : "undefined",
+          allowed: rolesAndAllowed
+            .filter((role) => role.allowed)
+            .map((role) => role.id),
         })
         .eq("id", isObject(space) && space.id ? space.id : "");
       if (error) {
@@ -141,11 +158,12 @@ export const EditSpaceModal = ({ user }: { user: User }) => {
     setSpaceType("text");
     onClose();
   };
+
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="p-0 overflow-hidden bg-white text-background_content">
+      <DialogContent className="p-0 overflow-hidden ">
         <DialogHeader className="px-6 pt-8">
-          <DialogTitle className="text-2xl font-bold text-center text-background_content">
+          <DialogTitle className="text-2xl font-bold text-left">
             Edit Space
           </DialogTitle>
         </DialogHeader>
@@ -155,7 +173,7 @@ export const EditSpaceModal = ({ user }: { user: User }) => {
             <div className="flex flex-row justify-between gap-x-4">
               <Input
                 disabled={loading}
-                className="text-black border-0 bg-zinc-300/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+                className="border-0 bg-zinc-700 focus-visible:ring-0 focus-visible:ring-offset-0"
                 placeholder="Enter space name"
                 value={spaceName}
                 onChange={(e) => setSpaceName(e.target.value)}
@@ -167,7 +185,7 @@ export const EditSpaceModal = ({ user }: { user: User }) => {
             <div className="flex flex-row justify-between gap-x-4">
               <Input
                 disabled={loading}
-                className="text-black border-0 bg-zinc-300/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+                className=" border-0 bg-zinc-700 focus-visible:ring-0 focus-visible:ring-offset-0"
                 placeholder={`wavify.io/${
                   collective ? collective.unique : "your-collective"
                 }/`}
@@ -188,7 +206,7 @@ export const EditSpaceModal = ({ user }: { user: User }) => {
               onValueChange={(e) => setSpaceType(e)}
               value={spaceType}
             >
-              <SelectTrigger className="text-black capitalize border-0 outline-none bg-zinc-300/50 focus:ring-0 ring-offset-0 focus:ring-offset-0">
+              <SelectTrigger className=" capitalize border-0 outline-none bg-zinc-700 focus:ring-0 ring-offset-0 focus:ring-offset-0">
                 <SelectValue placeholder="Select a channel type" />
               </SelectTrigger>
               <SelectContent>
@@ -200,8 +218,15 @@ export const EditSpaceModal = ({ user }: { user: User }) => {
               </SelectContent>
             </Select>
           </div>
+          <div>
+            <Label>Allowed Roles</Label>
+            <SpaceRoles
+              rolesAndAllowed={rolesAndAllowed}
+              setRolesAndAllowed={setRolesAndAllowed}
+            ></SpaceRoles>
+          </div>
         </div>
-        <DialogFooter className="flex flex-col px-6 py-4 bg-gray-100">
+        <DialogFooter className="flex flex-col px-6 py-4">
           <ButtonLoader
             onClick={submitSpaceDetails}
             text="Edit"

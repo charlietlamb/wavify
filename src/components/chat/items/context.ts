@@ -13,6 +13,10 @@ interface ChatItemWrapContext {
   fetchNextPage: () => void;
   name: string;
   status: "success" | "pending" | "error";
+  colUser: ColUserAndData | undefined;
+  setBottomRefState: React.Dispatch<
+    React.SetStateAction<HTMLDivElement | null>
+  >;
 }
 
 export const ItemContext = createContext<ChatItemWrapContext | undefined>(

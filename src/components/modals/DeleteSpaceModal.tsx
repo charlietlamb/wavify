@@ -22,19 +22,9 @@ export const DeleteSpaceModal = () => {
   const { collective, space, spaces } = data;
 
   const [isLoading, setIsLoading] = useState(false);
-  if (!spaces || !space || !collective || !Array.isArray(collective.spaces))
-    return null;
+  if (!spaces || !space || !collective) return null;
   const onClick = async () => {
     setIsLoading(true);
-    const spacesToUpdate =
-      collective.spaces && Array.isArray(collective.spaces)
-        ? collective.spaces.filter((item) => item !== space.id)
-        : [];
-    const { error } = await supabase
-      .from("collectives")
-      .update({ spaces: spacesToUpdate })
-      .eq("id", collective.id);
-    if (error) throw error;
     const { error: spaceError } = await supabase
       .from("spaces")
       .delete()
@@ -46,20 +36,20 @@ export const DeleteSpaceModal = () => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>
-      <DialogContent className="p-0 overflow-hidden text-black bg-white">
+      <DialogContent className="p-0 overflow-hidden ">
         <DialogHeader className="px-6 pt-8">
-          <DialogTitle className="text-2xl font-bold text-center">
+          <DialogTitle className="text-2xl font-bold text-left">
             Delete Space
           </DialogTitle>
-          <DialogDescription className="text-center text-zinc-500">
-            Are you sure you want to do this? <br />
+          <DialogDescription className="text-left text-zinc-400">
+            Are you sure you want to do this?{" "}
             <span className="font-semibold text-primary">
               {collective?.unique}
             </span>{" "}
             will be permanently deleted.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="px-6 py-4 bg-gray-100">
+        <DialogFooter className="px-6 py-4 ">
           <div className="flex items-center justify-between w-full">
             <Button disabled={isLoading} onClick={onClose} variant="ghost">
               Cancel

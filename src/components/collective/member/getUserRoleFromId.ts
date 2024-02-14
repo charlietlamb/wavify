@@ -8,18 +8,16 @@ export async function getUserRoleFromId(
     .select(
       `
         *,
-        roles (*)
+        roles (*),
         users (*)
     `
     )
-    .eq("id", id)
+    .eq("user", id)
     .eq("collective", collective.id);
   if (error) throw error;
-  let toReturn;
   if (Array.isArray(data) && data.length > 0) {
-    toReturn = data[0];
+    return data[0] as unknown as ColUserAndData;
   } else {
-    toReturn = data;
+    return data as unknown as ColUserAndData;
   }
-  return data as unknown as ColUserAndData;
 }

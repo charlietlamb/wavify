@@ -1,16 +1,25 @@
+import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 
 export default function ButtonLoader({
   isLoading,
   onClick,
   text,
+  className,
+  disabled,
 }: {
   isLoading: boolean;
   onClick: () => void;
   text: string;
+  className?: string;
+  disabled?: boolean;
 }) {
   return (
-    <Button onClick={onClick}>
+    <Button
+      onClick={onClick}
+      className={cn("", className && className)}
+      disabled={disabled}
+    >
       {!isLoading ? (
         `${text}`
       ) : (

@@ -11,7 +11,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import UploadDropZone from "../util/UploadDropZone";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -20,70 +19,29 @@ import { AnimatedXIcon } from "../icons/x";
 import { uploadCollectiveImageToS3 } from "./modal-actions/createCollectiveActions";
 import { useModal } from "../../../hooks/use-modal-store";
 import { createCollective } from "./functions/createCollective";
+import ButtonLoader from "../me/ButtonLoader";
+import { useCheckUsernameEffect } from "./hooks/useCheckUsernameEffect";
+import { fileToBase64 } from "./functions/fileToBase64";
+import { usernameHandler } from "./functions/usernameHandler";
 
 const iconProps = {
   height: "40",
   width: "40",
-  color: "hsl(var(--background-content))",
+  //color: "hsl(var(--background-content))",
+  color: "#FFFFFF",
 };
 
 export const CreateCollectiveModal = ({ user }: { user: User }) => {
-  const [image, setImage] = useState<File | undefined | File[]>(undefined);
+  const [image, setImage] = useState<File[] | File | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [usernameAvailable, setUsernameAvailable] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const supabase = createClientComponentClient<Database>();
+  const supabase = createClientComponentClient();
   const { isOpen, onClose, type } = useModal();
   const router = useRouter();
-
   const isModalOpen = isOpen && type === "createCollective";
-
-  const isUsernameAvailable = async (usernameToCheck: string) => {
-    if (usernameToCheck === "") {
-      setUsernameAvailable(false);
-      return;
-    }
-    const { data, error } = await supabase
-      .from("collectives")
-      .select("unique")
-      .eq("unique", usernameToCheck);
-
-    if (error) {
-      console.error("Error checking username:", error);
-      setUsernameAvailable(false);
-    } else {
-      setUsernameAvailable(data.length === 0);
-    }
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      isUsernameAvailable(username);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [username]);
-
-  function fileToBase64(file: File | null): Promise<string> | null {
-    if (file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          if (typeof reader.result === "string") {
-            resolve(reader.result);
-          } else {
-            reject(new Error("FileReader did not return a string."));
-          }
-        };
-        reader.onerror = (error) => reject(error);
-        reader.readAsDataURL(file);
-      });
-    } else {
-      return null;
-    }
-  }
-
+  useCheckUsernameEffect(username, setUsernameAvailable, supabase);
   async function submitCollectiveDetails() {
     setLoading(true);
     if (usernameAvailable) {
@@ -113,26 +71,6 @@ export const CreateCollectiveModal = ({ user }: { user: User }) => {
     setLoading(false);
   }
 
-  const debounce = (func: (...args: any[]) => void, delay: number) => {
-    let debounceTimer: NodeJS.Timeout;
-    return function (this: any, ...args: any[]) {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => func.apply(this, args), delay);
-    };
-  };
-
-  const debouncedCheckUsername = debounce(isUsernameAvailable, 100);
-
-  const usernameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const allowedChars = /^[a-z0-9._-]*$/;
-    let inputValue = e.target.value;
-    if (!allowedChars.test(inputValue)) {
-      inputValue = inputValue.replace(/[^a-z0-9._-]/g, "");
-    }
-    setUsername(inputValue);
-    debouncedCheckUsername(inputValue);
-  };
-
   const handleClose = () => {
     setErrorMessage("");
     setUsername("");
@@ -142,25 +80,25 @@ export const CreateCollectiveModal = ({ user }: { user: User }) => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="p-0 overflow-hidden bg-white text-background_content">
+      <DialogContent className="p-0 overflow-hidden ">
         <DialogHeader className="px-6 pt-8">
-          <DialogTitle className="text-2xl font-bold text-center text-background_content">
+          <DialogTitle className="text-2xl font-bold text-left ">
             Create your collective
           </DialogTitle>
-          <DialogDescription className="text-center text-zinc-500">
+          <DialogDescription className="text-left text-zinc-400">
             Give your collective a personality with a name and an image. You can
             always change it later.
           </DialogDescription>
         </DialogHeader>
         <div className="px-6 space-y-8">
-          <UploadDropZone uploadFunction={setImage} />
+          <UploadDropZone uploadFunction={setImage} color="#FFFFFF" />
           <div className="flex flex-row justify-between gap-x-4">
             <Input
               disabled={loading}
-              className="text-black border-0 bg-zinc-300/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+              className=" border-0 bg-zinc-700 focus-visible:ring-0 focus-visible:ring-offset-0"
               placeholder="Enter collective unique"
               value={username}
-              onChange={usernameHandler}
+              onChange={(e) => usernameHandler(e, setUsername)}
             />
             {usernameAvailable ? (
               <AnimatedCheckIcon {...iconProps} />
@@ -169,35 +107,13 @@ export const CreateCollectiveModal = ({ user }: { user: User }) => {
             )}
           </div>
         </div>
-        <DialogFooter className="flex flex-col px-6 py-4 bg-gray-100">
-          <Button
-            type="submit"
+        <DialogFooter className="flex flex-col px-6 py-4 ">
+          <ButtonLoader
             className="w-full"
             onClick={submitCollectiveDetails}
-          >
-            {loading ? (
-              <svg
-                width="24"
-                height="24"
-                stroke="#0f0f0f"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                className="spinner"
-              >
-                <g>
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="9.5"
-                    fill="none"
-                    strokeWidth="3"
-                  ></circle>
-                </g>
-              </svg>
-            ) : (
-              "Create"
-            )}
-          </Button>
+            isLoading={loading}
+            text="Create"
+          />
           {!!errorMessage && (
             <p className="w-full mt-2 text-sm text-center text-red-500 text-muted-foreground">
               {errorMessage}

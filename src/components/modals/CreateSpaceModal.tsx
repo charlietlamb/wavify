@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from "uuid";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -18,53 +17,58 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useModal } from "../../../hooks/use-modal-store";
 import { AnimatedCheckIcon } from "../icons/check";
 import { AnimatedXIcon } from "../icons/x";
 import { Label } from "../ui/label";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import ButtonLoader from "../me/ButtonLoader";
+import { spaceTypes } from "../collective/space/data";
+import SpaceRoles from "../collective/space/SpaceRoles";
 const iconProps = {
   height: "40",
   width: "40",
-  color: "hsl(var(--background-content))",
+  color: "hsl(var(--primary))",
 };
 
-type SpaceType = "text" | "audio" | "video";
-const spaceTypes: SpaceType[] = ["text", "audio", "video"];
-
-export const CreateSpaceModal = ({ user }: { user: User }) => {
+export const CreateSpaceModal = () => {
   const [loading, setLoading] = useState(false);
   const [spaceName, setSpaceName] = useState("");
   const { isOpen, onClose, type, data } = useModal();
-  const { spaceType: theSpaceType } = data as {
+  const {
+    spaceType: theSpaceType,
+    collective,
+    spaces,
+    roles,
+  } = data as {
     spaceType: SpaceType;
+    collective: Collective;
+    spaces: Space[];
+    roles: Role[];
   };
-  const [spaceType, setSpaceType] = useState<SpaceType>("audio");
+  const [spaceType, setSpaceType] = useState<SpaceType>("text");
   const [username, setUsername] = useState("");
   const [usernameAvailable, setUsernameAvailable] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const supabase = createClientComponentClient<Database>();
   const router = useRouter();
 
+  const [rolesAndAllowed, setRolesAndAllowed] = useState<RoleAndAllowed[]>(
+    Array.isArray(roles)
+      ? roles.map((role) => ({ ...role, allowed: false }))
+      : []
+  );
+
+  useEffect(() => {
+    setRolesAndAllowed(
+      Array.isArray(roles)
+        ? roles.map((role) => ({ ...role, allowed: false }))
+        : []
+    );
+  }, [roles]);
+
   const isModalOpen = isOpen && type === "createSpace";
-
-  const { collective } = data as {
-    collective: Collective;
-  };
-
   useEffect(() => {
     if (theSpaceType && spaceTypes.includes(theSpaceType)) {
       setSpaceType(theSpaceType);
@@ -75,23 +79,23 @@ export const CreateSpaceModal = ({ user }: { user: User }) => {
     setLoading(true);
     if (spaceName !== "" && spaceName !== "roles") {
       const id = uuidv4();
-      const space: Json = {
+      const space = {
         id,
         name: spaceName,
         type: spaceType,
         slug: username,
+        allowed: rolesAndAllowed
+          .filter((role) => role.allowed)
+          .map((role) => role.id),
       };
       const { error } = await supabase.from("spaces").insert({
-        id: typeof space.id === "string" ? space.id : "",
-        name: typeof space.name === "string" ? space.name : "",
-        type: typeof space.type === "string" ? space.type : "",
-        slug: typeof space.slug === "string" ? space.slug : "",
-        collective: typeof collective.id === "string" ? collective.id : "",
+        ...space,
+        collective: collective.id,
         open: true,
       });
       if (error) {
-        throw error;
         setErrorMessage("There was an error creating space.");
+        throw error;
       } else {
         setErrorMessage("");
         setSpaceName("");
@@ -110,15 +114,10 @@ export const CreateSpaceModal = ({ user }: { user: User }) => {
       setUsernameAvailable(false);
       return;
     }
-    if (Array.isArray(collective.spaces)) {
+    //just finished here so try get create Space working again then do styles for create collective and any other modals
+    if (spaces?.length > 0) {
       setUsernameAvailable(
-        collective.spaces.every(
-          (space: Json) =>
-            space &&
-            typeof space === "object" &&
-            !Array.isArray(space) &&
-            space.slug !== usernameToCheck
-        )
+        spaces?.every((space: Space) => space.slug !== usernameToCheck)
       );
     } else {
       setUsernameAvailable(true);
@@ -167,9 +166,9 @@ export const CreateSpaceModal = ({ user }: { user: User }) => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="p-0 overflow-hidden bg-white text-background_content">
+      <DialogContent className="p-0 overflow-hidden">
         <DialogHeader className="px-6 pt-8">
-          <DialogTitle className="text-2xl font-bold text-center text-background_content">
+          <DialogTitle className="text-2xl font-bold text-left">
             Create Space
           </DialogTitle>
         </DialogHeader>
@@ -179,7 +178,7 @@ export const CreateSpaceModal = ({ user }: { user: User }) => {
             <div className="flex flex-row justify-between gap-x-4">
               <Input
                 disabled={loading}
-                className="text-black border-0 bg-zinc-300/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+                className=" border-0 bg-zinc-700 focus-visible:ring-0 focus-visible:ring-offset-0"
                 placeholder="Enter space name"
                 value={spaceName}
                 onChange={(e) => setSpaceName(e.target.value)}
@@ -191,7 +190,7 @@ export const CreateSpaceModal = ({ user }: { user: User }) => {
             <div className="flex flex-row justify-between gap-x-4">
               <Input
                 disabled={loading}
-                className="text-black border-0 bg-zinc-300/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+                className=" border-0 bg-zinc-700 focus-visible:ring-0 focus-visible:ring-offset-0"
                 placeholder={`wavify.io/${
                   collective ? collective.unique : "your-collective"
                 }/`}
@@ -213,7 +212,7 @@ export const CreateSpaceModal = ({ user }: { user: User }) => {
               value={spaceType}
               defaultValue={spaceType}
             >
-              <SelectTrigger className="text-black capitalize border-0 outline-none bg-zinc-300/50 focus:ring-0 ring-offset-0 focus:ring-offset-0">
+              <SelectTrigger className="capitalize border-0 outline-none bg-zinc-700 focus:ring-0 ring-offset-0 focus:ring-offset-0">
                 <SelectValue placeholder="Select a channel type" />
               </SelectTrigger>
               <SelectContent>
@@ -225,32 +224,21 @@ export const CreateSpaceModal = ({ user }: { user: User }) => {
               </SelectContent>
             </Select>
           </div>
+          <div>
+            <Label>Allowed Roles</Label>
+            <SpaceRoles
+              rolesAndAllowed={rolesAndAllowed}
+              setRolesAndAllowed={setRolesAndAllowed}
+            ></SpaceRoles>
+          </div>
         </div>
-        <DialogFooter className="flex flex-col px-6 py-4 bg-gray-100">
-          <Button type="submit" className="w-full" onClick={submitSpaceDetails}>
-            {loading ? (
-              <svg
-                width="24"
-                height="24"
-                stroke="#0f0f0f"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                className="spinner"
-              >
-                <g>
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="9.5"
-                    fill="none"
-                    strokeWidth="3"
-                  ></circle>
-                </g>
-              </svg>
-            ) : (
-              "Create"
-            )}
-          </Button>
+        <DialogFooter className="flex flex-col px-6 py-4">
+          <ButtonLoader
+            onClick={submitSpaceDetails}
+            isLoading={loading}
+            disabled={loading}
+            text="Create"
+          />
           {!!errorMessage && (
             <p className="w-full mt-2 text-sm text-center text-red-500 text-muted-foreground">
               {errorMessage}

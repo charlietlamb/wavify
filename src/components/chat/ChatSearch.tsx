@@ -2,7 +2,6 @@
 
 import { ArrowBigUp, Search } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
 import downloadChatImage from "./actions/downloadFile";
 import {
   CommandDialog,

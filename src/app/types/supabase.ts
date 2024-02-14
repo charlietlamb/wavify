@@ -16,7 +16,6 @@ export type Database = {
           created_at: string
           edited_at: string | null
           id: string
-          messages: Json | null
           space: string | null
           type: string | null
           user1: string | null
@@ -28,7 +27,6 @@ export type Database = {
           created_at?: string
           edited_at?: string | null
           id?: string
-          messages?: Json | null
           space?: string | null
           type?: string | null
           user1?: string | null
@@ -40,7 +38,6 @@ export type Database = {
           created_at?: string
           edited_at?: string | null
           id?: string
-          messages?: Json | null
           space?: string | null
           type?: string | null
           user1?: string | null
@@ -80,48 +77,36 @@ export type Database = {
       collectives: {
         Row: {
           banner_url: string | null
-          description: string | null
-          display_name: string | null
           founder: string | null
           id: string
           image_url: string | null
           inviteCode: string | null
           roles: string[]
           score: number | null
-          spaces: string[]
           type: string | null
           unique: string
-          users: string[]
         }
         Insert: {
           banner_url?: string | null
-          description?: string | null
-          display_name?: string | null
           founder?: string | null
           id?: string
           image_url?: string | null
           inviteCode?: string | null
           roles?: string[]
           score?: number | null
-          spaces?: string[]
           type?: string | null
           unique: string
-          users?: string[]
         }
         Update: {
           banner_url?: string | null
-          description?: string | null
-          display_name?: string | null
           founder?: string | null
           id?: string
           image_url?: string | null
           inviteCode?: string | null
           roles?: string[]
           score?: number | null
-          spaces?: string[]
           type?: string | null
           unique?: string
-          users?: string[]
         }
         Relationships: []
       }
@@ -166,7 +151,7 @@ export type Database = {
             foreignKeyName: "colUsers_user_fkey"
             columns: ["user"]
             isOneToOne: false
-            referencedRelation: "colUsers"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           }
         ]
@@ -233,10 +218,10 @@ export type Database = {
           canRoles: boolean
           canSettings: boolean
           collective: string | null
-          color: string | null
-          emoji: string | null
+          color: string
+          emoji: string
           id: string
-          name: string | null
+          name: string
         }
         Insert: {
           authority: number
@@ -248,10 +233,10 @@ export type Database = {
           canRoles?: boolean
           canSettings?: boolean
           collective?: string | null
-          color?: string | null
-          emoji?: string | null
+          color: string
+          emoji: string
           id?: string
-          name?: string | null
+          name: string
         }
         Update: {
           authority?: number
@@ -263,10 +248,10 @@ export type Database = {
           canRoles?: boolean
           canSettings?: boolean
           collective?: string | null
-          color?: string | null
-          emoji?: string | null
+          color?: string
+          emoji?: string
           id?: string
-          name?: string | null
+          name?: string
         }
         Relationships: [
           {
@@ -280,7 +265,7 @@ export type Database = {
       }
       spaces: {
         Row: {
-          allowed: string[] | null
+          allowed: string[]
           collective: string
           id: string
           name: string
@@ -289,7 +274,7 @@ export type Database = {
           type: string
         }
         Insert: {
-          allowed?: string[] | null
+          allowed: string[]
           collective: string
           id: string
           name: string
@@ -298,7 +283,7 @@ export type Database = {
           type?: string
         }
         Update: {
-          allowed?: string[] | null
+          allowed?: string[]
           collective?: string
           id?: string
           name?: string
@@ -318,7 +303,6 @@ export type Database = {
       }
       users: {
         Row: {
-          collectives: Json | null
           created_at: string
           description: string | null
           display_name: string | null
@@ -327,17 +311,16 @@ export type Database = {
           followers: string[] | null
           following: string[] | null
           id: string
-          instagram: string | null
-          profile_pic_url: string | null
+          instagram: string
+          profile_pic_url: string
           role: string | null
           score: number | null
           setup_complete: boolean
           storage: number | null
-          twitter: string | null
-          username: string | null
+          twitter: string
+          username: string
         }
         Insert: {
-          collectives?: Json | null
           created_at?: string
           description?: string | null
           display_name?: string | null
@@ -346,17 +329,16 @@ export type Database = {
           followers?: string[] | null
           following?: string[] | null
           id: string
-          instagram?: string | null
-          profile_pic_url?: string | null
+          instagram?: string
+          profile_pic_url?: string
           role?: string | null
           score?: number | null
           setup_complete?: boolean
           storage?: number | null
-          twitter?: string | null
-          username?: string | null
+          twitter?: string
+          username?: string
         }
         Update: {
-          collectives?: Json | null
           created_at?: string
           description?: string | null
           display_name?: string | null
@@ -365,14 +347,14 @@ export type Database = {
           followers?: string[] | null
           following?: string[] | null
           id?: string
-          instagram?: string | null
-          profile_pic_url?: string | null
+          instagram?: string
+          profile_pic_url?: string
           role?: string | null
           score?: number | null
           setup_complete?: boolean
           storage?: number | null
-          twitter?: string | null
-          username?: string | null
+          twitter?: string
+          username?: string
         }
         Relationships: [
           {

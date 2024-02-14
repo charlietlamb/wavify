@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-export function createRole(
+export async function createRole(
+  supabase: Supabase,
   roles: Role[],
   setRoles: Dispatch<SetStateAction<Role[]>>,
   setCreateLoading: Dispatch<SetStateAction<boolean>>,
@@ -24,5 +25,7 @@ export function createRole(
     collective: collective.id,
   };
   setRoles((prevRoles) => [...prevRoles, newRole]);
+  const { error } = await supabase.from("roles").insert(newRole);
+  if (error) throw error;
   setCreateLoading(false);
 }

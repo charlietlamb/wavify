@@ -1,12 +1,8 @@
-import { SupabaseClient } from "@supabase/supabase-js";
-import { isJson, isMessageAuthor } from "../utilityFunctions";
-import isObject from "@/lib/isObject";
-import { getNewRenders } from "./getNewRenders";
+import { getMessageFromId } from "./getMessageFromId";
 
 export async function newMessageSent(
-  chat: Chat,
-  supabase: SupabaseClient<any, "public", any>,
-  messageIds: string[],
+  newMessage: { id: string; [key: string]: any },
+  supabase: Supabase,
   setNewMessagesToRender: (messages: MessageAndAuthor[]) => void,
   setNewMessagesToRenderFiles: (messages: MessageAndAuthor[]) => void,
   newMessagesToRender: MessageAndAuthor[],
@@ -18,22 +14,12 @@ export async function newMessageSent(
     (MessageAndAuthor | null)[] | undefined
   >
 ) {
-  const { data: newMessageIdArray } = await supabase
-    .from("chats")
-    .select("messages")
-    .eq("id", chat ? chat.id : "")
-    .single();
-  if (!Array.isArray(newMessageIdArray?.messages)) return;
-  const newArray: string[] = newMessageIdArray?.messages.filter(
-    (item: Json) =>
-      isObject(item) &&
-      typeof item.id === "string" &&
-      !messageIds.includes(item.id)
-  );
-  const newRenders: MessageAndAuthor[] = await getNewRenders(
-    newArray,
-    supabase
-  );
+  const newMessageAndAuthor = await getMessageFromId(supabase, newMessage.id);
+  const newRenders: MessageAndAuthor[] = newMessagesToRenderStore.current
+    ? ([...newMessagesToRenderStore.current, newMessageAndAuthor].filter(
+        Boolean
+      ) as MessageAndAuthor[])
+    : ([newMessageAndAuthor].filter(Boolean) as MessageAndAuthor[]);
 
   const uniqueNewRenders: MessageAndAuthor[] = newRenders.filter(
     (item: MessageAndAuthor, index, self) =>

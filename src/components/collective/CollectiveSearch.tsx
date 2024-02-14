@@ -14,44 +14,29 @@ import {
 } from "@/components/ui/command";
 
 interface CollectiveSearchProps {
-  data: {
-    key: string;
-    label: string;
-    type: "space" | "user";
-    data:
-      | {
-          icon: React.ReactNode;
-          name: string;
-          id: string;
-        }[]
-      | undefined;
-  }[];
+  data: SearchData;
 }
 
 export default function CollectiveSearch({ data }: CollectiveSearchProps) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const params = useParams();
-
   useEffect(() => {
-    const down = (e: KeyboardEvent) => {
+    const down = (e: KeyboardEvent): void => {
       if (e.key === "k" && !e.shiftKey && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((open) => !open);
       }
     };
-
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, []);
 
   const onClick = ({ id, type }: { id: string; type: "space" | "user" }) => {
     setOpen(false);
-
     if (type === "user") {
       return router.push(`/user/${id}/chat`);
     }
-
     if (type === "space") {
       return router.push(`/collective/${params?.unique}/${id}`);
     }
@@ -80,14 +65,16 @@ export default function CollectiveSearch({ data }: CollectiveSearchProps) {
 
             return (
               <CommandGroup key={key} heading={label}>
-                {data?.map(({ id, icon, name }) => {
+                {data?.map(({ id, icon, name, color }) => {
                   return (
                     <CommandItem
                       key={key + id}
                       onSelect={() => onClick({ id, type })}
                     >
                       {icon}
-                      <span>{name}</span>
+                      <span className="ml-2" style={{ color: color }}>
+                        {name}
+                      </span>
                     </CommandItem>
                   );
                 })}

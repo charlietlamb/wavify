@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useModal } from "../../../hooks/use-modal-store";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import ButtonLoader from "../me/ButtonLoader";
 
 export const DeleteCollectiveModal = () => {
   const { isOpen, onClose, type, data } = useModal();
@@ -47,27 +48,30 @@ export const DeleteCollectiveModal = () => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>
-      <DialogContent className="p-0 overflow-hidden text-black bg-white">
-        <DialogHeader className="px-6 pt-8">
-          <DialogTitle className="text-2xl font-bold text-center">
+      <DialogContent className="p-0 overflow-hidden">
+        <DialogHeader className="px-6 pt-8 w-full">
+          <DialogTitle className="text-2xl font-bold text-left">
             Delete Collective
           </DialogTitle>
-          <DialogDescription className="text-center text-zinc-500">
-            Are you sure you want to do this? <br />
-            <span className="font-semibold text-indigo-500">
+          <DialogDescription className="text-left text-zinc-400 w-full">
+            Are you sure you want to do this?{" "}
+            <span className="font-semibold text-primary">
               {collective?.unique}
             </span>{" "}
             will be permanently deleted.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="px-6 py-4 bg-gray-100">
+        <DialogFooter className="px-6 py-4">
           <div className="flex items-center justify-between w-full">
             <Button disabled={isLoading} onClick={onClose} variant="ghost">
               Cancel
             </Button>
-            <Button disabled={isLoading} variant="primary" onClick={onClick}>
-              Confirm
-            </Button>
+            <ButtonLoader
+              disabled={isLoading}
+              onClick={onClick}
+              text="Confirm"
+              isLoading={isLoading}
+            />
           </div>
         </DialogFooter>
       </DialogContent>

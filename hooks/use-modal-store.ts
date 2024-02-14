@@ -1,3 +1,4 @@
+import { RoleItemContext } from "@/components/collective/roles/context";
 import { create } from "zustand";
 
 export type ModalType =
@@ -11,11 +12,12 @@ export type ModalType =
   | "deleteSpace"
   | "editSpace"
   | "messageFile"
-  | "deleteMessage";
+  | "deleteMessage"
+  | "deleteRole";
 
 interface ModalData {
   collective?: Collective;
-  userData?: User[];
+  colUsers?: ColUserAndData[];
   user?: User;
   space?: Space;
   spaces?: Space[];
@@ -25,6 +27,10 @@ interface ModalData {
   chat?: Chat;
   message?: Message;
   setFiles?: (files: Json) => void;
+  roles?: Role[];
+  role?: Role;
+  roleContext?: RoleItemContext;
+  rolesAndAllowed?: RoleAndAllowed[];
 }
 
 interface ModalStore {

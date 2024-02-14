@@ -13,6 +13,7 @@ import { PopoverPicker } from "../me/PopoverPicker";
 import ButtonLoader from "../me/ButtonLoader";
 import { deleteRole } from "./roles/deleteRole";
 import { useState } from "react";
+import { useModal } from "../../../hooks/use-modal-store";
 
 export default function RoleEdit() {
   const { resolvedTheme } = useTheme();
@@ -29,6 +30,7 @@ export default function RoleEdit() {
     loading,
   } = context;
   const supabase = createClientComponentClient();
+  const { onOpen } = useModal();
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   return (
     <AccordionContent>
@@ -65,7 +67,7 @@ export default function RoleEdit() {
           <ButtonLoader
             isLoading={deleteLoading}
             text="Delete Role"
-            onClick={() => deleteRole(supabase, context, setDeleteLoading)}
+            onClick={() => onOpen("deleteRole", { roleContext: context })}
           ></ButtonLoader>
           <ButtonLoader
             isLoading={loading}

@@ -19,24 +19,27 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useModal } from "../../../hooks/use-modal-store";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useRouter, redirect } from "next/navigation";
-import isObject from "@/lib/isObject";
+import { useRouter } from "next/navigation";
 import { useHeaderChangeEffect } from "./(header)/(hooks)/useHeaderChangeEffect";
 
 interface CollectiveHeaderProps {
   collective: Collective;
-  colUser?: ColUser;
-  userData: User[];
+  colUser: ColUserAndData;
+  colUsers: ColUserAndData[];
   user: User;
   userRole: Role;
+  roles: Role[];
+  spaces: Space[];
 }
 
 export const CollectiveHeader = ({
   collective,
   colUser,
-  userData,
   user,
   userRole,
+  colUsers,
+  roles,
+  spaces,
 }: CollectiveHeaderProps) => {
   const supabase = createClientComponentClient();
   const { onOpen } = useModal();
@@ -44,9 +47,7 @@ export const CollectiveHeader = ({
   function redirectToRoles(collective: Collective) {
     router.push(`/collective/${collective.unique}/roles`);
   }
-  if (!Array.isArray(collective.roles)) return redirect("/");
-  const isFounder = collective.founder === colUser?.id;
-  if (!isObject(userRole)) return redirect("/");
+  const isFounder = collective.founder === colUser.users?.id;
   useHeaderChangeEffect(supabase, user, collective, router);
   return (
     <DropdownMenu>
@@ -86,7 +87,9 @@ export const CollectiveHeader = ({
         )}
         {(isFounder || userRole.canMembers) && (
           <DropdownMenuItem
-            onClick={() => onOpen("members", { collective, userData })}
+            onClick={() =>
+              onOpen("members", { user, collective, colUsers, roles })
+            }
             className="px-3 py-2 text-sm cursor-pointer"
           >
             Manage Members
@@ -95,7 +98,7 @@ export const CollectiveHeader = ({
         )}
         {(isFounder || userRole.canCreate) && (
           <DropdownMenuItem
-            onClick={() => onOpen("createSpace", { collective })}
+            onClick={() => onOpen("createSpace", { collective, spaces, roles })}
             className="px-3 py-2 text-sm cursor-pointer"
           >
             Create Space

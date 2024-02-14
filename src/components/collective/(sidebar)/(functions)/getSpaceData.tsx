@@ -1,26 +1,15 @@
 export function getSpaceData(
-  textSpaces: Json[],
+  spaces: Space[],
   iconMap: { [key: string]: React.ReactNode }
 ) {
-  return textSpaces
+  return spaces
     ?.map((space) =>
       space
         ? {
-            id:
-              space && typeof space === "object" && !Array.isArray(space)
-                ? space.slug
-                : null,
-            name:
-              space && typeof space === "object" && !Array.isArray(space)
-                ? space.name
-                : null,
-            icon:
-              space &&
-              typeof space === "object" &&
-              !Array.isArray(space) &&
-              typeof space.type === "string"
-                ? iconMap[space.type as keyof typeof iconMap]
-                : null,
+            id: space.slug,
+            name: space.name,
+            icon: iconMap[space.type as keyof typeof iconMap],
+            color: "#FFFFFF",
           }
         : null
     )
@@ -28,5 +17,6 @@ export function getSpaceData(
     icon: React.ReactNode;
     name: string;
     id: string;
+    color: string;
   }[];
 }

@@ -35,20 +35,20 @@ export const InviteUserModal = ({ user }: { user: User }) => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>
-      <DialogContent className="p-0 overflow-hidden bg-white text-background_content">
-        <DialogHeader className="px-6 pt-8">
-          <DialogTitle className="text-2xl font-bold text-center text-background_content">
+      <DialogContent className="py-8 px-6 overflow-hidden ">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-bold text-left ">
             Invite a friend
           </DialogTitle>
         </DialogHeader>
-        <div className="p-6">
-          <Label className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
+        <div className="">
+          <Label className="text-xs font-bold uppercase text-primary">
             Server invite link
           </Label>
           <div className="flex items-center mt-2 gap-x-2">
             <Input
-              className="text-black border-0 bg-zinc-300/50 focus-visible:ring-0 focus-visible:ring-offset-0"
-              value={inviteUrl}
+              className=" border-0 bg-zinc-300/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+              defaultValue={inviteUrl}
             />
             <Button disabled={loading} onClick={onCopy} size="icon">
               {copied ? (

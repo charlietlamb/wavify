@@ -19,31 +19,23 @@ import isObject from "@/lib/isObject";
 import { formatDistanceToNow } from "date-fns";
 import ResizableDiv from "../../me/ResizableDiv";
 import downloadChatImage from "../actions/downloadFile";
+import {
+  imageExtensions,
+  musicExtensions,
+  zipExtensions,
+} from "../data/extensions";
 interface ChatItemProps {
-  chat: Chat;
   user: User;
   message: MessageAndAuthor | null;
-  colUser?: Json;
-  space?: Json;
-  collective?: Json;
+  collective?: Collective;
+  colUser: ColUserAndData | undefined;
 }
-
-interface RoleIconMap {
-  [key: string]: JSX.Element;
-}
-
-const roleIconMap: RoleIconMap = {
-  other: <ShieldCheck className="w-4 h-4 ml-2 text-indigo-500" />,
-  founder: <ShieldAlert className="w-4 h-4 text-rose-500" />,
-};
 
 export function ChatItem({
-  chat,
   user,
   message,
-  colUser,
-  space,
   collective,
+  colUser,
 }: ChatItemProps) {
   if (!message) return null;
   const { onOpen } = useModal();
@@ -54,25 +46,6 @@ export function ChatItem({
     }
     router.push(`/user/${user.username}/chat`);
   };
-  var role = null;
-  if (
-    isObject(collective) &&
-    colUser &&
-    space &&
-    Array.isArray(collective.roles)
-  ) {
-    role = collective.roles.find(
-      (role1: Json) =>
-        role1 &&
-        typeof role1 === "object" &&
-        !Array.isArray(role1) &&
-        colUser &&
-        typeof colUser === "object" &&
-        !Array.isArray(colUser) &&
-        role1.id === colUser.roleId
-    );
-  }
-
   const getFileExtension = (url: string | undefined): string => {
     if (typeof url === "string") {
       const parts = url.split(".");
@@ -81,6 +54,7 @@ export function ChatItem({
     return "";
   };
   var canDeleteAny = false;
+  const role = colUser ? colUser.roles : "";
   if (collective && isObject(role) && role.canMessages) {
     canDeleteAny = true;
   }
@@ -90,28 +64,7 @@ export function ChatItem({
   }
 
   const fileClasses = "w-10 h-10 fill-transparent stroke-primary min-w-10";
-  const imageExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"];
-  const musicExtensions = [
-    "mp3",
-    "wav",
-    "ogg",
-    "flac",
-    "aac",
-    "wma",
-    "mid",
-    "midi",
-  ];
-  const zipExtensions = [
-    "zip",
-    "rar",
-    "7z",
-    "tar",
-    "gz",
-    "xz",
-    "bz2",
-    "lzma",
-    "z",
-  ];
+
   async function download(fileUrl: string, fileName: string) {
     const url = await downloadChatImage(fileUrl);
     const response = await fetch(url);
@@ -152,11 +105,7 @@ export function ChatItem({
                 <ActionTooltip
                   label={typeof role.name === "string" ? role.name : ""}
                 >
-                  {
-                    roleIconMap[
-                      typeof role.iconKey === "string" ? role.iconKey : ""
-                    ]
-                  }
+                  {role.emoji}
                 </ActionTooltip>
               )}
             </div>

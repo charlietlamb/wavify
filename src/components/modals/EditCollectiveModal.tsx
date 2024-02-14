@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import {
   Dialog,
   DialogContent,
@@ -10,17 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FileUpload } from "@/components/util/FileUpload";
 import { useRouter } from "next/navigation";
 import UploadDropZone from "../util/UploadDropZone";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -32,7 +22,7 @@ import { useModal } from "../../../hooks/use-modal-store";
 const iconProps = {
   height: "40",
   width: "40",
-  color: "hsl(var(--background-content))",
+  color: "hsl(var(--primary))",
 };
 
 export const EditCollectiveModal = ({ user }: { user: User }) => {
@@ -44,7 +34,6 @@ export const EditCollectiveModal = ({ user }: { user: User }) => {
   const [imgSrc, setImgSrc] = useState("");
   const supabase = createClientComponentClient<Database>();
   const { isOpen, onClose, type, data } = useModal();
-  const router = useRouter();
 
   const isModalOpen = isOpen && type === "editCollective";
   const { collective } = data;
@@ -172,22 +161,26 @@ export const EditCollectiveModal = ({ user }: { user: User }) => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="p-0 overflow-hidden bg-white text-background_content">
-        <DialogHeader className="px-6 pt-8">
-          <DialogTitle className="text-2xl font-bold text-center text-background_content">
+      <DialogContent className="p-0 pt-8 overflow-hidden bg-background_content flex flex-col items-center">
+        <DialogHeader className="w-[90%]">
+          <DialogTitle className="text-2xl font-bold text-left">
             Edit your collective
           </DialogTitle>
-          <DialogDescription className="text-center text-zinc-500">
+          <DialogDescription className="text-left text-zinc-500">
             Give your collective a personality with a name and an image. You can
             always change it later.
           </DialogDescription>
         </DialogHeader>
-        <div className="px-6 space-y-8">
-          <UploadDropZone uploadFunction={setImage} imageUrl={imgSrc} />
+        <div className="w-[90%] space-y-8">
+          <UploadDropZone
+            uploadFunction={setImage}
+            imageUrl={imgSrc}
+            color={"#FFFFFF"}
+          />
           <div className="flex flex-row justify-between gap-x-4">
             <Input
               disabled={loading}
-              className="text-black border-0 bg-zinc-300/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+              className=" border-0 bg-zinc-700 focus-visible:ring-0 focus-visible:ring-offset-0"
               placeholder="Enter collective unique"
               value={username}
               onChange={usernameHandler}
@@ -199,7 +192,7 @@ export const EditCollectiveModal = ({ user }: { user: User }) => {
             )}
           </div>
         </div>
-        <DialogFooter className="flex flex-col px-6 py-4 bg-gray-100">
+        <DialogFooter className="flex flex-col w-[90%] py-4">
           <Button
             type="submit"
             className="w-full"

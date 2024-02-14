@@ -80,4 +80,23 @@ declare global {
 
   type ColUserAndRole = ColUser & AndRole;
   type ColUserAndData = ColUser & AndRole & AndUser;
+
+  type SearchData = {
+    key: string;
+    label: string;
+    type: "space" | "user";
+    data:
+      | {
+          icon: React.ReactNode | string;
+          name: string;
+          id: string;
+          color: string;
+        }[]
+      | undefined;
+  }[];
+
+  type AndAllowed = {
+    allowed: boolean;
+  };
+  type RoleAndAllowed = Role & AndAllowed;
 }

@@ -13,6 +13,7 @@ import { DeleteSpaceModal } from "@/components/modals/DeleteSpaceModal";
 import { EditSpaceModal } from "@/components/modals/EditSpaceModal";
 import { MessageFileModal } from "@/components/modals/MessageFileModal";
 import { DeleteMessageModal } from "@/components/modals/DeleteMessageModal";
+import { DeleteRoleModal } from "../modals/DeleteRoleModal";
 
 export const ModalProvider = ({ user }: { user: User }) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -30,14 +31,15 @@ export const ModalProvider = ({ user }: { user: User }) => {
       <CreateCollectiveModal user={user} />
       <InviteUserModal user={user} />
       <EditCollectiveModal user={user} />
-      <MembersModal user={user} />
-      <CreateSpaceModal user={user} />
+      <MembersModal />
+      <CreateSpaceModal />
       <DeleteCollectiveModal />
       <LeaveCollectiveModal />
       <DeleteSpaceModal />
-      <EditSpaceModal user={user} />
+      <EditSpaceModal />
       <MessageFileModal />
       <DeleteMessageModal />
+      <DeleteRoleModal />
     </>
   );
 };

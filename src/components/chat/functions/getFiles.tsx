@@ -2,22 +2,34 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export const getFiles = async ({
   pageParam,
-  fileIds,
   setLastFetchedFiles,
 }: {
   pageParam: number | undefined;
-  fileIds: string[];
-  setLastFetchedFiles: (id: string) => void;
+  setLastFetchedFiles: React.Dispatch<React.SetStateAction<string>>;
 }) => {
-  const supabase = createClientComponentClient();
   if (pageParam === undefined) throw new Error("No page param");
-  //error that basically I can't get the data if there is no files in a particular message and lots of errors in the console
+  const supabase = createClientComponentClient();
+  const startIndex = (pageParam - 1) * 25;
+  const endIndex = startIndex + 24;
+
   const response = await supabase
     .from("messages")
-    .select(`*, users (username, profile_pic_url)`)
-    .in("id", fileIds.slice((pageParam - 1) * 10, (pageParam - 1) * 10 + 10));
-  if (response.error) throw new Error(response.error.message);
+    .select(
+      `
+            *,
+            users ( username, profile_pic_url)
+        `
+    )
+    .not("files", "is", null)
+    .order("createdAt", { ascending: false })
+    .range(startIndex, endIndex);
 
+  // Check if the request was successful
+  if (response.error) {
+    throw new Error(response.error.message);
+  }
+
+  // Return the data from the response
   if (response.data.length > 0) setLastFetchedFiles(response.data[0].id);
   return response.data;
 };

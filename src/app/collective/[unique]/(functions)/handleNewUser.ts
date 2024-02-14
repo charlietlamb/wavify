@@ -9,9 +9,14 @@ export async function handleNewUser(
   defaultRole: Role
 ) {
   if (collective.type === "public") {
-    return await addUser(user, collective, supabase, unique, defaultRole);
+    return (await addUser(
+      user,
+      collective,
+      supabase,
+      unique,
+      defaultRole
+    )) as unknown as ColUserAndData;
   } else {
     redirect("/");
-    return undefined;
   }
 }

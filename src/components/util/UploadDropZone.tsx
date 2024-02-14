@@ -10,6 +10,7 @@ interface dropZoneProps {
   multipleFiles?: boolean;
   displayText?: string;
   fileAccept?: string;
+  color?: string;
 }
 import { Button } from "@/components/ui/button";
 import { Card } from "../ui/card";
@@ -28,6 +29,7 @@ const UploadDropZone = ({
   multipleFiles,
   displayText,
   fileAccept,
+  color,
 }: dropZoneProps) => {
   const [uploaded, setUploaded] = imageUrl ? useState(true) : useState(false);
   const [imageSrc, setImageSrc] = imageUrl ? useState(imageUrl) : useState("");
@@ -121,12 +123,32 @@ const UploadDropZone = ({
     <div className=" h-auto w-[100%] flex items-center justify-center">
       {!uploaded ? (
         <div className="flex z-1 min-h-[100%] w-full flex-col gap-y-2">
-          <div className="relative flex flex-col items-center justify-center w-full text-white border-4 border-dashed border-background_content rounded-2xl min-h-[100%] py-[32px]">
-            <UploadCloud className="w-[50px] h-[50px] text-background_content" />
-            <p className="text-[1.5rem] text-background_content">
+          <div
+            className="relative flex flex-col items-center justify-center w-full text-white border-4 border-dashed rounded-2xl min-h-[100%] py-[32px]"
+            style={{
+              borderColor: color ? color : "hsl(var(--background-content))",
+            }}
+          >
+            <UploadCloud
+              className="w-[50px] h-[50px]"
+              style={{
+                color: color ? color : "hsl(var(--background-content))",
+              }}
+            />
+            <p
+              className="text-[1.5rem] text-background_content"
+              style={{
+                color: color ? color : "hsl(var(--background-content))",
+              }}
+            >
               {displayText ? displayText : "Upload Image"}
             </p>
-            <p className="text-[1rem] text-background_content">
+            <p
+              className="text-[1rem]"
+              style={{
+                color: color ? color : "hsl(var(--background-content))",
+              }}
+            >
               Max size {maxUpload ? maxUpload : 5}MB
             </p>
             <input
@@ -182,14 +204,14 @@ const UploadDropZone = ({
           )}
         </div>
       ) : (
-        <div className="flex flex-col gap-y-4 w-[50%] overflow-hidden rounded-xl">
-          <div className="checkered-background">
+        <div className="flex flex-col gap-y-4 w-[50%] overflow-hidden rounded-xl items-center py-4">
+          <div className="checkered-background relative w-[240px] h-[240px] rounded-xl overflow-hidden">
             <Image
               src={imageSrc}
               alt="collective preview image"
-              width={128}
-              height={128}
-              className="overflow-hidden rounded-xl w-[100%]"
+              layout="fill"
+              objectFit="cover"
+              className="absolute inset-0 rounded-xl"
             />
           </div>
           <Button onClick={changeImage}> Change Image </Button>

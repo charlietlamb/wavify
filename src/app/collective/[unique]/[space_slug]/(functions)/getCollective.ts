@@ -1,14 +1,15 @@
-import { SupabaseClient } from "@supabase/supabase-js";
-
-export async function getCollective(
-  supabase: SupabaseClient<any, "public", any>,
-  unique: string
-) {
-  const { data: collective, error } = await supabase
-    .from("collectives")
-    .select()
-    .eq("unique", unique)
-    .single();
-  if (error) throw error;
-  return collective as unknown as Collective;
+export async function getCollective(supabase: Supabase, unique: string) {
+  let collective: Collective | null = null;
+  try {
+    const { data, error } = await supabase
+      .from("collectives")
+      .select()
+      .eq("unique", unique)
+      .single();
+    collective = data;
+  } catch (error) {
+    throw error;
+  } finally {
+    return collective;
+  }
 }

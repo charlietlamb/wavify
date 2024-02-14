@@ -18,7 +18,7 @@ export default function RoleOptions() {
     <div className="grid items-start grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       <Checkbox
         radius="sm"
-        checked={!!permissions.canInvite}
+        defaultSelected={!!permissions.canInvite}
         onValueChange={(value) =>
           setPermissions((prev) =>
             isObject(prev) ? { ...prev, canInvite: value } : prev
@@ -31,7 +31,7 @@ export default function RoleOptions() {
       </Checkbox>
       <Checkbox
         radius="sm"
-        checked={!!permissions.canCreate}
+        defaultSelected={!!permissions.canCreate}
         onValueChange={(value) =>
           setPermissions((prev) =>
             isObject(prev) ? { ...prev, canCreate: value } : prev
@@ -45,7 +45,7 @@ export default function RoleOptions() {
 
       <Checkbox
         radius="sm"
-        checked={!!permissions.canDelete}
+        defaultSelected={!!permissions.canDelete}
         onValueChange={(value) =>
           setPermissions((prev) =>
             isObject(prev) ? { ...prev, canDelete: value } : prev
@@ -59,7 +59,7 @@ export default function RoleOptions() {
 
       <Checkbox
         radius="sm"
-        checked={!!permissions.canMembers}
+        defaultSelected={!!permissions.canMembers}
         onValueChange={(value) =>
           setPermissions((prev) =>
             isObject(prev) ? { ...prev, canMembers: value } : prev
@@ -72,7 +72,7 @@ export default function RoleOptions() {
       </Checkbox>
       <Checkbox
         radius="sm"
-        checked={!!permissions.canSettings}
+        defaultSelected={!!permissions.canSettings}
         onValueChange={(value) =>
           setPermissions((prev) =>
             isObject(prev) ? { ...prev, canSettings: value } : prev
@@ -86,7 +86,7 @@ export default function RoleOptions() {
 
       <Checkbox
         radius="sm"
-        checked={!!permissions.canRoles}
+        defaultSelected={!!permissions.canRoles}
         onValueChange={(value) =>
           setPermissions((prev) =>
             isObject(prev) ? { ...prev, canRoles: value } : prev
@@ -100,7 +100,7 @@ export default function RoleOptions() {
 
       <Checkbox
         radius="sm"
-        checked={!!permissions.canMessages}
+        defaultSelected={!!permissions.canMessages}
         onValueChange={(value) =>
           setPermissions((prev) =>
             isObject(prev) ? { ...prev, canMessages: value } : prev

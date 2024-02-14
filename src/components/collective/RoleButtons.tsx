@@ -28,7 +28,7 @@ export default function RoleButtons({
       <div className="flex space-x-4">
         <ButtonLoader
           onClick={() =>
-            createRole(roles, setRoles, setCreateLoading, collective)
+            createRole(supabase, roles, setRoles, setCreateLoading, collective)
           }
           isLoading={createLoading}
           text="Create Role"

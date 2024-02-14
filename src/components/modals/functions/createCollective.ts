@@ -6,22 +6,15 @@ export async function createCollective(
   supabase: Supabase,
   username: string
 ) {
-  var newCollective = null;
-  var updatedCollectives;
-  if (!Array.isArray(user.collectives)) {
-    newCollective = [{ id, unique: username }];
-  } else {
-    updatedCollectives = [...user.collectives, { id, unique: username }];
-  }
   const roleId = uuidv4();
   const roleId2 = uuidv4();
   const { error } = await supabase.from("collectives").insert({
     id,
     unique: username,
-    users: [user.id],
     roles: [roleId, roleId2],
     founder: user.id,
   });
+  if (error) throw error;
   const { error: roleError } = await supabase.from("roles").insert({
     id: roleId,
     name: "founder",
@@ -39,7 +32,7 @@ export async function createCollective(
   });
   if (roleError) throw roleError;
 
-  const { data: roleData2, error: roleError2 } = await supabase
+  const { error: roleError2 } = await supabase
     .from("roles")
     .insert({
       id: roleId2,
@@ -57,9 +50,9 @@ export async function createCollective(
       collective: id,
     })
     .select();
-  if (roleError) throw roleError;
+  if (roleError2) throw roleError2;
 
-  const { data: colUserData, error: colUserError } = await supabase
+  const { error: colUserError } = await supabase
     .from("colUsers")
     .insert({
       id: uuidv4(),
@@ -71,12 +64,5 @@ export async function createCollective(
     .select();
   if (colUserError) throw colUserError;
 
-  const { data: userData, error: userError } = await supabase
-    .from("users")
-    .update({ collectives: updatedCollectives })
-    .eq("id", user.id);
-
-  if (userError) throw userError;
-
-  return error || roleError || roleError2 || colUserError || userError;
+  return error || roleError || roleError2 || colUserError;
 }

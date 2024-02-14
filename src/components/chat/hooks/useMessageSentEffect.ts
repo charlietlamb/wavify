@@ -4,7 +4,6 @@ import { newMessageSent } from "../functions/newMessageSent";
 
 export function useMessageSentEffect(
   chat: Chat,
-  messageIds: string[],
   setNewMessagesToRender: (messages: MessageAndAuthor[]) => void,
   setNewMessagesToRenderFiles: (messages: MessageAndAuthor[]) => void,
   newMessagesToRender: MessageAndAuthor[],
@@ -25,19 +24,19 @@ export function useMessageSentEffect(
         {
           event: "*",
           schema: "public",
-          table: "chats",
+          table: "messages",
         },
         (payload) => {
           const newPayload = payload.new as { id: string; [key: string]: any };
           if (
             newPayload &&
             typeof newPayload === "object" &&
-            newPayload.id === chat.id
+            payload.eventType === "INSERT" &&
+            newPayload.chat === chat.id
           ) {
             newMessageSent(
-              chat,
+              newPayload,
               supabase,
-              messageIds,
               setNewMessagesToRender,
               setNewMessagesToRenderFiles,
               newMessagesToRender,

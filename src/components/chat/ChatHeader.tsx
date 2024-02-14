@@ -1,9 +1,8 @@
-import { Hash } from "lucide-react";
-
 import { ChatVideoButton } from "./ChatVideoButton";
 import { UserAvatar } from "../me/UserAvatar";
 import { MobileToggle } from "../util/MobileToggle";
 import isObject from "@/lib/isObject";
+import { iconMap } from "../collective/space/data";
 
 interface BaseChatHeaderProps {
   user: User;
@@ -18,7 +17,7 @@ interface ChatHeaderPropsWithOtherUser extends BaseChatHeaderProps {
 
 interface ChatHeaderPropsWithSpace extends BaseChatHeaderProps {
   otherUser?: never; // This ensures that 'otherUser' cannot be provided when 'space' is provided
-  space: Json;
+  space: Space;
 }
 
 type ChatHeaderProps = ChatHeaderPropsWithOtherUser | ChatHeaderPropsWithSpace;
@@ -33,9 +32,7 @@ export const ChatHeader = ({
   return (
     <div className="flex items-center h-12 px-3 py-3 font-semibold border-b-2 text-md border-neutral-200 dark:border-neutral-800">
       <MobileToggle user={user} />
-      {type === "space" && (
-        <Hash className="w-5 h-5 mr-2 text-zinc-500 dark:text-zinc-400" />
-      )}
+      {type === "space" && iconMap[space?.type as keyof typeof iconMap]}
       {type === "conversation" && (
         <UserAvatar src={imageUrl} className="w-8 h-8 mr-2 md:h-8 md:w-8" />
       )}

@@ -6,13 +6,12 @@ import { ChatHeader } from "@/components/chat/ChatHeader";
 import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatInput } from "@/components/chat/ChatInput";
 import isObject from "@/lib/isObject";
-import { getMessageIds } from "@/app/user/[user_id]/chat/(functions)/getMessageIds";
-import { getFileIds } from "@/app/user/[user_id]/chat/(functions)/getFileIds";
 import { getSearchFilesData } from "@/app/user/[user_id]/chat/(functions)/getSearchFilesData";
 import { getSpace } from "./(functions)/getSpace";
 import { getChatSpace } from "./(functions)/getChatSpace";
 import { getCollective } from "./(functions)/getCollective";
-import { getHasSpace } from "./(functions)/getHasSpace";
+import { getColUserDataFromUserAndCol } from "@/components/collective/(sidebar)/(functions)/getColUserDataFromUserAndCol";
+import { MediaRoom } from "@/components/media/MediaRoom";
 
 interface spacePageParams {
   unique: string;
@@ -28,19 +27,24 @@ export default async function page({ params }: spacePageProps) {
   const user = await getUser();
   if (!user) redirect("/account");
   const collective = await getCollective(supabase, params.unique);
+  if (!collective) redirect(`/`);
   const space = await getSpace(collective, params.space_slug, supabase);
   if (!space || Array.isArray(space)) redirect(`/collective/${params.unique}`);
-  var chat: Chat | null = null;
-  var messageIds;
-  var fileIds;
-  var searchFilesData;
+  let chat: Chat | null = null;
+  let searchFilesData;
   if (space.type === "text") {
     chat = await getChatSpace(collective, space);
     if (!chat) return redirect(`/`);
-    messageIds = await getMessageIds(chat);
-    fileIds = await getFileIds(supabase, messageIds);
-    searchFilesData = await getSearchFilesData(supabase, messageIds);
+    searchFilesData = await getSearchFilesData(supabase);
   }
+  const colUser = await getColUserDataFromUserAndCol(
+    supabase,
+    user,
+    collective
+  );
+  if (!colUser) return redirect(`/`);
+  if (!space.allowed.includes(colUser.roles?.id))
+    return redirect(`/collective/${params.unique}`);
 
   return (
     <div className="flex flex-col w-full h-full bg-white dark:bg-background_content">
@@ -64,13 +68,10 @@ export default async function page({ params }: spacePageProps) {
             }
             user={user}
             chat={chat}
-            space={space}
             type={"space"}
-            collective={collective}
             fileTab={true}
-            messageIds={messageIds ? messageIds : []}
-            fileIds={fileIds ? fileIds : []}
             searchData={searchFilesData}
+            colUser={colUser}
           />
           <ChatInput
             chat={chat}
@@ -84,20 +85,15 @@ export default async function page({ params }: spacePageProps) {
           />
         </>
       )}
-      {/*isObject(space) && space.type === "audio" && (
-        <MediaRoom
-          chatId={isObject(space) ? space.id : ""}
-          video={false}
-          audio={true}
-        />
-      )}
-      {isObject(space) && space.type === "video" && (
-        <MediaRoom
-          chatId={isObject(space) ? space.id : ""}
-          video={true}
-          audio={true}
-        />
-      )*/}
+      {isObject(space) &&
+        (space.type === "audio" || space.type === "video") && (
+          <MediaRoom
+            chatId={isObject(space) ? space.id : ""}
+            video={space.type === "video"}
+            audio={true}
+            user={user}
+          />
+        )}
     </div>
   );
 }

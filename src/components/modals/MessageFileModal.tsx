@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import isObject from "@/lib/isObject";
@@ -10,12 +10,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import { useModal } from "../../../hooks/use-modal-store";
 import UploadDropZone from "../util/UploadDropZone";
 import { uploadFileToS3 } from "./modal-actions/uploadFile";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import ButtonLoader from "../me/ButtonLoader";
 
 export const MessageFileModal = () => {
   const { isOpen, onClose, type, data } = useModal();
@@ -91,20 +90,6 @@ export const MessageFileModal = () => {
         };
 
         await supabase.from("messages").insert(newMessage);
-        var newMessageArray: Json;
-        var date = new Date().toISOString();
-        if (chatData && Array.isArray(chatData.messages)) {
-          newMessageArray = [
-            ...chatData.messages,
-            { id: messageId, createdAt: date },
-          ];
-        } else {
-          newMessageArray = [{ id: messageId, createdAt: date }];
-        }
-        await supabase
-          .from("chats")
-          .update({ messages: newMessageArray })
-          .eq("id", chatData ? chatData.id : "");
         setLoading(false);
         router.refresh();
         handleClose();
@@ -117,16 +102,16 @@ export const MessageFileModal = () => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="p-0 overflow-hidden text-black bg-white">
-        <DialogHeader className="px-6 pt-8">
-          <DialogTitle className="text-2xl font-bold text-center">
+      <DialogContent className="p-0 overflow-hidden">
+        <DialogHeader className="px-6 pt-4">
+          <DialogTitle className="text-2xl font-bold text-left">
             Add an attachment
           </DialogTitle>
-          <DialogDescription className="text-center text-zinc-500">
+          <DialogDescription className="text-left text-zinc-400">
             Send a file as a message
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-row items-center justify-center w-full">
+        <div className="flex flex-row items-left justify-center w-full">
           <div className="w-[80%]">
             <UploadDropZone
               uploadFunction={addFile}
@@ -134,13 +119,17 @@ export const MessageFileModal = () => {
               multipleFiles={true}
               displayText={"Upload Files"}
               fileAccept="*"
+              color="#FFFFFF"
             />
           </div>
         </div>
-        <DialogFooter className="px-6 py-4 bg-gray-100">
-          <Button variant="primary" disabled={loading} onClick={onSubmit}>
-            Send
-          </Button>
+        <DialogFooter className="px-6 py-4 ">
+          <ButtonLoader
+            disabled={loading}
+            onClick={onSubmit}
+            isLoading={loading}
+            text="Sent"
+          />
         </DialogFooter>
       </DialogContent>
     </Dialog>

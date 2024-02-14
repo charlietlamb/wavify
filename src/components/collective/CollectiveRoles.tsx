@@ -15,11 +15,11 @@ export default function CollectiveRoles({
   const [roles1, setRoles1] = useState<Role[]>(roles);
   const supabase = createClientComponentClient();
   return (
-    <div className="flex flex-col items-center w-full h-full py-4 space-y-2 overflow-clip">
+    <div className="flex flex-col items-center w-full h-full py-4 space-y-2">
       <div className="flex w-full ">
         <h2 className="text-6xl font-semibold px-[4%]">Manage Roles</h2>
       </div>
-      <div className="w-[92%]">
+      <div className="w-[92%] overflow-y-auto">
         <RolesMap
           roles={roles1}
           setRoles={setRoles1}

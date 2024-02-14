@@ -1,46 +1,65 @@
 "use client";
 
-import { Edit, Hash, Mic, Trash, Video } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ModalType, useModal } from "../../../hooks/use-modal-store";
 import { ActionTooltip } from "../util/ActionTooltip";
+import { iconMap, iconMapSidebar } from "./space/data";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRoleUpdateEffect } from "../modals/hooks/useRoleUpdateEffect";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 interface CollectiveSpaceProps {
   spaces: Space[];
   space: Space;
   collective: Collective;
   userRole: Role;
+  roles: Role[];
 }
-
-const iconMap = {
-  ["text"]: Hash,
-  ["audio"]: Mic,
-  ["video"]: Video,
-};
 
 export const CollectiveSpace = ({
   spaces,
   space,
   collective,
   userRole,
+  roles,
 }: CollectiveSpaceProps) => {
   const { onOpen } = useModal();
   const params = useParams();
   const router = useRouter();
-  const isValidKey = (key: any): key is keyof typeof iconMap => {
-    return key in iconMap;
-  };
-  const Icon = iconMap[isValidKey(space.type) ? space.type : "text"];
+  const supabase = createClientComponentClient();
   const onClick = () => {
     router.push(`/collective/${params?.unique}/${space.slug}`);
   };
+  const [rolesAndAllowed, setRolesAndAllowed] = useState<RoleAndAllowed[]>(
+    roles.map((role) => ({ ...role, allowed: space.allowed.includes(role.id) }))
+  );
 
-  const onAction = (e: React.MouseEvent, action: ModalType) => {
-    e.stopPropagation();
-    onOpen(action, { space, collective, spaces });
-  };
+  const rolesAndAllowedRef = useRef(rolesAndAllowed);
+  useEffect(() => {
+    rolesAndAllowedRef.current = rolesAndAllowed;
+  }, [rolesAndAllowed]);
 
+  const onAction = useCallback(
+    (e: React.MouseEvent, action: ModalType) => {
+      e.stopPropagation();
+      onOpen(action, {
+        space,
+        collective,
+        spaces,
+        rolesAndAllowed: rolesAndAllowedRef.current,
+      });
+    },
+    [onOpen, space, collective, spaces]
+  );
+  useRoleUpdateEffect(
+    supabase,
+    collective,
+    rolesAndAllowed,
+    setRolesAndAllowed
+  );
+  /* so error is that I can't pass the updated roles into the edit space modal and then the create space modal meaning that the roles being eidted are outdated */
   return (
     <button
       onClick={onClick}
@@ -49,7 +68,7 @@ export const CollectiveSpace = ({
         params?.spaceId === space.id && "bg-zinc-700/20 dark:bg-zinc-700"
       )}
     >
-      <Icon className="flex-shrink-0 w-5 h-5 text-zinc-500 dark:text-zinc-400" />
+      {iconMapSidebar[space?.type as keyof typeof iconMap]}
       <p
         className={cn(
           "line-clamp-1 font-semibold text-sm text-zinc-500 group-hover:text-zinc-600 dark:text-zinc-400 dark:group-hover:text-zinc-300 transition",
@@ -63,7 +82,9 @@ export const CollectiveSpace = ({
         <div className="flex items-center ml-auto gap-x-2">
           <ActionTooltip label="Edit">
             <Edit
-              onClick={(e) => onAction(e, "editSpace")}
+              onClick={(e) => {
+                onAction(e, "editSpace");
+              }}
               className="hidden w-4 h-4 transition group-hover:block text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-300"
             />
           </ActionTooltip>

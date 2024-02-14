@@ -21,13 +21,10 @@ interface ChatMessagesProps {
   name: string;
   user: User;
   chat: Chat | null;
-  space?: Json;
-  collective?: Collective;
   type: "space" | "chat";
   fileTab?: boolean;
-  fileIds: string[];
-  messageIds: string[];
   searchData?: (MessageAndAuthor | null)[];
+  colUser?: ColUserAndData;
 }
 
 //need to fix scroll on here
@@ -35,13 +32,10 @@ export function ChatMessages({
   name,
   user,
   chat,
-  space,
   type,
-  collective,
   fileTab,
-  messageIds,
-  fileIds,
   searchData,
+  colUser,
 }: ChatMessagesProps) {
   if (chat === null) return null;
   if (fileTab === undefined) fileTab = false;
@@ -49,6 +43,11 @@ export function ChatMessages({
   const filesRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const bottomRefFiles = useRef<HTMLDivElement>(null);
+  const [bottomRefState, setBottomRefState] = useState<HTMLDivElement | null>(
+    null
+  );
+  const [bottomRefStateFiles, setBottomRefStateFiles] =
+    useState<HTMLDivElement | null>(null);
   const [messagesToRender, setMessagesToRender] = useState<MessagesToRender>();
   const [messagesToRenderFiles, setMessagesToRenderFiles] =
     useState<MessagesToRender>();
@@ -82,8 +81,7 @@ export function ChatMessages({
     status,
   } = useInfiniteQuery({
     queryKey: ["messages"],
-    queryFn: ({ pageParam = 1 }) =>
-      getMessages({ pageParam, messageIds, setLastFetched }),
+    queryFn: ({ pageParam = 1 }) => getMessages({ pageParam, setLastFetched }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: MessageAndAuthor[], allPages) => {
       if (lastPage?.length === 0) return undefined;
@@ -92,7 +90,7 @@ export function ChatMessages({
   });
   useChatScroll({
     chatRef,
-    bottomRef,
+    bottomRef: bottomRefState,
     loadMore: fetchNextPage,
     shouldLoadMore: !isFetchingNextPage && !!hasNextPage,
     newMessages: newMessagesToRender,
@@ -107,7 +105,7 @@ export function ChatMessages({
   } = useInfiniteQuery({
     queryKey: ["files"],
     queryFn: ({ pageParam = 1 }) =>
-      getFiles({ pageParam, fileIds, setLastFetchedFiles }),
+      getFiles({ pageParam, setLastFetchedFiles }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: MessageAndAuthor[], allPages) => {
       if (lastPage?.length === 0) return undefined;
@@ -116,7 +114,7 @@ export function ChatMessages({
   });
   useChatScroll({
     chatRef: filesRef,
-    bottomRef: bottomRefFiles,
+    bottomRef: bottomRefStateFiles,
     loadMore: fetchNextPageFiles,
     shouldLoadMore: !isFetchingNextPageFiles && !!hasNextPageFiles,
     newMessages: newMessagesToRenderFiles,
@@ -146,7 +144,6 @@ export function ChatMessages({
 
   useMessageSentEffect(
     chat,
-    messageIds,
     setNewMessagesToRender,
     setNewMessagesToRenderFiles,
     newMessagesToRender,
@@ -197,6 +194,8 @@ export function ChatMessages({
             hasNextPageFiles,
             fetchNextPageFiles,
             isFetchingNextPageFiles,
+            colUser,
+            setBottomRefStateFiles,
           }}
         >
           <ChatFilesWrap />
@@ -216,6 +215,8 @@ export function ChatMessages({
           fetchNextPage,
           name,
           status,
+          colUser,
+          setBottomRefState,
         }}
       >
         <ChatItemWrap />

@@ -57,25 +57,10 @@ export const ChatInput = ({
         chat: chat?.id,
       };
       await supabase.from("messages").insert(newMessage);
-
-      var newMessageArray: Json;
-      var date = new Date().toISOString();
-      if (Array.isArray(chat.messages)) {
-        newMessageArray = [
-          ...chat.messages,
-          { id: messageId, createdAt: date },
-        ];
-      } else {
-        newMessageArray = [{ id: messageId, createdAt: date }];
-      }
-      await supabase
-        .from("chats")
-        .update({ messages: newMessageArray })
-        .eq("id", chat.id);
       form.reset();
       router.refresh();
     } catch (error) {
-      throw new Error(String(error.message));
+      throw error;
     }
   };
 

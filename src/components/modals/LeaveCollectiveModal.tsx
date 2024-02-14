@@ -15,7 +15,8 @@ import { useModal } from "../../../hooks/use-modal-store";
 import { Button } from "../ui/button";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import isObject from "@/lib/isObject";
-import { handleLeaveCollective } from "./functions/handleLeaveCollective";
+import ButtonLoader from "../me/ButtonLoader";
+import { colUserLeave } from "./functions/colUserLeave";
 
 export const LeaveCollectiveModal = () => {
   const supabase = createClientComponentClient();
@@ -32,7 +33,7 @@ export const LeaveCollectiveModal = () => {
     try {
       setIsLoading(true);
       if (collective && user) {
-        await handleLeaveCollective(user, collective, supabase);
+        colUserLeave(supabase, user, collective);
       }
       onClose();
       router.push("/");
@@ -49,27 +50,29 @@ export const LeaveCollectiveModal = () => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>
-      <DialogContent className="p-0 overflow-hidden text-black bg-white">
+      <DialogContent className="p-0 overflow-hidden">
         <DialogHeader className="px-6 pt-8">
-          <DialogTitle className="text-2xl font-bold text-center">
+          <DialogTitle className="text-2xl font-bold text-left">
             Leave Collective
           </DialogTitle>
-          <DialogDescription className="text-center text-zinc-500">
+          <DialogDescription className="text-left text-zinc-500">
             Are you sure you want to leave{" "}
-            <span className="font-semibold text-indigo-500">
+            <span className="font-semibold text-primary">
               {collective?.unique}
             </span>
             ?
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="px-6 py-4 bg-gray-100">
+        <DialogFooter className="px-6 py-4 ">
           <div className="flex items-center justify-between w-full">
             <Button disabled={isLoading} onClick={onClose} variant="ghost">
               Cancel
             </Button>
-            <Button disabled={isLoading} variant="primary" onClick={onClick}>
-              Confirm
-            </Button>
+            <ButtonLoader
+              isLoading={isLoading}
+              onClick={onClick}
+              text="Confirm"
+            ></ButtonLoader>
           </div>
         </DialogFooter>
       </DialogContent>

@@ -1,7 +1,3 @@
-import isObject from "@/lib/isObject";
-
-export function collectiveHasUser(user: User, collective: Collective) {
-  return Array.isArray(collective.users)
-    ? collective.users.includes(user.id)
-    : false;
+export function collectiveHasUser(user: User, colUsers: ColUserAndData[]) {
+  return colUsers.some((colUser) => colUser.users.id === user.id);
 }

@@ -11,6 +11,10 @@ interface ChatFilesWrapContext {
   hasNextPageFiles: boolean;
   fetchNextPageFiles: () => void;
   isFetchingNextPageFiles: boolean;
+  colUser: ColUserAndData | undefined;
+  setBottomRefStateFiles: React.Dispatch<
+    React.SetStateAction<HTMLDivElement | null>
+  >;
 }
 
 export const FilesContext = createContext<ChatFilesWrapContext | undefined>(
