@@ -7,14 +7,14 @@ export default function ChatFilesWrap() {
   const context = useFilesContext();
   const { searchData, filesRef } = context;
   return (
-    <div className="hidden lg:flex flex-col w-[30%] items-center ">
+    <div className="flex flex-grow flex-col w-full items-center ">
       <ChatSearch
         className="w-[90%] my-2"
         searchData={searchData ? searchData : [null]}
       ></ChatSearch>
 
       <div
-        className="w-full h-auto px-4 overflow-y-auto rounded-md"
+        className="w-full h-auto px-4 overflow-y-auto rounded-md flex-grow"
         ref={filesRef}
       >
         <ChatFilesContainer />

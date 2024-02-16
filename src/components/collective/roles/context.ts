@@ -15,6 +15,7 @@ export interface RoleItemContext {
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setRoles: React.Dispatch<React.SetStateAction<Role[]>>;
+  colUser: ColUserAndData;
 }
 
 export const RoleContext = createContext<RoleItemContext | undefined>(

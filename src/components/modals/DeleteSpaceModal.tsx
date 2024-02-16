@@ -43,9 +43,7 @@ export const DeleteSpaceModal = () => {
           </DialogTitle>
           <DialogDescription className="text-left text-zinc-400">
             Are you sure you want to do this?{" "}
-            <span className="font-semibold text-primary">
-              {collective?.unique}
-            </span>{" "}
+            <span className="font-semibold text-primary">{space?.slug}</span>{" "}
             will be permanently deleted.
           </DialogDescription>
         </DialogHeader>

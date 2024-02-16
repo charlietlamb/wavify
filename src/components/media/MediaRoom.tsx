@@ -4,17 +4,28 @@ import { useEffect, useState } from "react";
 import { LiveKitRoom, VideoConference } from "@livekit/components-react";
 import "@livekit/components-styles";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import MediaRoomSkeleton from "./MediaRoomSkeleton";
 
 interface MediaRoomProps {
   chatId: string;
   video: boolean;
   audio: boolean;
   user: User;
+  collective?: Collective;
+  otherUser?: User;
 }
 
-export const MediaRoom = ({ chatId, video, audio, user }: MediaRoomProps) => {
+export const MediaRoom = ({
+  chatId,
+  video,
+  audio,
+  user,
+  collective,
+  otherUser,
+}: MediaRoomProps) => {
   const [token, setToken] = useState("");
-
+  const router = useRouter();
   useEffect(() => {
     (async () => {
       try {
@@ -29,25 +40,27 @@ export const MediaRoom = ({ chatId, video, audio, user }: MediaRoomProps) => {
     })();
   }, [user?.username, chatId]);
 
-  if (token === "") {
-    return (
-      <div className="flex flex-col flex-1 justify-center items-center">
-        <Loader2 className="h-7 w-7 text-zinc-500 animate-spin my-4" />
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">Loading...</p>
-      </div>
-    );
-  }
-
-  return (
-    <LiveKitRoom
-      data-lk-theme="default"
-      serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
-      token={token}
-      connect={true}
-      video={video}
-      audio={audio}
-    >
-      <VideoConference />
-    </LiveKitRoom>
+  return token === "" ? (
+    <MediaRoomSkeleton />
+  ) : (
+    <div className="flex overflow-y-auto max-h-full">
+      <LiveKitRoom
+        data-lk-theme="default"
+        serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
+        token={token}
+        connect={true}
+        video={video}
+        audio={audio}
+        onDisconnected={() => {
+          router.push(
+            collective
+              ? `/collective/${collective?.unique}`
+              : `/user/${otherUser?.username}`
+          );
+        }}
+      >
+        <VideoConference className=" lk-video-conference bg-background_content min-h-full" />
+      </LiveKitRoom>
+    </div>
   );
 };

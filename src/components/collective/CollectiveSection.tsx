@@ -36,7 +36,9 @@ export default function CollectiveSection({
       {canCreate && sectionType === "spaces" && (
         <ActionTooltip label="Create Space" side="top">
           <button
-            onClick={() => onOpen("createSpace", { collective, spaceType })}
+            onClick={() =>
+              onOpen("createSpace", { collective, spaceType, roles })
+            }
             className="transition text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-300"
           >
             <Plus className="w-4 h-4" />

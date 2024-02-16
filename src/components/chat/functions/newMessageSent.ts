@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import { getMessageFromId } from "./getMessageFromId";
 
 export async function newMessageSent(
@@ -12,8 +13,11 @@ export async function newMessageSent(
   >,
   newMessagesToRenderStoreFiles: React.MutableRefObject<
     (MessageAndAuthor | null)[] | undefined
-  >
+  >,
+  setRecentType: Dispatch<SetStateAction<"new" | "old">>,
+  setRecentTypeFiles: Dispatch<SetStateAction<"new" | "old">>
 ) {
+  setRecentType("new");
   const newMessageAndAuthor = await getMessageFromId(supabase, newMessage.id);
   const newRenders: MessageAndAuthor[] = newMessagesToRenderStore.current
     ? ([...newMessagesToRenderStore.current, newMessageAndAuthor].filter(
@@ -43,6 +47,7 @@ export async function newMessageSent(
   //if this fixes any issues then could be issues with setting files
   uniqueNewRenders.forEach((item) => {
     if (item.files) {
+      setRecentTypeFiles("new");
       const toSetFiles = [...newMessagesToRenderFiles, ...uniqueNewRenders];
       const toSet = toSetFiles.filter(
         (item: MessageAndAuthor, index, self) =>

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
-import UploadDropZone from "../util/UploadDropZone";
+import UploadDropZone from "../util/uploads/UploadDropZone";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { AnimatedCheckIcon } from "../icons/check";
 import { AnimatedXIcon } from "../icons/x";
@@ -81,7 +81,7 @@ export const CreateCollectiveModal = ({ user }: { user: User }) => {
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
       <DialogContent className="p-0 overflow-hidden ">
-        <DialogHeader className="px-6 pt-8">
+        <DialogHeader className="px-6 pt-4">
           <DialogTitle className="text-2xl font-bold text-left ">
             Create your collective
           </DialogTitle>

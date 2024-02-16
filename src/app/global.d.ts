@@ -99,4 +99,12 @@ declare global {
     allowed: boolean;
   };
   type RoleAndAllowed = Role & AndAllowed;
+
+  type FileData = {
+    fileId: string;
+    fileExt: string;
+    fileUrl: string;
+    fileName: string;
+    fileSize: number;
+  };
 }

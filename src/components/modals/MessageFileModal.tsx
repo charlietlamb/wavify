@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useModal } from "../../../hooks/use-modal-store";
-import UploadDropZone from "../util/UploadDropZone";
+import UploadDropZone from "../util/uploads/UploadDropZone";
 import { uploadFileToS3 } from "./modal-actions/uploadFile";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import ButtonLoader from "../me/ButtonLoader";

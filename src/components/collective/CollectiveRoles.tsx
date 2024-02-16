@@ -8,9 +8,11 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 export default function CollectiveRoles({
   collective,
   roles,
+  colUser,
 }: {
   collective: Collective;
   roles: Role[];
+  colUser: ColUserAndData;
 }) {
   const [roles1, setRoles1] = useState<Role[]>(roles);
   const supabase = createClientComponentClient();
@@ -24,12 +26,14 @@ export default function CollectiveRoles({
           roles={roles1}
           setRoles={setRoles1}
           collective={collective}
+          colUser={colUser}
         ></RolesMap>
         <RoleButtons
           roles={roles1}
           setRoles={setRoles1}
           collective={collective}
           supabase={supabase}
+          colUser={colUser}
         ></RoleButtons>
       </div>
     </div>

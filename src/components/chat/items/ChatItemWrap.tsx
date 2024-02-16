@@ -10,10 +10,7 @@ export default function ChatItemWrap() {
   const context = useItemContext();
   const { chatRef, fileTab, status } = context;
   return (
-    <div
-      ref={chatRef}
-      className={cn("overflow-auto", fileTab && "w-full lg:w-[70%]")}
-    >
+    <div ref={chatRef} className={cn("overflow-auto flex-grow", fileTab && "w-full")}>
       <div className="flex flex-col px-4">
         <MotionConfig transition={{ duration: 0.4 }}>
           {status === "pending" ? (

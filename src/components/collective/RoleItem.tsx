@@ -13,12 +13,14 @@ export default function RoleItem({
   index,
   collective,
   setRoles,
+  colUser,
 }: {
   roles: Role[];
   role: Role;
   index: number;
   collective: Collective;
   setRoles: Dispatch<SetStateAction<Role[]>>;
+  colUser: ColUserAndData;
 }) {
   const [emoji, setEmoji] = useState<string>(role.emoji ? role.emoji : "");
   const [name, setName] = useState<string>(role.name ? role.name : "");
@@ -97,6 +99,7 @@ export default function RoleItem({
                   setLoading,
                   color,
                   setColor,
+                  colUser,
                 }}
               >
                 <RoleEdit></RoleEdit>

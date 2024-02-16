@@ -4,5 +4,5 @@ export async function getRoles(collective: Collective, supabase: Supabase) {
     .select()
     .eq("collective", collective.id);
   if (error) throw error;
-  return data;
+  return data.sort((a, b) => a.authority - b.authority);
 }

@@ -3,9 +3,11 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 export const getMessages = async ({
   pageParam,
   setLastFetched,
+  setRecentType,
 }: {
   pageParam: number | undefined;
   setLastFetched: React.Dispatch<React.SetStateAction<string>>;
+  setRecentType: React.Dispatch<React.SetStateAction<"new" | "old">>;
 }) => {
   if (pageParam === undefined) throw new Error("No page param");
   const supabase = createClientComponentClient();
@@ -30,5 +32,6 @@ export const getMessages = async ({
 
   // Return the data from the response
   if (response.data.length > 0) setLastFetched(response.data[0].id);
+  setRecentType("old");
   return response.data;
 };

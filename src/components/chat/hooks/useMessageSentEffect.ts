@@ -1,5 +1,5 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { newMessageSent } from "../functions/newMessageSent";
 
 export function useMessageSentEffect(
@@ -13,7 +13,9 @@ export function useMessageSentEffect(
   >,
   newMessagesToRenderStoreFiles: React.MutableRefObject<
     (MessageAndAuthor | null)[] | undefined
-  >
+  >,
+  setRecentType: Dispatch<SetStateAction<"new" | "old">>,
+  setRecentTypeFiles: Dispatch<SetStateAction<"new" | "old">>
 ) {
   const supabase = createClientComponentClient();
   useEffect(() => {
@@ -42,7 +44,9 @@ export function useMessageSentEffect(
               newMessagesToRender,
               newMessagesToRenderFiles,
               newMessagesToRenderStore,
-              newMessagesToRenderStoreFiles
+              newMessagesToRenderStoreFiles,
+              setRecentType,
+              setRecentTypeFiles
             );
           }
         }

@@ -1,12 +1,9 @@
 "use client";
 import {
-  Edit,
   FileArchive,
   FileIcon,
   FileImage,
   FileMusic,
-  ShieldAlert,
-  ShieldCheck,
   Trash,
 } from "lucide-react";
 import Image from "next/image";
@@ -18,12 +15,14 @@ import { ActionTooltip } from "../../util/ActionTooltip";
 import isObject from "@/lib/isObject";
 import { formatDistanceToNow } from "date-fns";
 import ResizableDiv from "../../me/ResizableDiv";
-import downloadChatImage from "../actions/downloadFile";
 import {
   imageExtensions,
   musicExtensions,
+  playableExtensions,
   zipExtensions,
 } from "../data/extensions";
+import FilePlayer from "@/components/audio/FilePlayer";
+import { download } from "../functions/download";
 interface ChatItemProps {
   user: User;
   message: MessageAndAuthor | null;
@@ -65,19 +64,6 @@ export function ChatItem({
 
   const fileClasses = "w-10 h-10 fill-transparent stroke-primary min-w-10";
 
-  async function download(fileUrl: string, fileName: string) {
-    const url = await downloadChatImage(fileUrl);
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const blobUrl = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = blobUrl;
-    link.download = fileName;
-    link.click();
-
-    URL.revokeObjectURL(url);
-  }
   return (
     <ResizableDiv
       className={cn(
@@ -120,18 +106,20 @@ export function ChatItem({
               files deleted
             </p>
           ) : Array.isArray(message.files) ? (
-            <div className="flex items-end justify-between">
-              <div className="flex flex-col gap-y-1">
+            <div className="flex items-end justify-between w-full">
+              <div className="flex flex-col gap-y-1 w-full">
                 {message.files.map((file: Json) => {
                   if (file && isObject(file)) {
                     const fileExtension = getFileExtension(
                       typeof file.fileUrl === "string" ? file.fileUrl : ""
                     );
                     const isImage = imageExtensions.includes(fileExtension);
+                    const isPlayable =
+                      playableExtensions.includes(fileExtension);
                     return (
                       <div
                         key={typeof file.fileId === "string" ? file.fileId : ""}
-                        className=""
+                        className="w-full"
                       >
                         {isImage ? (
                           <button
@@ -163,6 +151,11 @@ export function ChatItem({
                               className="object-cover"
                             />
                           </button>
+                        ) : isPlayable ? (
+                          <FilePlayer
+                            file={file as FileData}
+                            otherUser={message.users as User}
+                          />
                         ) : (
                           <div
                             className={cn(

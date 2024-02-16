@@ -6,7 +6,8 @@ export async function createRole(
   roles: Role[],
   setRoles: Dispatch<SetStateAction<Role[]>>,
   setCreateLoading: Dispatch<SetStateAction<boolean>>,
-  collective: Collective
+  collective: Collective,
+  colUser: ColUserAndData
 ) {
   setCreateLoading(true);
   const newRole: Role = {
@@ -24,7 +25,9 @@ export async function createRole(
     authority: roles.length,
     collective: collective.id,
   };
-  setRoles((prevRoles) => [...prevRoles, newRole]);
+  setRoles((prevRoles) =>
+    [...prevRoles, newRole].sort((a, b) => a.authority - b.authority)
+  );
   const { error } = await supabase.from("roles").insert(newRole);
   if (error) throw error;
   setCreateLoading(false);

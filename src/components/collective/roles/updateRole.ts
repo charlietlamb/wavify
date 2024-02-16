@@ -11,6 +11,7 @@ export async function updateRole(supabase: Supabase, context: RoleItemContext) {
     emoji,
     color,
     setLoading,
+    colUser,
   } = context;
   if (!isObject(permissions)) return;
   setLoading(true);

@@ -12,6 +12,7 @@ import { getChatSpace } from "./(functions)/getChatSpace";
 import { getCollective } from "./(functions)/getCollective";
 import { getColUserDataFromUserAndCol } from "@/components/collective/(sidebar)/(functions)/getColUserDataFromUserAndCol";
 import { MediaRoom } from "@/components/media/MediaRoom";
+import { MediaContext } from "./(hooks)/useMediaContext";
 
 interface spacePageParams {
   unique: string;
@@ -43,20 +44,22 @@ export default async function page({ params }: spacePageProps) {
     collective
   );
   if (!colUser) return redirect(`/`);
-  if (!space.allowed.includes(colUser.roles?.id))
+  if (!space.open && !space.allowed.includes(colUser.roles?.id))
     return redirect(`/collective/${params.unique}`);
 
   return (
     <div className="flex flex-col w-full h-full bg-white dark:bg-background_content">
       <ChatHeader
         user={user}
-        type={"space"}
+        type="space"
         imageUrl={
           isObject(collective) && typeof collective.image_url === "string"
             ? collective.image_url
             : ""
         }
         space={space}
+        colUser={colUser}
+        collective={collective}
       />
       {isObject(space) && space.type === "text" && (
         <>
@@ -92,6 +95,7 @@ export default async function page({ params }: spacePageProps) {
             video={space.type === "video"}
             audio={true}
             user={user}
+            collective={collective}
           />
         )}
     </div>

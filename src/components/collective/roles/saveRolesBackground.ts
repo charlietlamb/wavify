@@ -1,7 +1,10 @@
 "use server";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
-export async function saveRolesBackground(roles: Role[]) {
+export async function saveRolesBackground(
+  roles: Role[],
+  colUser: ColUserAndData
+) {
   const supabase = createServerComponentClient({ cookies });
   try {
     await Promise.all(

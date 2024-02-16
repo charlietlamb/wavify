@@ -7,7 +7,8 @@ import { saveRolesBackground } from "./saveRolesBackground";
 export function handleDragEnd(
   result: DropResult,
   roles: Role[],
-  setRoles: Dispatch<SetStateAction<Role[]>>
+  setRoles: Dispatch<SetStateAction<Role[]>>,
+  colUser: ColUserAndData
 ) {
   const { destination, source, draggableId } = result;
   if (!destination) return;
@@ -30,5 +31,5 @@ export function handleDragEnd(
     ...filteredRoles.slice(destination.index),
   ];
   setRoles(rolesToUpdate);
-  saveRolesBackground(rolesToUpdate);
+  saveRolesBackground(rolesToUpdate, colUser);
 }

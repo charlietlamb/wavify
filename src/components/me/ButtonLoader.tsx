@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
+import { colorVariants } from "@nextui-org/react";
 
 export default function ButtonLoader({
   isLoading,
@@ -7,26 +8,33 @@ export default function ButtonLoader({
   text,
   className,
   disabled,
+  variant,
 }: {
   isLoading: boolean;
   onClick: () => void;
   text: string;
   className?: string;
   disabled?: boolean;
+  variant?: "white";
 }) {
   return (
     <Button
       onClick={onClick}
-      className={cn("", className && className)}
+      className={cn(
+        "w-full", // Set a specific width
+        className && className,
+        variant === "white" &&
+          "bg-transparent border-2 border-white/80 text-white, hover:bg-white/80 hover:text-background_content"
+      )}
       disabled={disabled}
     >
       {!isLoading ? (
         `${text}`
       ) : (
         <svg
-          width="24"
+          width="100%" // Make the SVG the same width as the text
           height="24"
-          stroke="#0f0f0f"
+          stroke={!variant ? "#0f0f0f" : "#fff"}
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
           className="spinner"

@@ -128,7 +128,7 @@ export default function ChatFile({
                             )
                           }
                           className={cn(
-                            "ml-2 text-sm text-primary dark:text-primary hover:underline"
+                            "ml-2 text-sm text-primary dark:text-primary hover:underline text-left"
                           )}
                         >
                           {typeof file.fileName === "string"

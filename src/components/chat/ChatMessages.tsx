@@ -11,11 +11,16 @@ import { useFileUpdateEffect } from "./hooks/useFileUpdateEffect";
 import { useMessageUpdateEffect } from "./hooks/useMessageUpdateEffect";
 import { useMessageDeletedEffect } from "./hooks/useMessageDeletedEffect";
 import { useMessageSentEffect } from "./hooks/useMessageSentEffect";
-import { useStatusFilesEffect } from "./hooks/useStatusFilesEffect";
 import { isMessagesToRender } from "./utilityFunctions";
 import useStatusMessageEffect from "./hooks/useStatusMessageEffect";
 import { getFiles } from "./functions/getFiles";
 import { getMessages } from "./functions/getMessages";
+import { useMasterChatScrollEffect } from "./hooks/useMasterChatScrollEffect";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "../ui/resizable";
 
 interface ChatMessagesProps {
   name: string;
@@ -59,6 +64,12 @@ export function ChatMessages({
   const renderFilesStore = useRef<(MessageAndAuthor | null)[]>([]);
   const [init, setInit] = useState(false);
   const [initFiles, setInitFiles] = useState(false);
+  const [pages, setPages] = useState(0);
+  const [pagesFiles, setPagesFiles] = useState(0);
+  const chatScrollStore = useRef(0);
+  const filesScrollStore = useRef(0);
+  const [recentType, setRecentType] = useState<"new" | "old">("old");
+  const [recentTypeFiles, setRecentTypeFiles] = useState<"new" | "old">("old");
   const [newMessagesToRender, setNewMessagesToRender] = useState<
     MessageAndAuthor[]
   >([]);
@@ -67,7 +78,6 @@ export function ChatMessages({
   >([]);
   const [lastFetched, setLastFetched] = useState("");
   const [lastFetchedFiles, setLastFetchedFiles] = useState("");
-
   const messagesToRenderStore = useRef<MessagesToRender>();
   const messagesToRenderFilesStore = useRef<MessagesToRender>();
   const newMessagesToRenderStore = useRef<(MessageAndAuthor | null)[]>();
@@ -81,7 +91,8 @@ export function ChatMessages({
     status,
   } = useInfiniteQuery({
     queryKey: ["messages"],
-    queryFn: ({ pageParam = 1 }) => getMessages({ pageParam, setLastFetched }),
+    queryFn: ({ pageParam = 1 }) =>
+      getMessages({ pageParam, setLastFetched, setRecentType }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: MessageAndAuthor[], allPages) => {
       if (lastPage?.length === 0) return undefined;
@@ -105,7 +116,7 @@ export function ChatMessages({
   } = useInfiniteQuery({
     queryKey: ["files"],
     queryFn: ({ pageParam = 1 }) =>
-      getFiles({ pageParam, setLastFetchedFiles }),
+      getFiles({ pageParam, setLastFetchedFiles, setRecentTypeFiles }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: MessageAndAuthor[], allPages) => {
       if (lastPage?.length === 0) return undefined;
@@ -128,10 +139,11 @@ export function ChatMessages({
     isMessagesToRender(messages) ? messages : { pages: [] },
     setMessagesToRender,
     lastFetched,
-    messagesToRenderStore
+    messagesToRenderStore,
+    chatRef
   );
 
-  useStatusFilesEffect(
+  useStatusMessageEffect(
     statusFiles,
     initFiles,
     setInitFiles,
@@ -139,7 +151,8 @@ export function ChatMessages({
     isMessagesToRender(files) ? files : { pages: [] },
     setMessagesToRenderFiles,
     lastFetchedFiles,
-    messagesToRenderFilesStore
+    messagesToRenderFilesStore,
+    filesRef
   );
 
   useMessageSentEffect(
@@ -149,7 +162,9 @@ export function ChatMessages({
     newMessagesToRender,
     newMessagesToRenderFiles,
     newMessagesToRenderStore,
-    newMessagesToRenderFilesStore
+    newMessagesToRenderFilesStore,
+    setRecentType,
+    setRecentTypeFiles
   );
 
   useMessageDeletedEffect(
@@ -179,48 +194,77 @@ export function ChatMessages({
     renderFilesStore
   );
 
+  useMasterChatScrollEffect(
+    render,
+    chatRef,
+    pages,
+    setPages,
+    chatScrollStore,
+    recentType
+  );
+  useMasterChatScrollEffect(
+    renderFiles,
+    filesRef,
+    pagesFiles,
+    setPagesFiles,
+    filesScrollStore,
+    recentTypeFiles
+  );
+
   return (
-    <div className="flex flex-grow w-full max-h-full overflow-hidden">
+    <ResizablePanelGroup
+      direction="horizontal"
+      className="flex flex-grow w-full max-h-full overflow-hidden"
+    >
       {fileTab && (
-        <FilesContext.Provider
+        <ResizablePanel defaultSize={fileTab ? 30 : 0} className="flex">
+          <FilesContext.Provider
+            value={{
+              chat,
+              user,
+              searchData: searchData ? searchData : [],
+              filesRef,
+              statusFiles,
+              bottomRefFiles,
+              renderFiles,
+              hasNextPageFiles,
+              fetchNextPageFiles,
+              isFetchingNextPageFiles,
+              colUser,
+              setBottomRefStateFiles,
+            }}
+          >
+            <ChatFilesWrap />
+          </FilesContext.Provider>
+        </ResizablePanel>
+      )}
+      {fileTab && <ResizableHandle />}
+      <ResizablePanel
+        defaultSize={fileTab ? 70 : 100}
+        minSize={50}
+        className="flex"
+      >
+        <ItemContext.Provider
           value={{
+            chatRef,
+            bottomRef,
+            render,
             chat,
             user,
-            searchData: searchData ? searchData : [],
-            filesRef,
-            statusFiles,
-            bottomRefFiles,
-            renderFiles,
-            hasNextPageFiles,
-            fetchNextPageFiles,
-            isFetchingNextPageFiles,
+            type,
+            fileTab,
+            hasNextPage,
+            isFetchingNextPage,
+            fetchNextPage,
+            name,
+            status,
             colUser,
-            setBottomRefStateFiles,
+            setBottomRefState,
           }}
         >
-          <ChatFilesWrap />
-        </FilesContext.Provider>
-      )}
-      <ItemContext.Provider
-        value={{
-          chatRef,
-          bottomRef,
-          render,
-          chat,
-          user,
-          type,
-          fileTab,
-          hasNextPage,
-          isFetchingNextPage,
-          fetchNextPage,
-          name,
-          status,
-          colUser,
-          setBottomRefState,
-        }}
-      >
-        <ChatItemWrap />
-      </ItemContext.Provider>
-    </div>
+          <ChatItemWrap />
+        </ItemContext.Provider>
+      </ResizablePanel>
+    </ResizablePanelGroup>
   );
 }

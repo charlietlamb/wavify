@@ -8,11 +8,13 @@ export default function RoleButtons({
   setRoles,
   collective,
   supabase,
+  colUser,
 }: {
   roles: Role[];
   setRoles: Dispatch<SetStateAction<Role[]>>;
   collective: Collective;
   supabase: Supabase;
+  colUser: ColUserAndData;
 }) {
   const [createLoading, setCreateLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
@@ -28,7 +30,14 @@ export default function RoleButtons({
       <div className="flex space-x-4">
         <ButtonLoader
           onClick={() =>
-            createRole(supabase, roles, setRoles, setCreateLoading, collective)
+            createRole(
+              supabase,
+              roles,
+              setRoles,
+              setCreateLoading,
+              collective,
+              colUser
+            )
           }
           isLoading={createLoading}
           text="Create Role"

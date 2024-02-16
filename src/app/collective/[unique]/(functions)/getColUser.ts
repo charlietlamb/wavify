@@ -7,7 +7,13 @@ export async function getColUser(
 ) {
   const { data, error } = await supabase
     .from("colUsers")
-    .select()
+    .select(
+      `
+    *,
+    roles (*),
+    users (*)
+`
+    )
     .eq("user", user.id)
     .eq("collective", collective.id)
     .single();

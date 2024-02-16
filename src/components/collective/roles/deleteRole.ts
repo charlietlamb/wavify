@@ -6,9 +6,9 @@ export async function deleteRole(
   setDeleteLoading: React.Dispatch<React.SetStateAction<boolean>>
 ) {
   setDeleteLoading(true);
-  const newRoles: Role[] = context.roles.filter(
-    (role) => role.id !== context.role.id
-  );
+  const newRoles: Role[] = context.roles
+    .filter((role) => role.id !== context.role.id)
+    .sort((a, b) => a.authority - b.authority);
   context.setRoles(newRoles);
   const { error } = await supabase
     .from("roles")

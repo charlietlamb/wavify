@@ -29,7 +29,11 @@ export function useRoleUpdateEffect(
               ...newPayload,
               allowed: false,
             };
-            setRolesAndAllowed([...rolesAndAllowed, newRoleAndAllowed]);
+            setRolesAndAllowed(
+              [...rolesAndAllowed, newRoleAndAllowed].sort(
+                (a, b) => a.authority - b.authority
+              )
+            );
           } else if (
             newPayload &&
             typeof newPayload === "object" &&
@@ -41,9 +45,11 @@ export function useRoleUpdateEffect(
               allowed: false,
             };
             setRolesAndAllowed(
-              rolesAndAllowed.map((role) =>
-                role.id === newRoleAndAllowed.id ? newRoleAndAllowed : role
-              )
+              rolesAndAllowed
+                .map((role) =>
+                  role.id === newRoleAndAllowed.id ? newRoleAndAllowed : role
+                )
+                .sort((a, b) => a.authority - b.authority)
             );
           }
         }

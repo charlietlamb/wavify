@@ -8,6 +8,8 @@ interface BaseChatHeaderProps {
   user: User;
   type: "space" | "conversation";
   imageUrl?: string;
+  collective?: Collective;
+  colUser?: ColUserAndData;
 }
 
 interface ChatHeaderPropsWithOtherUser extends BaseChatHeaderProps {
@@ -28,10 +30,12 @@ export const ChatHeader = ({
   type,
   imageUrl,
   space,
+  collective,
+  colUser,
 }: ChatHeaderProps) => {
   return (
-    <div className="flex items-center h-12 px-3 py-3 font-semibold border-b-2 text-md border-neutral-200 dark:border-neutral-800">
-      <MobileToggle user={user} />
+    <div className="flex items-center h-12 px-3 py-3 font-semibold text-md ">
+      <MobileToggle user={user} collective={collective} colUser={colUser} />
       {type === "space" && iconMap[space?.type as keyof typeof iconMap]}
       {type === "conversation" && (
         <UserAvatar src={imageUrl} className="w-8 h-8 mr-2 md:h-8 md:w-8" />

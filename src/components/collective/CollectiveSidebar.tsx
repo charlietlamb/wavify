@@ -12,7 +12,6 @@ import CollectiveMemberMap from "./CollectiveMemberMap";
 import CollectiveSearchWrap from "./CollectiveSearchWrap";
 
 export default async function CollectiveSidebar({
-  unique,
   user,
   collective,
   colUser,
@@ -20,7 +19,6 @@ export default async function CollectiveSidebar({
   roles,
   colSpaces,
 }: {
-  unique?: string;
   user: User;
   collective: Collective;
   colUser: ColUserAndData;
@@ -40,34 +38,40 @@ export default async function CollectiveSidebar({
     ? isFounder
       ? [...textSpaces, ...audioSpaces, ...videoSpaces]
       : [
-          ...textSpaces.filter((space: Space) =>
-            space.allowed.includes(colUser.roles?.id)
+          ...textSpaces.filter(
+            (space: Space) =>
+              space.allowed.includes(colUser.roles?.id) || space.open
           ),
-          ...audioSpaces.filter((space: Space) =>
-            space.allowed.includes(colUser.roles?.id)
+          ...audioSpaces.filter(
+            (space: Space) =>
+              space.allowed.includes(colUser.roles?.id) || space.open
           ),
-          ...videoSpaces.filter((space: Space) =>
-            space.allowed.includes(colUser.roles?.id)
+          ...videoSpaces.filter(
+            (space: Space) =>
+              space.allowed.includes(colUser.roles?.id) || space.open
           ),
         ]
     : [];
   const filteredTextSpaces = isFounder
     ? textSpaces
-    : textSpaces.filter((space: Space) =>
-        space.allowed.includes(colUser.roles?.id)
+    : textSpaces.filter(
+        (space: Space) =>
+          space.allowed.includes(colUser.roles?.id) || space.open
       );
   const filteredAudioSpaces = isFounder
     ? audioSpaces
-    : audioSpaces.filter((space: Space) =>
-        space.allowed.includes(colUser.roles?.id)
+    : audioSpaces.filter(
+        (space: Space) =>
+          space.allowed.includes(colUser.roles?.id) || space.open
       );
   const filteredVideoSpaces = isFounder
     ? videoSpaces
-    : videoSpaces.filter((space: Space) =>
-        space.allowed.includes(colUser.roles?.id)
+    : videoSpaces.filter(
+        (space: Space) =>
+          space.allowed.includes(colUser.roles?.id) || space.open
       );
   return (
-    <div className="flex flex-col w-full h-full text-primary bg-background_content">
+    <div className="flex flex-col w-full max-h-[80vh] text-primary bg-background_content ">
       <CollectiveHeader
         collective={collective}
         colUser={colUser}
@@ -77,7 +81,7 @@ export default async function CollectiveSidebar({
         roles={roles}
         spaces={colSpaces}
       />
-      <ScrollArea className="flex-1 px-3">
+      <div className="flex-1 px-3 flex flex-col overflow-y-auto">
         <CollectiveSearchWrap
           collective={collective}
           spaces={spaces}
@@ -175,7 +179,7 @@ export default async function CollectiveSidebar({
           initColUsers={colUsers}
           roles={roles}
         ></CollectiveMemberMap>
-      </ScrollArea>
+      </div>
     </div>
   );
 }

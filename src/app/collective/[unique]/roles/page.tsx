@@ -19,11 +19,14 @@ export default async function RolesPage({
   if (!user || !collective) return redirect("/");
   const colUser = await getColUser(user, collective, supabase);
   if (!colUser) return redirect("/");
-  const userRole = await getUserRole(colUser, supabase);
   const roles = await getRoles(collective, supabase);
-  if (!userRole.canRoles || !Array.isArray(roles))
+  if (!colUser.roles?.canRoles || !Array.isArray(roles))
     return redirect(`/collective/${collective.unique}`);
   return (
-    <CollectiveRoles collective={collective} roles={roles}></CollectiveRoles>
+    <CollectiveRoles
+      collective={collective}
+      roles={roles}
+      colUser={colUser}
+    ></CollectiveRoles>
   );
 }

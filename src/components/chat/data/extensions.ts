@@ -28,3 +28,5 @@ export const zipExtensions = [
   "lzma",
   "z",
 ];
+
+export const playableExtensions = ["mp3", "wav"];

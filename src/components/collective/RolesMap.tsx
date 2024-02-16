@@ -10,10 +10,12 @@ export default function RolesMap({
   collective,
   roles,
   setRoles,
+  colUser,
 }: {
   collective: Collective;
   roles: Role[];
   setRoles: Dispatch<SetStateAction<Role[]>>;
+  colUser: ColUserAndData;
 }) {
   //pretty sure error is here, not displaying roles as I changed the implementation to get them from collectives
   if (!Array.isArray(roles)) return null;
@@ -24,7 +26,7 @@ export default function RolesMap({
   }
   return (
     <DragDropContext
-      onDragEnd={(result) => handleDragEnd(result, roles, setRoles)}
+      onDragEnd={(result) => handleDragEnd(result, roles, setRoles, colUser)}
     >
       <Accordion type="single" collapsible className="max-w-full space-y-2">
         <Droppable droppableId={"roles"}>
@@ -40,18 +42,18 @@ export default function RolesMap({
               {Array.isArray(roles) &&
                 roles.map((role: Role, index: number) => {
                   return (
-                    <RoleItem
-                      collective={collective}
-                      roles={roles}
-                      role={role}
-                      setRoles={setRoles}
-                      key={
-                        isObject(role) && typeof role.id === "string"
-                          ? role.id
-                          : ""
-                      }
-                      index={index}
-                    ></RoleItem>
+                    (colUser.roles?.authority < role.authority ||
+                      colUser.roles?.authority === 0) && (
+                      <RoleItem
+                        collective={collective}
+                        roles={roles}
+                        role={role}
+                        setRoles={setRoles}
+                        key={role.id}
+                        index={index}
+                        colUser={colUser}
+                      />
+                    )
                   );
                 })}
               {provided.placeholder}

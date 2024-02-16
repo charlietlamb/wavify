@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import UploadDropZone from "../util/UploadDropZone";
+import UploadDropZone from "../util/uploads/UploadDropZone";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { AnimatedCheckIcon } from "../icons/check";
 import { AnimatedXIcon } from "../icons/x";
@@ -161,7 +161,7 @@ export const EditCollectiveModal = ({ user }: { user: User }) => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="p-0 pt-8 overflow-hidden bg-background_content flex flex-col items-center">
+      <DialogContent className="p-0 pt-4 overflow-hidden bg-background_content flex flex-col items-center">
         <DialogHeader className="w-[90%]">
           <DialogTitle className="text-2xl font-bold text-left">
             Edit your collective

@@ -9,8 +9,8 @@ export default function SpaceRoles({
   setRolesAndAllowed: Dispatch<SetStateAction<RoleAndAllowed[]>>;
 }) {
   return (
-    <div className="flex gap-x-2">
-      {rolesAndAllowed.map((role) => (
+    <div className="flex gap-x-2 gap-y-2 flex-wrap">
+      {rolesAndAllowed?.map((role) => (
         <SpaceRole
           key={role.id}
           roleAndAllowed={role}

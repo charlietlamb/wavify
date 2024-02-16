@@ -25,7 +25,7 @@ import isObject from "@/lib/isObject";
 import ButtonLoader from "../me/ButtonLoader";
 import { spaceTypes } from "../collective/space/data";
 import SpaceRoles from "../collective/space/SpaceRoles";
-import { useRoleUpdateEffect } from "./hooks/useRoleUpdateEffect";
+import { updateRolesAndAllowed } from "./functions/updateRolesAndAllowed";
 
 const iconProps = {
   height: "40",
@@ -53,6 +53,9 @@ export const EditSpaceModal = () => {
     spaces: Space[];
     rolesAndAllowed: RoleAndAllowed[];
   };
+  const [spaceOpen, setSpaceOpen] = useState(space?.open);
+  const [isClosing, setIsClosing] = useState(false);
+
   const [rolesAndAllowed, setRolesAndAllowed] = useState<RoleAndAllowed[]>([]);
 
   useEffect(() => {
@@ -60,7 +63,11 @@ export const EditSpaceModal = () => {
       setSpaceName(space.name);
       setSpaceType(space.type);
       setUsername(space.slug);
-      setRolesAndAllowed(initRolesAndAllowed);
+      setSpaceOpen(space.open);
+      setRolesAndAllowed(
+        initRolesAndAllowed.sort((a, b) => a.authority - b.authority)
+      );
+      updateRolesAndAllowed(supabase, setRolesAndAllowed, collective, space);
     }
   }, [isOpen]);
 
@@ -218,12 +225,39 @@ export const EditSpaceModal = () => {
               </SelectContent>
             </Select>
           </div>
-          <div>
+          <div className="flex flex-col gap-y-2">
             <Label>Allowed Roles</Label>
-            <SpaceRoles
-              rolesAndAllowed={rolesAndAllowed}
-              setRolesAndAllowed={setRolesAndAllowed}
-            ></SpaceRoles>
+            {!spaceOpen ? (
+              <>
+                <SpaceRoles
+                  rolesAndAllowed={rolesAndAllowed}
+                  setRolesAndAllowed={setRolesAndAllowed}
+                ></SpaceRoles>
+                <ButtonLoader
+                  onClick={() => {
+                    setIsClosing(true);
+                    setSpaceOpen(true);
+                    space.open = true;
+                    setIsClosing(false);
+                  }}
+                  text="Make Space Public"
+                  isLoading={isClosing}
+                  variant="white"
+                ></ButtonLoader>
+              </>
+            ) : (
+              <ButtonLoader
+                onClick={() => {
+                  setIsClosing(true);
+                  setSpaceOpen(false);
+                  space.open = false;
+                  setIsClosing(false);
+                }}
+                text="Restrict Roles"
+                isLoading={isClosing}
+                variant="white"
+              ></ButtonLoader>
+            )}
           </div>
         </div>
         <DialogFooter className="flex flex-col px-6 py-4">

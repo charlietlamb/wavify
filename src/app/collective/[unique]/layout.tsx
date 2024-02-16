@@ -13,6 +13,11 @@ import { getRoles } from "./roles/(functions)/getRoles";
 import { getColUsers } from "@/components/modals/functions/getColUsers";
 import { getAllSpaces } from "./(functions)/getAllSpaces";
 import { getColUserDataFromUserAndCol } from "@/components/collective/(sidebar)/(functions)/getColUserDataFromUserAndCol";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 
 const CollectiveLayout = async ({
   children,
@@ -58,10 +63,15 @@ const CollectiveLayout = async ({
   }
   const spaces = await getAllSpaces(collective, supabase);
   return (
-    <div className="flex flex-grow max-h-[80vh] min-h-[80vh]">
-      <div className="flex-col hidden h-full md:flex w-60">
+    <ResizablePanelGroup
+      className="flex flex-grow max-h-[80vh] min-h-[80vh]"
+      direction="horizontal"
+    >
+      <ResizablePanel
+        className="flex-col hidden h-full md:flex w-60 overflow-y-auto max-h-[80vh]  "
+        defaultSize={15}
+      >
         <CollectiveSidebar
-          unique={params.unique}
           user={user}
           collective={collective}
           colUser={colUser}
@@ -69,9 +79,16 @@ const CollectiveLayout = async ({
           roles={roles}
           colSpaces={spaces}
         />
-      </div>
-      <div className="flex w-full h-full">{children}</div>
-    </div>
+      </ResizablePanel>
+      <ResizableHandle />
+      <ResizablePanel
+        className="flex w-full max-h-[80vh]"
+        defaultSize={85}
+        minSize={60}
+      >
+        {children}
+      </ResizablePanel>
+    </ResizablePanelGroup>
   );
 };
 

@@ -26,6 +26,7 @@ import { Label } from "../ui/label";
 import ButtonLoader from "../me/ButtonLoader";
 import { spaceTypes } from "../collective/space/data";
 import SpaceRoles from "../collective/space/SpaceRoles";
+import { updateRoles } from "./functions/updateRoles";
 const iconProps = {
   height: "40",
   width: "40",
@@ -53,20 +54,23 @@ export const CreateSpaceModal = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const supabase = createClientComponentClient<Database>();
   const router = useRouter();
-
+  const [spaceOpen, setSpaceOpen] = useState(true);
+  const [isClosing, setIsClosing] = useState(false);
   const [rolesAndAllowed, setRolesAndAllowed] = useState<RoleAndAllowed[]>(
-    Array.isArray(roles)
-      ? roles.map((role) => ({ ...role, allowed: false }))
-      : []
+    roles
+      ?.map((role) => ({ ...role, allowed: false }))
+      ?.sort((a, b) => a.authority - b.authority)
   );
 
   useEffect(() => {
+    setSpaceOpen(true);
     setRolesAndAllowed(
-      Array.isArray(roles)
-        ? roles.map((role) => ({ ...role, allowed: false }))
-        : []
+      roles
+        ?.map((role) => ({ ...role, allowed: false }))
+        ?.sort((a, b) => a.authority - b.authority)
     );
-  }, [roles]);
+    updateRoles(supabase, setRolesAndAllowed, collective);
+  }, [isOpen]);
 
   const isModalOpen = isOpen && type === "createSpace";
   useEffect(() => {
@@ -87,6 +91,7 @@ export const CreateSpaceModal = () => {
         allowed: rolesAndAllowed
           .filter((role) => role.allowed)
           .map((role) => role.id),
+        open: spaceOpen,
       };
       const { error } = await supabase.from("spaces").insert({
         ...space,
@@ -224,12 +229,37 @@ export const CreateSpaceModal = () => {
               </SelectContent>
             </Select>
           </div>
-          <div>
+          <div className="flex flex-col space-y-2">
             <Label>Allowed Roles</Label>
-            <SpaceRoles
-              rolesAndAllowed={rolesAndAllowed}
-              setRolesAndAllowed={setRolesAndAllowed}
-            ></SpaceRoles>
+            {!spaceOpen ? (
+              <>
+                <SpaceRoles
+                  rolesAndAllowed={rolesAndAllowed}
+                  setRolesAndAllowed={setRolesAndAllowed}
+                ></SpaceRoles>
+                <ButtonLoader
+                  onClick={() => {
+                    setIsClosing(true);
+                    setSpaceOpen(true);
+                    setIsClosing(false);
+                  }}
+                  text="Make Space Public"
+                  isLoading={isClosing}
+                  variant="white"
+                ></ButtonLoader>
+              </>
+            ) : (
+              <ButtonLoader
+                onClick={() => {
+                  setIsClosing(true);
+                  setSpaceOpen(false);
+                  setIsClosing(false);
+                }}
+                text="Restrict Roles"
+                isLoading={isClosing}
+                variant="white"
+              ></ButtonLoader>
+            )}
           </div>
         </div>
         <DialogFooter className="flex flex-col px-6 py-4">

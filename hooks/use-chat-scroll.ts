@@ -52,12 +52,10 @@ export const useChatScroll = ({
     };
 
     if (shouldAutoScroll()) {
-      setTimeout(() => {
-        bottomRef &&
-          bottomRef?.scrollIntoView({
-            behavior: "smooth",
-          });
-      }, 100);
+      bottomRef &&
+        bottomRef?.scrollIntoView({
+          behavior: "smooth",
+        });
     }
   }, [bottomRef, chatRef, newMessages, hasInitialized]);
 };

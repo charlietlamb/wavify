@@ -39,7 +39,13 @@ const ChatPage = async ({ params, searchParams }: MemberIdPageProps) => {
         type="conversation"
       />
       {searchParams.video && (
-        <MediaRoom chatId={chat.id} video={true} audio={true} user={user} />
+        <MediaRoom
+          chatId={chat.id}
+          video={true}
+          audio={true}
+          user={user}
+          otherUser={otherUser}
+        />
       )}
       {!searchParams.video && (
         <div className="flex-grow overflow-hidden">

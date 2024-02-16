@@ -11,11 +11,13 @@ export default function SpaceRole({
 }) {
   function onClick() {
     setRolesAndAllowed((prev) =>
-      prev.map((role) =>
-        role.id === roleAndAllowed.id
-          ? { ...role, allowed: !role.allowed }
-          : role
-      )
+      prev
+        .map((role) =>
+          role.id === roleAndAllowed.id
+            ? { ...role, allowed: !role.allowed }
+            : role
+        )
+        .sort((a, b) => a.authority - b.authority)
     );
   }
   function hexToRGB(hex: string, alpha: number) {
