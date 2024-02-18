@@ -6,9 +6,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/state/store";
 import { handlePlay } from "./functions/handlePlay";
 import { useEffect, useRef, useState } from "react";
-import { AudioState } from "@/state/audio/audioSlice";
+import { AudioState, setDuration } from "@/state/audio/audioSlice";
 import { handleProgressClick } from "./functions/handleProgressClick";
-
+import {
+  setTimeRemaining as setTimeRemainingAction,
+  setProgress as setProgressAction,
+} from "@/state/audio/audioSlice";
+import { handleExternalProgressClick } from "./functions/handleExternalProgressClick";
 interface FilePlayerProps {
   file: FileData;
   otherUser: User;
@@ -26,7 +30,6 @@ export default function FilePlayer({ file, otherUser }: FilePlayerProps) {
   const [isMouseDown, setIsMouseDown] = useState(false);
   const progressRef = useRef<HTMLDivElement | null>(null);
   const dispatch = useDispatch();
-  if (!isObject(file)) return null;
 
   useEffect(() => {
     while (isDragging) {
@@ -35,7 +38,6 @@ export default function FilePlayer({ file, otherUser }: FilePlayerProps) {
         const x = mouseX - rect.left; // x position within the element
         const width = rect.right - rect.left; // width of the element
         const percentage = x / width; // percentage of the clicked position in the element
-        console.log(percentage * 100);
         setProgress(percentage * 100);
       }
     }
@@ -45,12 +47,25 @@ export default function FilePlayer({ file, otherUser }: FilePlayerProps) {
     if (audio.fileData && audio.fileData.fileId !== file.fileId) {
       audioFile.pause();
       setIsPlaying(false);
+    } else if (audio.fileData && audio.fileData.fileId === file.fileId) {
+      setIsPlaying(audio.isPlaying);
+      if (audio.progress - progress > 5 || audio.progress - progress < -5) {
+        handleExternalProgressClick(audioFile, audio.progress);
+      }
+      setProgress(audio.progress);
+      setTimeRemaining(audio.timeRemaining);
+      if (audio.isPlaying) {
+        audioFile.play();
+      } else {
+        audioFile.pause();
+      }
     }
   }, [audio]);
 
   useEffect(() => {
     audioFile.addEventListener("loadedmetadata", () => {
       setTimeRemaining(audioFile.duration);
+      dispatch(setTimeRemainingAction(audioFile.duration));
     });
   }, [audioFile]);
 
@@ -58,6 +73,12 @@ export default function FilePlayer({ file, otherUser }: FilePlayerProps) {
     audioFile.addEventListener("timeupdate", () => {
       setProgress((audioFile.currentTime / audioFile.duration) * 100);
       setTimeRemaining(audioFile.duration - audioFile.currentTime);
+      dispatch(
+        setProgressAction((audioFile.currentTime / audioFile.duration) * 100)
+      );
+      dispatch(
+        setTimeRemainingAction(audioFile.duration - audioFile.currentTime)
+      );
       if (audioFile.currentTime === audioFile.duration) {
         setIsPlaying(false);
         audioFile.pause();
@@ -66,6 +87,7 @@ export default function FilePlayer({ file, otherUser }: FilePlayerProps) {
     });
   });
 
+  if (!isObject(file)) return null;
   return (
     <div className="flex flex-col gap-y-2 pr-4">
       <div>
@@ -99,7 +121,10 @@ export default function FilePlayer({ file, otherUser }: FilePlayerProps) {
               otherUser,
               file,
               progress,
-              audioFile
+              audioFile,
+              "https://github.com/shadcn.png", //user.profile_pic_url
+              timeRemaining,
+              audioFile.duration
             );
           }}
         >
@@ -119,7 +144,6 @@ export default function FilePlayer({ file, otherUser }: FilePlayerProps) {
               const x = e.clientX - rect.left; // x position within the element
               const width = rect.right - rect.left; // width of the element
               const percentage = x / width; // percentage of the clicked position in the element
-              console.log(percentage * 100);
               setProgress(percentage * 100);
             }
           }}

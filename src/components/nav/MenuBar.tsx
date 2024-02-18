@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Menubar,
   MenubarCheckboxItem,
@@ -13,34 +15,41 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-import Image from "next/image";
-import Link from "next/link";
+import { useModal } from "../../../hooks/use-modal-store";
+import { useRouter } from "next/navigation";
 
-export default function MenuBar1() {
+interface MenuBarProps {
+  user: User;
+  collectives: Collective[];
+}
+
+export default function NavMenu({ user, collectives }: MenuBarProps) {
+  const { onOpen } = useModal();
+  const router = useRouter();
   return (
-    <Menubar className="rounded-0 text-lg flex min-h-[3rem] items-center px-[2rem]">
-      <Link href="/">
-        <Image
-          src="/w-logo.png"
-          alt="Wavify"
-          width={1024}
-          height={1024}
-          className="w-[2rem] height-auto"
-        />
-      </Link>
+    <Menubar className="rounded-0 border-0 text-lg flex items-center px-[0.5rem] p-0 cursor-pointer">
       <MenubarMenu>
-        <MenubarTrigger>File</MenubarTrigger>
+        <MenubarTrigger>{user.username}</MenubarTrigger>
         <MenubarContent>
           <MenubarItem>
-            New Tab <MenubarShortcut>⌘T</MenubarShortcut>
+            Create Collective <MenubarShortcut>⌘T</MenubarShortcut>
           </MenubarItem>
           <MenubarItem>
-            New Window <MenubarShortcut>⌘N</MenubarShortcut>
+            Your Collectives <MenubarShortcut>⌘N</MenubarShortcut>
           </MenubarItem>
           <MenubarItem disabled>New Incognito Window</MenubarItem>
           <MenubarSeparator />
           <MenubarSub>
-            <MenubarSubTrigger>Share</MenubarSubTrigger>
+            <MenubarSubTrigger>Friends</MenubarSubTrigger>
+            <MenubarSubContent>
+              <MenubarItem>Email link</MenubarItem>
+              <MenubarItem>Messages</MenubarItem>
+              <MenubarItem>Notes</MenubarItem>
+            </MenubarSubContent>
+          </MenubarSub>
+          <MenubarSeparator />
+          <MenubarSub>
+            <MenubarSubTrigger>Favorites</MenubarSubTrigger>
             <MenubarSubContent>
               <MenubarItem>Email link</MenubarItem>
               <MenubarItem>Messages</MenubarItem>
@@ -54,10 +63,42 @@ export default function MenuBar1() {
         </MenubarContent>
       </MenubarMenu>
       <MenubarMenu>
-        <MenubarTrigger>Edit</MenubarTrigger>
+        <MenubarTrigger>Collective</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem onClick={() => onOpen("createCollective")}>
+            Create Collective <MenubarShortcut>⌘T</MenubarShortcut>
+          </MenubarItem>
+          <MenubarItem>
+            Your Collectives <MenubarShortcut>⌘N</MenubarShortcut>
+          </MenubarItem>
+          <MenubarItem disabled>New Incognito Window</MenubarItem>
+          <MenubarSeparator />
+          <MenubarSub>
+            <MenubarSubTrigger>Quick...</MenubarSubTrigger>
+            <MenubarSubContent>
+              {collectives.map((collective) => (
+                <MenubarItem
+                  key={collective.id}
+                  onClick={() =>
+                    router.push(`/collective/${collective.unique}`)
+                  }
+                >
+                  {collective.unique}
+                </MenubarItem>
+              ))}
+            </MenubarSubContent>
+          </MenubarSub>
+          <MenubarSeparator />
+          <MenubarItem>
+            Print... <MenubarShortcut>⌘P</MenubarShortcut>
+          </MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>Market</MenubarTrigger>
         <MenubarContent>
           <MenubarItem>
-            Undo <MenubarShortcut>⌘Z</MenubarShortcut>
+            Create Product <MenubarShortcut>⌘Z</MenubarShortcut>
           </MenubarItem>
           <MenubarItem>
             Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
@@ -80,37 +121,37 @@ export default function MenuBar1() {
         </MenubarContent>
       </MenubarMenu>
       <MenubarMenu>
-        <MenubarTrigger>View</MenubarTrigger>
+        <MenubarTrigger>Resources</MenubarTrigger>
         <MenubarContent>
-          <MenubarCheckboxItem>Always Show Bookmarks Bar</MenubarCheckboxItem>
-          <MenubarCheckboxItem checked>
-            Always Show Full URLs
-          </MenubarCheckboxItem>
-          <MenubarSeparator />
-          <MenubarItem inset>
-            Reload <MenubarShortcut>⌘R</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem disabled inset>
-            Force Reload <MenubarShortcut>⇧⌘R</MenubarShortcut>
-          </MenubarItem>
-          <MenubarSeparator />
-          <MenubarItem inset>Toggle Fullscreen</MenubarItem>
-          <MenubarSeparator />
-          <MenubarItem inset>Hide Sidebar</MenubarItem>
-        </MenubarContent>
-      </MenubarMenu>
-      <MenubarMenu>
-        <MenubarTrigger>Profiles</MenubarTrigger>
-        <MenubarContent>
-          <MenubarRadioGroup value="benoit">
-            <MenubarRadioItem value="andy">Andy</MenubarRadioItem>
-            <MenubarRadioItem value="benoit">Benoit</MenubarRadioItem>
-            <MenubarRadioItem value="Luis">Luis</MenubarRadioItem>
+          <MenubarItem>Sidebar Options</MenubarItem>
+          <MenubarRadioGroup value="closed">
+            <MenubarRadioItem value="closed">Closed</MenubarRadioItem>
+            <MenubarRadioItem value="users">Users</MenubarRadioItem>
+            <MenubarRadioItem value="collectives">Collectives</MenubarRadioItem>
           </MenubarRadioGroup>
           <MenubarSeparator />
           <MenubarItem inset>Edit...</MenubarItem>
           <MenubarSeparator />
           <MenubarItem inset>Add Profile...</MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>Preferences</MenubarTrigger>
+        <MenubarContent>
+          <MenubarCheckboxItem>Icon Menu</MenubarCheckboxItem>
+          <MenubarCheckboxItem checked>
+            Always Show Audio Player
+          </MenubarCheckboxItem>
+          <MenubarItem inset>Toggle Fullscreen</MenubarItem>
+          <MenubarSeparator />
+          <MenubarItem inset>Theme...</MenubarItem>
+          <MenubarSeparator />
+          <MenubarItem>Sidebar Options</MenubarItem>
+          <MenubarRadioGroup value="closed">
+            <MenubarRadioItem value="closed">Closed</MenubarRadioItem>
+            <MenubarRadioItem value="users">Users</MenubarRadioItem>
+            <MenubarRadioItem value="collectives">Collectives</MenubarRadioItem>
+          </MenubarRadioGroup>
         </MenubarContent>
       </MenubarMenu>
     </Menubar>

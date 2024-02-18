@@ -217,7 +217,10 @@ export function ChatMessages({
       className="flex flex-grow w-full max-h-full overflow-hidden"
     >
       {fileTab && (
-        <ResizablePanel defaultSize={fileTab ? 30 : 0} className="flex">
+        <ResizablePanel
+          defaultSize={fileTab ? 30 : 0}
+          className="hidden md:flex"
+        >
           <FilesContext.Provider
             value={{
               chat,

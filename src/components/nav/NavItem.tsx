@@ -30,7 +30,7 @@ export const NavigationItem = ({ collective }: NavigationItemProps) => {
         />
         <div
           className={cn(
-            "relative group flex mx-1 h-[48px] w-[48px] rounded-[24px] group-hover:rounded-[16px] transition-all overflow-hidden",
+            "relative group flex mx-1 h-[2rem] w-[2rem] rounded-full group-hover:rounded-[16px] transition-all overflow-hidden",
             params?.unique === collective.id &&
               "bg-primary/10 text-primary rounded-[16px]"
           )}

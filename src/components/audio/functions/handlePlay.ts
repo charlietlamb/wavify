@@ -1,8 +1,11 @@
 import {
   AudioState,
+  setDuration,
   setFileData,
+  setImageSrc,
   setIsPlaying,
   setProgress,
+  setTimeRemaining,
   setUser,
 } from "@/state/audio/audioSlice";
 import { Dispatch as DispatchRedux } from "@reduxjs/toolkit";
@@ -16,7 +19,10 @@ export function handlePlay(
   artist: User,
   fileData: FileData,
   progress: number,
-  audioFile: HTMLAudioElement
+  audioFile: HTMLAudioElement,
+  imageSrc: string,
+  timeRemaining: number,
+  duration: number
 ) {
   setIsPlayingSingle(!isPlaying);
   dispatch(setIsPlaying(!isPlaying));
@@ -26,6 +32,9 @@ export function handlePlay(
       dispatch(setUser(artist));
       dispatch(setFileData(fileData));
       dispatch(setProgress(progress));
+      dispatch(setImageSrc(imageSrc));
+      dispatch(setTimeRemaining(timeRemaining));
+      dispatch(setDuration(duration));
     }
   } else {
     audioFile.pause();

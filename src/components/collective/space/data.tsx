@@ -18,3 +18,4 @@ export const iconMapSidebar = {
 };
 
 export const spaceTypes: SpaceType[] = ["text", "audio", "video"];
+export const spaceLabels = ['Text Spaces', 'Audio Spaces', 'Video Spaces']

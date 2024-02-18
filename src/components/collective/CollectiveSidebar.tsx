@@ -1,15 +1,15 @@
-import { ScrollArea } from "../ui/scroll-area";
-import { Separator } from "../ui/separator";
-import { CollectiveHeader } from "./CollectiveHeader";
-import CollectiveSection from "./CollectiveSection";
-import { CollectiveSpace } from "./CollectiveSpace";
-import { getSpaces } from "./(sidebar)/(functions)/getSpaces";
-import isObject from "@/lib/isObject";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
-import { getUserRole } from "./(sidebar)/(functions)/getUserRole";
-import CollectiveMemberMap from "./CollectiveMemberMap";
-import CollectiveSearchWrap from "./CollectiveSearchWrap";
+import { Separator } from '../ui/separator'
+import { CollectiveHeader } from './CollectiveHeader'
+import CollectiveSection from './CollectiveSection'
+import { CollectiveSpace } from './CollectiveSpace'
+import { getSpaces } from './(sidebar)/(functions)/getSpaces'
+import isObject from '@/lib/isObject'
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
+import { getUserRole } from './(sidebar)/(functions)/getUserRole'
+import CollectiveMemberMap from './CollectiveMemberMap'
+import CollectiveSearchWrap from './CollectiveSearchWrap'
+import CollectiveSpaces from './CollectiveSpaces'
 
 export default async function CollectiveSidebar({
   user,
@@ -19,59 +19,27 @@ export default async function CollectiveSidebar({
   roles,
   colSpaces,
 }: {
-  user: User;
-  collective: Collective;
-  colUser: ColUserAndData;
-  colUsers: ColUserAndData[];
-  roles: Role[];
-  colSpaces: Space[];
+  user: User
+  collective: Collective
+  colUser: ColUserAndData
+  colUsers: ColUserAndData[]
+  roles: Role[]
+  colSpaces: Space[]
 }) {
-  const supabase = createServerComponentClient({ cookies });
-  const userRole = await getUserRole(colUser, supabase);
-  const spaces = await getSpaces(collective, supabase);
-  const { textSpaces, audioSpaces, videoSpaces } = spaces
-    ? spaces
-    : { textSpaces: [], audioSpaces: [], videoSpaces: [] };
-  const isFounder = user.id === collective.founder;
+  const supabase = createServerComponentClient({ cookies })
+  const userRole = await getUserRole(colUser, supabase)
+  const spaces = await getSpaces(collective, supabase)
+  const isFounder = user.id === collective.founder
 
-  const spacesToPass: Space[] = spaces
-    ? isFounder
-      ? [...textSpaces, ...audioSpaces, ...videoSpaces]
-      : [
-          ...textSpaces.filter(
-            (space: Space) =>
-              space.allowed.includes(colUser.roles?.id) || space.open
-          ),
-          ...audioSpaces.filter(
-            (space: Space) =>
-              space.allowed.includes(colUser.roles?.id) || space.open
-          ),
-          ...videoSpaces.filter(
-            (space: Space) =>
-              space.allowed.includes(colUser.roles?.id) || space.open
-          ),
-        ]
-    : [];
-  const filteredTextSpaces = isFounder
-    ? textSpaces
-    : textSpaces.filter(
+  const filteredSpaces = isFounder
+    ? spaces
+    : spaces.filter(
         (space: Space) =>
           space.allowed.includes(colUser.roles?.id) || space.open
-      );
-  const filteredAudioSpaces = isFounder
-    ? audioSpaces
-    : audioSpaces.filter(
-        (space: Space) =>
-          space.allowed.includes(colUser.roles?.id) || space.open
-      );
-  const filteredVideoSpaces = isFounder
-    ? videoSpaces
-    : videoSpaces.filter(
-        (space: Space) =>
-          space.allowed.includes(colUser.roles?.id) || space.open
-      );
+      )
+
   return (
-    <div className="flex flex-col w-full max-h-[80vh] text-primary bg-background_content ">
+    <div className="flex flex-grow flex-col bg-background_content text-primary">
       <CollectiveHeader
         collective={collective}
         colUser={colUser}
@@ -81,105 +49,31 @@ export default async function CollectiveSidebar({
         roles={roles}
         spaces={colSpaces}
       />
-      <div className="flex-1 px-3 flex flex-col overflow-y-auto">
+      <div className="flex flex-grow flex-col px-3">
         <CollectiveSearchWrap
           collective={collective}
-          spaces={spaces}
+          spaces={filteredSpaces}
           colUsers={colUsers}
         ></CollectiveSearchWrap>
         <Separator className="my-2 rounded-md bg-zinc-200 dark:bg-zinc-700" />
-        {!!filteredTextSpaces?.length && (
-          <div className="mb-2">
-            <CollectiveSection
-              sectionType="spaces"
-              spaceType="text"
-              user={user}
-              collective={collective}
-              label="Text Spaces"
-              colUser={colUser}
-              colUsers={colUsers}
-              roles={roles}
-            />
-            <div className="space-y-[2px]">
-              {filteredTextSpaces.map((space) => (
-                <CollectiveSpace
-                  key={space.id}
-                  space={space}
-                  collective={collective}
-                  userRole={userRole}
-                  spaces={spacesToPass}
-                  roles={roles}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-        {!!filteredAudioSpaces?.length && (
-          <div className="mb-2">
-            <CollectiveSection
-              sectionType="spaces"
-              spaceType="audio"
-              user={user}
-              collective={collective}
-              label="Audio Spaces"
-              colUser={colUser}
-              colUsers={colUsers}
-              roles={roles}
-            />
-            <div className="space-y-[2px]">
-              {filteredAudioSpaces.map(
-                (space) =>
-                  isObject(space) && (
-                    <CollectiveSpace
-                      key={typeof space.id === "string" ? space.id : ""}
-                      space={space}
-                      userRole={userRole}
-                      collective={collective}
-                      spaces={spacesToPass}
-                      roles={roles}
-                    />
-                  )
-              )}
-            </div>
-          </div>
-        )}
-        {!!filteredVideoSpaces?.length && (
-          <div className="mb-2">
-            <CollectiveSection
-              sectionType="spaces"
-              spaceType="video"
-              user={user}
-              collective={collective}
-              label="Video Spaces"
-              colUser={colUser}
-              colUsers={colUsers}
-              roles={roles}
-            />
-            <div className="space-y-[2px]">
-              {filteredVideoSpaces.map(
-                (space) =>
-                  isObject(space) && (
-                    <CollectiveSpace
-                      key={typeof space.id === "string" ? space.id : ""}
-                      space={space}
-                      userRole={userRole}
-                      collective={collective}
-                      spaces={spacesToPass}
-                      roles={roles}
-                    />
-                  )
-              )}
-            </div>
-          </div>
-        )}
-
-        <CollectiveMemberMap
-          user={user}
-          collective={collective}
-          initColUsers={colUsers}
-          roles={roles}
-        ></CollectiveMemberMap>
+        <div className="flex flex-grow flex-col overflow-y-auto">
+          <CollectiveSpaces
+            initSpaces={filteredSpaces}
+            user={user}
+            collective={collective}
+            colUser={colUser}
+            colUsers={colUsers}
+            roles={roles}
+            userRole={userRole}
+          />
+          <CollectiveMemberMap
+            user={user}
+            collective={collective}
+            initColUsers={colUsers}
+            roles={roles}
+          ></CollectiveMemberMap>
+        </div>
       </div>
     </div>
-  );
+  )
 }
