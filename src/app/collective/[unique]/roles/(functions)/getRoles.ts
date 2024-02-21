@@ -1,8 +1,8 @@
 export async function getRoles(collective: Collective, supabase: Supabase) {
   const { data, error } = await supabase
-    .from("roles")
+    .from('roles')
     .select()
-    .eq("collective", collective.id);
-  if (error) throw error;
-  return data.sort((a, b) => a.authority - b.authority);
+    .eq('collective', collective.id)
+  if (error) throw error
+  return data.sort((a, b) => a.authority - b.authority)
 }

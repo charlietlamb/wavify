@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Menubar,
@@ -14,20 +14,21 @@ import {
   MenubarSubContent,
   MenubarSubTrigger,
   MenubarTrigger,
-} from "@/components/ui/menubar";
-import { useModal } from "../../../hooks/use-modal-store";
-import { useRouter } from "next/navigation";
+} from '@/components/ui/menubar'
+import { useModal } from '../../../hooks/use-modal-store'
+import { useRouter } from 'next/navigation'
+import { useUser } from '@/state/user/useUser'
 
 interface MenuBarProps {
-  user: User;
-  collectives: Collective[];
+  collectives: Collective[]
 }
 
-export default function NavMenu({ user, collectives }: MenuBarProps) {
-  const { onOpen } = useModal();
-  const router = useRouter();
+export default function NavMenu({ collectives }: MenuBarProps) {
+  const user = useUser()
+  const { onOpen } = useModal()
+  const router = useRouter()
   return (
-    <Menubar className="rounded-0 border-0 text-lg flex items-center px-[0.5rem] p-0 cursor-pointer">
+    <Menubar className="rounded-0 flex cursor-pointer items-center border-0 p-0 px-[0.5rem] text-lg">
       <MenubarMenu>
         <MenubarTrigger>{user.username}</MenubarTrigger>
         <MenubarContent>
@@ -65,7 +66,7 @@ export default function NavMenu({ user, collectives }: MenuBarProps) {
       <MenubarMenu>
         <MenubarTrigger>Collective</MenubarTrigger>
         <MenubarContent>
-          <MenubarItem onClick={() => onOpen("createCollective")}>
+          <MenubarItem onClick={() => onOpen('createCollective')}>
             Create Collective <MenubarShortcut>⌘T</MenubarShortcut>
           </MenubarItem>
           <MenubarItem>
@@ -144,7 +145,9 @@ export default function NavMenu({ user, collectives }: MenuBarProps) {
           </MenubarCheckboxItem>
           <MenubarItem inset>Toggle Fullscreen</MenubarItem>
           <MenubarSeparator />
-          <MenubarItem inset>Theme...</MenubarItem>
+          <MenubarItem inset onClick={() => onOpen('theme', { user })}>
+            Theme...
+          </MenubarItem>
           <MenubarSeparator />
           <MenubarItem>Sidebar Options</MenubarItem>
           <MenubarRadioGroup value="closed">
@@ -155,5 +158,5 @@ export default function NavMenu({ user, collectives }: MenuBarProps) {
         </MenubarContent>
       </MenubarMenu>
     </Menubar>
-  );
+  )
 }

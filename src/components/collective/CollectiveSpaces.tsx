@@ -1,41 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CollectiveSection from './CollectiveSection'
 import { CollectiveSpace } from './CollectiveSpace'
 import { spaceTypes, spaceLabels } from './space/data'
 import { useSpacesUpdateEffect } from './hooks/useSpacesUpdateEffect'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useCollective } from '@/state/collective/useCollective'
 
-interface CollectiveSpacesProps {
-  initSpaces: Space[]
-  user: User
-  collective: Collective
-  colUser: ColUserAndData
-  colUsers: ColUserAndData[]
-  roles: Role[]
-  userRole: Role
-}
-
-export default function CollectiveSpaces({
-  initSpaces,
-  user,
-  collective,
-  colUser,
-  colUsers,
-  roles,
-  userRole,
-}: CollectiveSpacesProps) {
-  const supabase = createClientComponentClient()
-  const [spaces, setSpaces] = useState<Space[]>(initSpaces)
-  useSpacesUpdateEffect(
-    supabase,
-    userRole,
-    spaces,
-    setSpaces,
-    collective,
-    collective.founder === user.id
-  )
+export default function CollectiveSpaces() {
+  const { spaces, collective, colUser, colUsers, roles } = useCollective()
+  //TODO
+  //useSpacesUpdateEffect(supabase, spaces, setSpaces, collective)
   return (
     <>
       {spaceTypes.map(
@@ -45,26 +21,12 @@ export default function CollectiveSpaces({
               <CollectiveSection
                 sectionType="spaces"
                 spaceType={spaceType as SpaceType}
-                user={user}
-                collective={collective}
                 label={spaceLabels[index]}
-                colUser={colUser}
-                colUsers={colUsers}
-                roles={roles}
               />
               <div className="space-y-[2px]">
                 {spaces.map((space: Space) => {
                   if (space.type !== spaceType) return null
-                  return (
-                    <CollectiveSpace
-                      key={space.id}
-                      space={space}
-                      collective={collective}
-                      userRole={userRole}
-                      spaces={spaces}
-                      roles={roles}
-                    />
-                  )
+                  return <CollectiveSpace key={space.id} space={space} />
                 })}
               </div>
             </div>

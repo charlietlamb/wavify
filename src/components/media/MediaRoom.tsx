@@ -1,49 +1,49 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { LiveKitRoom, VideoConference } from "@livekit/components-react";
-import "@livekit/components-styles";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import MediaRoomSkeleton from "./MediaRoomSkeleton";
+import { useEffect, useState } from 'react'
+import { LiveKitRoom, VideoConference } from '@livekit/components-react'
+import '@livekit/components-styles'
+import { Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import MediaRoomSkeleton from './MediaRoomSkeleton'
+import { useUser } from '@/state/user/useUser'
 
 interface MediaRoomProps {
-  chatId: string;
-  video: boolean;
-  audio: boolean;
-  user: User;
-  collective?: Collective;
-  otherUser?: User;
+  chatId: string
+  video: boolean
+  audio: boolean
+  collective?: Collective
+  otherUser?: User
 }
 
 export const MediaRoom = ({
   chatId,
   video,
   audio,
-  user,
   collective,
   otherUser,
 }: MediaRoomProps) => {
-  const [token, setToken] = useState("");
-  const router = useRouter();
+  const user = useUser()
+  const [token, setToken] = useState('')
+  const router = useRouter()
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       try {
         const resp = await fetch(
           `/api/livekit?room=${chatId}&username=${user.username}`
-        );
-        const data = await resp.json();
-        setToken(data.token);
+        )
+        const data = await resp.json()
+        setToken(data.token)
       } catch (e) {
-        throw e;
+        throw e
       }
-    })();
-  }, [user?.username, chatId]);
+    })()
+  }, [user?.username, chatId])
 
-  return token === "" ? (
+  return token === '' ? (
     <MediaRoomSkeleton />
   ) : (
-    <div className="flex overflow-y-auto max-h-full">
+    <div className="flex max-h-full overflow-y-auto">
       <LiveKitRoom
         data-lk-theme="default"
         serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
@@ -56,11 +56,11 @@ export const MediaRoom = ({
             collective
               ? `/collective/${collective?.unique}`
               : `/user/${otherUser?.username}`
-          );
+          )
         }}
       >
-        <VideoConference className=" lk-video-conference bg-background_content min-h-full" />
+        <VideoConference className=" lk-video-conference min-h-full bg-background_content" />
       </LiveKitRoom>
     </div>
-  );
-};
+  )
+}

@@ -1,18 +1,10 @@
-import { ChatItem } from "./ChatItem";
-import { useItemContext } from "./context";
+import { ChatItem } from './ChatItem'
+import { useItemContext } from './context'
 
 export default function ChatItemMap() {
-  const context = useItemContext();
-  const { render, user, colUser } = context;
+  const { render } = useItemContext()
   return render.map(
     (message: MessageAndAuthor | null) =>
-      message && (
-        <ChatItem
-          key={message.id}
-          user={user}
-          message={message}
-          colUser={colUser}
-        />
-      )
-  );
+      message && <ChatItem key={message.id} message={message} />
+  )
 }

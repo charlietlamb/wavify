@@ -1,15 +1,15 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from 'react'
 
 export async function updateRoles(
   supabase: Supabase,
   setRolesAndAllowed: Dispatch<SetStateAction<RoleAndAllowed[]>>,
   collective: Collective
 ) {
-  const { data: roles } = await supabase
-    .from("roles")
-    .select("*")
-    .eq("collective", collective?.id);
-
+  const { data: roles, error } = await supabase
+    .from('roles')
+    .select('*')
+    .eq('collective', collective?.id)
+  if (error) throw error
   roles &&
     setRolesAndAllowed(
       roles
@@ -18,5 +18,5 @@ export async function updateRoles(
           allowed: false,
         }))
         .sort((a, b) => a.authority - b.authority)
-    );
+    )
 }

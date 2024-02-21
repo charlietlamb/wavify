@@ -18,6 +18,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
+import { CollectiveProvider } from '@/components/providers/CollectiveProvider'
 
 const CollectiveLayout = async ({
   children,
@@ -53,34 +54,47 @@ const CollectiveLayout = async ({
   } else {
     colUsers = initColUsers
   }
-  const colUser = await getColUserDataFromUserAndCol(supabase, user, collective)
+  const colUser = (await getColUserDataFromUserAndCol(
+    supabase,
+    user,
+    collective
+  )) as unknown as ColUserAndData
   if (!colUser) {
     return redirect('/')
   }
   const spaces = await getAllSpaces(collective, supabase)
+
   return (
-    <ResizablePanelGroup
-      className="flex h-auto flex-grow"
-      direction="horizontal"
+    <CollectiveProvider
+      collective={collective}
+      colUser={colUser}
+      colUsers={colUsers}
+      roles={roles}
+      spaces={spaces}
     >
-      <ResizablePanel
-        className="hidden min-w-60 flex-col md:flex"
-        defaultSize={15}
+      <ResizablePanelGroup
+        className="flex h-auto flex-grow"
+        direction="horizontal"
       >
-        <CollectiveSidebar
-          user={user}
-          collective={collective}
-          colUser={colUser}
-          colUsers={colUsers}
-          roles={roles}
-          colSpaces={spaces}
-        />
-      </ResizablePanel>
-      <ResizableHandle />
-      <ResizablePanel className="flex w-full " defaultSize={85} minSize={60}>
-        {children}
-      </ResizablePanel>
-    </ResizablePanelGroup>
+        <ResizablePanel
+          className="hidden h-full min-w-60 flex-col md:flex"
+          defaultSize={15}
+        >
+          <CollectiveSidebar
+            user={user}
+            collective={collective}
+            colUser={colUser}
+            colUsers={colUsers}
+            roles={roles}
+            spaces={spaces}
+          />
+        </ResizablePanel>
+        <ResizableHandle />
+        <ResizablePanel className="flex w-full " defaultSize={85} minSize={60}>
+          {children}
+        </ResizablePanel>
+      </ResizablePanelGroup>
+    </CollectiveProvider>
   )
 }
 

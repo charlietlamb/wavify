@@ -5,16 +5,10 @@ import { getData } from './(sidebar)/(functions)/getData'
 import CollectiveSearch from './CollectiveSearch'
 import { useColUserUpdateEffect } from './hooks/useColUserUpdateEffect'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useCollective } from '@/state/collective/useCollective'
 
-export default function CollectiveSearchWrap({
-  spaces,
-  colUsers: colUsersInit,
-  collective,
-}: {
-  spaces: Space[]
-  colUsers: ColUserAndData[]
-  collective: Collective
-}) {
+export default function CollectiveSearchWrap() {
+  const { spaces, colUsers: colUsersInit, collective } = useCollective()
   const supabase = createClientComponentClient()
   const [colUsers, setColUsers] = useState<ColUserAndData[]>(colUsersInit)
   const newData = spaces

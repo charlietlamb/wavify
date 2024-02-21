@@ -1,31 +1,33 @@
-"use server";
-import { cookies } from "next/headers";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import NavigationAction from "./NavAction";
-import { Separator } from "../ui/separator";
-import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import AppNavBarTopCollectives from "./AppNavBarTopCollectives";
-import { getUserCollectives } from "./functions/getUserCollectives";
+'use server'
+import { cookies } from 'next/headers'
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import NavigationAction from './NavAction'
+import { Separator } from '../ui/separator'
+import { ScrollArea, ScrollBar } from '../ui/scroll-area'
+import AppNavBarTopCollectives from './AppNavBarTopCollectives'
+import { getUserCollectives } from './functions/getUserCollectives'
 
 interface appNavBarTopProps {
-  user: User;
+  user: User
 }
 
 export default async function Sidebar({ user }: appNavBarTopProps) {
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient({ cookies: () => cookieStore });
+  const cookieStore = cookies()
+  const supabase = createServerComponentClient({ cookies: () => cookieStore })
 
-  const collectives = await getUserCollectives(supabase, user);
+  const collectives = (await getUserCollectives(
+    supabase,
+    user
+  )) as unknown as Collective[]
   return (
-    <div className="flex flex-col items-center h-full space-y-4 text-primary bg-background_content">
+    <div className="flex h-full flex-col items-center space-y-4 bg-background_content text-primary">
       <NavigationAction></NavigationAction>
-      <Separator className="h-[2px] bg-primary_light dark:bg-primary_dark rounded-md w-10 mx-auto"></Separator>
+      <Separator className="mx-auto h-[2px] w-10 rounded-md bg-primary_light dark:bg-primary_dark"></Separator>
       <ScrollArea className="flex-1 ">
         <div className="flex flex-col justify-start">
           {!!collectives.length ? (
             <AppNavBarTopCollectives
               collectives={collectives}
-              user={user}
               className="mx-1"
             />
           ) : (
@@ -35,5 +37,5 @@ export default async function Sidebar({ user }: appNavBarTopProps) {
         <ScrollBar orientation="vertical" />
       </ScrollArea>
     </div>
-  );
+  )
 }

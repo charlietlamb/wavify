@@ -88,6 +88,10 @@ main {
   scrollbar-width: none; /* Firefox */
 }
 
+.text-primary {
+  transition: color 0.3s ease;
+}
+
 .primary {
   @apply text-primary;
 }

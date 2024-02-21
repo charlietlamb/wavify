@@ -303,6 +303,7 @@ export type Database = {
       }
       users: {
         Row: {
+          color: string
           created_at: string
           description: string | null
           display_name: string | null
@@ -321,6 +322,7 @@ export type Database = {
           username: string
         }
         Insert: {
+          color?: string
           created_at?: string
           description?: string | null
           display_name?: string | null
@@ -339,6 +341,7 @@ export type Database = {
           username?: string
         }
         Update: {
+          color?: string
           created_at?: string
           description?: string | null
           display_name?: string | null

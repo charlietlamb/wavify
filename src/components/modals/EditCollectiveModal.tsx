@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -8,162 +8,164 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import UploadDropZone from "../util/uploads/UploadDropZone";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { AnimatedCheckIcon } from "../icons/check";
-import { AnimatedXIcon } from "../icons/x";
-import { uploadCollectiveImageToS3 } from "./modal-actions/createCollectiveActions";
-import { useModal } from "../../../hooks/use-modal-store";
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { useRouter } from 'next/navigation'
+import UploadDropZone from '../util/uploads/UploadDropZone'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { AnimatedCheckIcon } from '../icons/check'
+import { AnimatedXIcon } from '../icons/x'
+import { uploadCollectiveImageToS3 } from './modal-actions/createCollectiveActions'
+import { useModal } from '../../../hooks/use-modal-store'
+import { useUser } from '@/state/user/useUser'
 
 const iconProps = {
-  height: "40",
-  width: "40",
-  color: "hsl(var(--primary))",
-};
+  height: '40',
+  width: '40',
+  color: 'hsl(var(--primary))',
+}
 
-export const EditCollectiveModal = ({ user }: { user: User }) => {
-  const [image, setImage] = useState<File[] | File | undefined>(undefined);
-  const [loading, setLoading] = useState(false);
-  const [username, setUsername] = useState("");
-  const [usernameAvailable, setUsernameAvailable] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [imgSrc, setImgSrc] = useState("");
-  const supabase = createClientComponentClient<Database>();
-  const { isOpen, onClose, type, data } = useModal();
+export const EditCollectiveModal = () => {
+  const user = useUser()
+  const [image, setImage] = useState<File[] | File | undefined>(undefined)
+  const [loading, setLoading] = useState(false)
+  const [username, setUsername] = useState('')
+  const [usernameAvailable, setUsernameAvailable] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [imgSrc, setImgSrc] = useState('')
+  const supabase = createClientComponentClient<Database>()
+  const { isOpen, onClose, type, data } = useModal()
 
-  const isModalOpen = isOpen && type === "editCollective";
-  const { collective } = data;
+  const isModalOpen = isOpen && type === 'editCollective'
+  const { collective } = data
 
   //set collective values
   useEffect(() => {
     if (collective) {
-      setUsername(collective.unique);
-      setImgSrc("https://github.com/shadcn.png");
+      setUsername(collective.unique)
+      setImgSrc('https://github.com/shadcn.png')
     }
-  }, [collective]);
+  }, [collective])
 
   const isUsernameAvailable = async (usernameToCheck: string) => {
-    if (usernameToCheck === "") {
-      setUsernameAvailable(false);
-      return;
+    if (usernameToCheck === '') {
+      setUsernameAvailable(false)
+      return
     }
     if (collective && usernameToCheck === collective.unique) {
-      setUsernameAvailable(true);
-      return;
+      setUsernameAvailable(true)
+      return
     }
     const { data, error } = await supabase
-      .from("collectives")
-      .select("unique")
-      .eq("unique", usernameToCheck);
+      .from('collectives')
+      .select('unique')
+      .eq('unique', usernameToCheck)
 
     if (error) {
-      console.error("Error checking username:", error);
-      setUsernameAvailable(false);
+      console.error('Error checking username:', error)
+      setUsernameAvailable(false)
     } else {
-      setUsernameAvailable(data.length === 0);
+      setUsernameAvailable(data.length === 0)
     }
-  };
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {
-      isUsernameAvailable(username);
-    }, 1000);
+      isUsernameAvailable(username)
+    }, 1000)
 
-    return () => clearInterval(interval);
-  }, [username]);
+    return () => clearInterval(interval)
+  }, [username])
 
   function fileToBase64(file: File | null): Promise<string> | null {
     if (file !== null) {
       return new Promise((resolve, reject) => {
-        const reader = new FileReader();
+        const reader = new FileReader()
         reader.onload = () => {
-          if (typeof reader.result === "string") {
-            resolve(reader.result);
+          if (typeof reader.result === 'string') {
+            resolve(reader.result)
           } else {
-            reject(new Error("FileReader did not return a string."));
+            reject(new Error('FileReader did not return a string.'))
           }
-        };
-        reader.onerror = (error) => reject(error);
-        reader.readAsDataURL(file);
-      });
+        }
+        reader.onerror = (error) => reject(error)
+        reader.readAsDataURL(file)
+      })
     } else {
-      return null;
+      return null
     }
   }
 
   async function submitCollectiveDetails() {
-    setLoading(true);
+    setLoading(true)
     if (usernameAvailable) {
       if (!!image || !!imgSrc) {
         if (!!image) {
           const base64Image = await fileToBase64(
             !Array.isArray(image) ? image : null
-          );
+          )
           await uploadCollectiveImageToS3(
             base64Image ? base64Image : null,
-            collective ? collective.id : "undefined"
-          );
+            collective ? collective.id : 'undefined'
+          )
         }
 
         const { data, error } = await supabase
-          .from("collectives")
+          .from('collectives')
           .update({
             unique: username,
           })
-          .eq("id", collective ? collective.id : "");
+          .eq('id', collective ? collective.id : '')
         if (error) {
-          setErrorMessage("There was an error creating your account.");
+          setErrorMessage('There was an error creating your account.')
         } else {
-          setErrorMessage("");
-          setUsername("");
-          setImage(undefined);
-          onClose();
+          setErrorMessage('')
+          setUsername('')
+          setImage(undefined)
+          onClose()
         }
       } else {
-        setErrorMessage("Please upload a collective image.");
+        setErrorMessage('Please upload a collective image.')
       }
     } else {
-      setErrorMessage("Please enter a valid username.");
+      setErrorMessage('Please enter a valid username.')
     }
-    setLoading(false);
+    setLoading(false)
   }
 
   const debounce = (func: (...args: any[]) => void, delay: number) => {
-    let debounceTimer: NodeJS.Timeout;
+    let debounceTimer: NodeJS.Timeout
     return function (this: any, ...args: any[]) {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => func.apply(this, args), delay);
-    };
-  };
+      clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(() => func.apply(this, args), delay)
+    }
+  }
 
-  const debouncedCheckUsername = debounce(isUsernameAvailable, 100);
+  const debouncedCheckUsername = debounce(isUsernameAvailable, 100)
 
   const usernameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const allowedChars = /^[a-z0-9._-]*$/;
-    let inputValue = e.target.value;
+    const allowedChars = /^[a-z0-9._-]*$/
+    let inputValue = e.target.value
     if (!allowedChars.test(inputValue)) {
-      inputValue = inputValue.replace(/[^a-z0-9._-]/g, "");
+      inputValue = inputValue.replace(/[^a-z0-9._-]/g, '')
     }
-    setUsername(inputValue);
-    debouncedCheckUsername(inputValue);
-  };
+    setUsername(inputValue)
+    debouncedCheckUsername(inputValue)
+  }
 
   const handleClose = () => {
-    setErrorMessage("");
-    setUsername("");
-    setImage(undefined);
-    onClose();
-  };
+    setErrorMessage('')
+    setUsername('')
+    setImage(undefined)
+    onClose()
+  }
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="p-0 pt-4 overflow-hidden bg-background_content flex flex-col items-center">
+      <DialogContent className="flex flex-col items-center overflow-hidden bg-background_content p-0 pt-4">
         <DialogHeader className="w-[90%]">
-          <DialogTitle className="text-2xl font-bold text-left">
+          <DialogTitle className="text-left text-2xl font-bold">
             Edit your collective
           </DialogTitle>
           <DialogDescription className="text-left text-zinc-500">
@@ -175,7 +177,7 @@ export const EditCollectiveModal = ({ user }: { user: User }) => {
           <UploadDropZone
             uploadFunction={setImage}
             imageUrl={imgSrc}
-            color={"#FFFFFF"}
+            color={'#FFFFFF'}
           />
           <div className="flex flex-row justify-between gap-x-4">
             <Input
@@ -192,7 +194,7 @@ export const EditCollectiveModal = ({ user }: { user: User }) => {
             )}
           </div>
         </div>
-        <DialogFooter className="flex flex-col w-[90%] py-4">
+        <DialogFooter className="flex w-[90%] flex-col py-4">
           <Button
             type="submit"
             className="w-full"
@@ -218,16 +220,16 @@ export const EditCollectiveModal = ({ user }: { user: User }) => {
                 </g>
               </svg>
             ) : (
-              "Save"
+              'Save'
             )}
           </Button>
           {!!errorMessage && (
-            <p className="w-full mt-2 text-sm text-center text-red-500 text-muted-foreground">
+            <p className="mt-2 w-full text-center text-sm text-muted-foreground text-red-500">
               {errorMessage}
             </p>
           )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}

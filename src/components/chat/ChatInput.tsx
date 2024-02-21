@@ -1,52 +1,52 @@
-"use client";
+'use client'
 
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus } from "lucide-react";
-import { redirect, useRouter } from "next/navigation";
-import { v4 as uuidv4 } from "uuid";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useModal } from "../../../hooks/use-modal-store";
-import { EmojiPicker } from "../util/EmojiPicker";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import isObject from "@/lib/isObject";
+import * as z from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Plus } from 'lucide-react'
+import { redirect, useRouter } from 'next/navigation'
+import { v4 as uuidv4 } from 'uuid'
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { useModal } from '../../../hooks/use-modal-store'
+import { EmojiPicker } from '../util/EmojiPicker'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import isObject from '@/lib/isObject'
+import { useUser } from '@/state/user/useUser'
 
 interface ChatInputProps {
-  type: "conversation" | "space";
-  chat: Chat | null;
-  user: User;
-  name: string;
-  collective?: Collective;
-  space?: Json;
+  type: 'conversation' | 'space'
+  chat: Chat | null
+  name: string
+  collective?: Collective
+  space?: Json
 }
 
 const formSchema = z.object({
   content: z.string().min(1),
-});
+})
 
 export const ChatInput = ({
-  user,
   name,
   type,
   chat,
   collective,
   space,
 }: ChatInputProps) => {
-  if (!chat) return redirect(`/`);
-  const { onOpen } = useModal();
-  const router = useRouter();
-  const supabase = createClientComponentClient();
-  const messageId = uuidv4();
+  if (!chat) return redirect(`/`)
+  const user = useUser()
+  const { onOpen } = useModal()
+  const router = useRouter()
+  const supabase = createClientComponentClient()
+  const messageId = uuidv4()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      content: "",
+      content: '',
     },
-  });
+  })
 
-  const isLoading = form.formState.isSubmitting;
+  const isLoading = form.formState.isSubmitting
 
   const onSubmit = async (formData: { content: string }) => {
     try {
@@ -55,14 +55,14 @@ export const ChatInput = ({
         author: user.id,
         content: formData.content,
         chat: chat?.id,
-      };
-      await supabase.from("messages").insert(newMessage);
-      form.reset();
-      router.refresh();
+      }
+      await supabase.from('messages').insert(newMessage)
+      form.reset()
+      router.refresh()
     } catch (error) {
-      throw error;
+      throw error
     }
-  };
+  }
 
   return (
     <Form {...form}>
@@ -76,25 +76,25 @@ export const ChatInput = ({
                 <div className="relative p-4 pb-6">
                   <button
                     type="button"
-                    onClick={() => onOpen("messageFile", { user, chat })}
-                    className="absolute top-7 left-8 h-[24px] w-[24px] bg-zinc-500 dark:bg-zinc-400 hover:bg-zinc-800 dark:hover:bg-zinc-300 transition rounded-full p-1 flex items-center justify-center"
+                    onClick={() => onOpen('messageFile', { user, chat })}
+                    className="absolute left-8 top-7 flex h-[24px] w-[24px] items-center justify-center rounded-full bg-zinc-500 p-1 transition hover:bg-zinc-800 dark:bg-zinc-400 dark:hover:bg-zinc-300"
                   >
                     <Plus className="text-white dark:text-[#313338]" />
                   </button>
                   <Input
                     disabled={isLoading}
-                    className="py-6 border-0 border-none px-14 bg-zinc-200/90 dark:bg-zinc-950 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200"
+                    className="border-0 border-none bg-zinc-200/90 px-14 py-6 text-zinc-600 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-zinc-950 dark:text-zinc-200"
                     placeholder={`Message ${
-                      type === "conversation"
+                      type === 'conversation'
                         ? name
-                        : "#" + space && isObject(space)
-                        ? space.name
-                        : ""
+                        : '#' + space && isObject(space)
+                          ? space.name
+                          : ''
                     }`}
                     {...field}
                   />
                   {
-                    <div className="absolute top-7 right-8">
+                    <div className="absolute right-8 top-7">
                       <EmojiPicker
                         onChange={(emoji: string) =>
                           field.onChange(`${field.value} ${emoji}`)
@@ -109,5 +109,5 @@ export const ChatInput = ({
         />
       </form>
     </Form>
-  );
-};
+  )
+}

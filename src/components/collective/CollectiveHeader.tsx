@@ -1,4 +1,4 @@
-"use client";
+'use client'
 import {
   Award,
   ChevronDown,
@@ -8,7 +8,7 @@ import {
   Trash,
   UserPlus,
   Users,
-} from "lucide-react";
+} from 'lucide-react'
 
 import {
   DropdownMenu,
@@ -16,115 +16,101 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useModal } from "../../../hooks/use-modal-store";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useRouter } from "next/navigation";
-import { useHeaderChangeEffect } from "./(header)/(hooks)/useHeaderChangeEffect";
+} from '@/components/ui/dropdown-menu'
+import { useModal } from '../../../hooks/use-modal-store'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useRouter } from 'next/navigation'
+import { useHeaderChangeEffect } from './(header)/(hooks)/useHeaderChangeEffect'
+import { useUser } from '@/state/user/useUser'
+import { useCollective } from '@/state/collective/useCollective'
 
-interface CollectiveHeaderProps {
-  collective: Collective;
-  colUser: ColUserAndData;
-  colUsers: ColUserAndData[];
-  user: User;
-  userRole: Role;
-  roles: Role[];
-  spaces: Space[];
-}
-
-export const CollectiveHeader = ({
-  collective,
-  colUser,
-  user,
-  userRole,
-  colUsers,
-  roles,
-  spaces,
-}: CollectiveHeaderProps) => {
-  const supabase = createClientComponentClient();
-  const { onOpen } = useModal();
-  const router = useRouter();
+export const CollectiveHeader = () => {
+  const user = useUser()
+  const { collective, colUser, colUsers, roles, spaces } = useCollective()
+  const supabase = createClientComponentClient()
+  const { onOpen } = useModal()
+  const router = useRouter()
   function redirectToRoles(collective: Collective) {
-    router.push(`/collective/${collective.unique}/roles`);
+    router.push(`/collective/${collective.unique}/roles`)
   }
-  const isFounder = collective.founder === colUser.users?.id;
-  useHeaderChangeEffect(supabase, user, collective, router);
+  const isFounder = collective.founder === colUser.users?.id
+  useHeaderChangeEffect(supabase, user, collective, router)
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none" asChild>
-        <button className="flex items-center w-full h-12 px-3 font-semibold transition border-b-2 text-md border-neutral-200 dark:border-neutral-800 hover:bg-zinc-700/10 dark:hover:bg-zinc-700/50">
+        <button className="text-md flex h-12 flex-shrink-0 items-center border-b-2 border-neutral-200 px-3 font-semibold transition hover:bg-zinc-700/10 dark:border-neutral-800 dark:hover:bg-zinc-700/50">
           {collective.unique}
-          <ChevronDown className="w-5 h-5 ml-auto" />
+          <ChevronDown className="ml-auto h-5 w-5" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 text-xs font-medium text-black dark:text-neutral-400 space-y-[2px]">
-        {(isFounder || userRole.canInvite) && (
+      <DropdownMenuContent className="w-56 space-y-[2px] text-xs font-medium text-black dark:text-neutral-400">
+        {(isFounder || colUser.roles.canInvite) && (
           <DropdownMenuItem
-            onClick={() => onOpen("invite", { collective })}
+            onClick={() => onOpen('invite', { collective })}
             className="px-3 py-2 text-sm text-primary"
           >
             Invite People
-            <UserPlus className="w-4 h-4 ml-auto" />
+            <UserPlus className="ml-auto h-4 w-4" />
           </DropdownMenuItem>
         )}
-        {(isFounder || userRole.canSettings) && (
+        {(isFounder || colUser.roles.canSettings) && (
           <DropdownMenuItem
-            onClick={() => onOpen("editCollective", { collective })}
-            className="px-3 py-2 text-sm cursor-pointer"
+            onClick={() => onOpen('editCollective', { collective })}
+            className="cursor-pointer px-3 py-2 text-sm"
           >
             Collective Settings
-            <Settings className="w-4 h-4 ml-auto" />
+            <Settings className="ml-auto h-4 w-4" />
           </DropdownMenuItem>
         )}
-        {(isFounder || userRole.canRoles) && (
+        {(isFounder || colUser.roles.canRoles) && (
           <DropdownMenuItem
             onClick={() => redirectToRoles(collective)}
-            className="px-3 py-2 text-sm cursor-pointer"
+            className="cursor-pointer px-3 py-2 text-sm"
           >
             Manage Roles
-            <Award className="w-4 h-4 ml-auto"></Award>
+            <Award className="ml-auto h-4 w-4"></Award>
           </DropdownMenuItem>
         )}
-        {(isFounder || userRole.canMembers) && (
+        {(isFounder || colUser.roles.canMembers) && (
           <DropdownMenuItem
             onClick={() =>
-              onOpen("members", { user, collective, colUsers, roles })
+              onOpen('members', { user, collective, colUsers, roles })
             }
-            className="px-3 py-2 text-sm cursor-pointer"
+            className="cursor-pointer px-3 py-2 text-sm"
           >
             Manage Members
-            <Users className="w-4 h-4 ml-auto" />
+            <Users className="ml-auto h-4 w-4" />
           </DropdownMenuItem>
         )}
-        {(isFounder || userRole.canCreate) && (
+        {(isFounder || colUser.roles.canCreate) && (
           <DropdownMenuItem
-            onClick={() => onOpen("createSpace", { collective, spaces, roles })}
-            className="px-3 py-2 text-sm cursor-pointer"
+            onClick={() => onOpen('createSpace', { collective, spaces, roles })}
+            className="cursor-pointer px-3 py-2 text-sm"
           >
             Create Space
-            <PlusCircle className="w-4 h-4 ml-auto" />
+            <PlusCircle className="ml-auto h-4 w-4" />
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
         {isFounder && (
           <DropdownMenuItem
-            onClick={() => onOpen("deleteCollective", { collective })}
-            className="px-3 py-2 text-sm cursor-pointer text-rose-500"
+            onClick={() => onOpen('deleteCollective', { collective })}
+            className="cursor-pointer px-3 py-2 text-sm text-rose-500"
           >
             Delete Collective
-            <Trash className="w-4 h-4 ml-auto" />
+            <Trash className="ml-auto h-4 w-4" />
           </DropdownMenuItem>
         )}
         {!isFounder && (
           <DropdownMenuItem
-            onClick={() => onOpen("leaveCollective", { collective, user })}
-            className="px-3 py-2 text-sm cursor-pointer text-rose-500"
+            onClick={() => onOpen('leaveCollective', { collective, user })}
+            className="cursor-pointer px-3 py-2 text-sm text-rose-500"
           >
             Leave Collective
-            <LogOut className="w-4 h-4 ml-auto" />
+            <LogOut className="ml-auto h-4 w-4" />
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-};
+  )
+}

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from 'react'
 
 export async function updateRolesAndAllowed(
   supabase: Supabase,
@@ -7,9 +7,9 @@ export async function updateRolesAndAllowed(
   space: Space
 ) {
   const { data: roles } = await supabase
-    .from("roles")
-    .select("*")
-    .eq("collective", collective.id);
+    .from('roles')
+    .select()
+    .eq('collective', collective.id)
 
   roles &&
     setRolesAndAllowed(
@@ -19,5 +19,5 @@ export async function updateRolesAndAllowed(
           allowed: space.allowed.includes(role.id),
         }))
         .sort((a, b) => a.authority - b.authority)
-    );
+    )
 }

@@ -27,7 +27,7 @@ export default async function AppNavBar({ user }: appNavBarProps) {
             className="height-auto w-[1.5rem]"
           />
         </Link>
-        <NavMenu user={user} collectives={collectives} />
+        <NavMenu collectives={collectives} />
       </div>
       <Separator
         className="mx-4 h-full w-2 bg-zinc-300"

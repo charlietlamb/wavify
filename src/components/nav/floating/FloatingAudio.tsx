@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { PopoverContent } from '@/components/ui/popover'
-import { AudioState } from '@/state/audio/audioSlice'
+import { AudioState, setMaster } from '@/state/audio/audioSlice'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
@@ -13,6 +13,7 @@ import {
   setTimeRemaining as setTimeRemainingAction,
 } from '@/state/audio/audioSlice'
 import Marquee from 'react-fast-marquee'
+import { floatingPopoverClassName } from './floatingData'
 
 interface FloatingAudioProps {
   audio: AudioState
@@ -53,7 +54,7 @@ export default function FloatingAudio({
   }, [audio])
 
   return (
-    <PopoverContent side="left">
+    <PopoverContent side="left" className={floatingPopoverClassName}>
       {audio.fileData ? (
         <div className="flex flex-col gap-y-2 overflow-hidden">
           <div className="flex gap-x-2">
@@ -73,9 +74,9 @@ export default function FloatingAudio({
                 @{audio.user?.username}
               </Button>
               <Marquee pauseOnHover direction={marqueeDirection}>
-                <h3 className="text-md font-bold">
+                <h3 className="text-m font-bold">
                   {audio.fileData.fileName}
-                  {'    '}
+                  <span className="text-zinc-500">{' \u00A0|\u00A0 '}</span>
                 </h3>
               </Marquee>
             </div>
@@ -98,6 +99,7 @@ export default function FloatingAudio({
               foregroundClasses="bg-zinc-400"
               onClick={(e) => {
                 if (!progressRef.current) return
+                dispatch(setMaster(true))
                 const rect = progressRef.current.getBoundingClientRect()
                 const x = e.clientX - rect.left // x position within the element
                 const width = rect.right - rect.left // width of the element
@@ -116,6 +118,7 @@ export default function FloatingAudio({
               onMouseUp={() => setIsMouseDown(false)}
               onMouseMove={(e) => {
                 if (isMouseDown && progressRef.current) {
+                  dispatch(setMaster(true))
                   const rect = progressRef.current.getBoundingClientRect()
                   const x = e.clientX - rect.left // x position within the element
                   const width = rect.right - rect.left // width of the element
@@ -133,7 +136,9 @@ export default function FloatingAudio({
               onDragStart={() => setIsDragging(true)}
               onDragEnd={() => setIsDragging(false)}
             ></Progress>
-            <p>{new Date(timeRemaining * 1000).toISOString().substr(14, 5)}</p>
+            <p className="min-w-12">
+              {new Date(timeRemaining * 1000).toISOString().substr(14, 5)}
+            </p>
           </div>
         </div>
       ) : (
