@@ -1,19 +1,19 @@
-import isObject from "@/lib/isObject";
+import isObject from '@/lib/isObject'
 
 export function updateWithDeleted(
   messages: MessagesToRender,
-  newMessage: MessageAndAuthor
+  newMessage: MessageData
 ): MessagesToRender {
   return Array.isArray(messages.pages)
     ? ({
         pages: messages.pages.map(
-          (page: MessageAndAuthor[] | null) =>
-            page?.map((item: MessageAndAuthor) =>
+          (page: MessageData[] | null) =>
+            page?.map((item: MessageData) =>
               isObject(item) && item.id === newMessage.id
                 ? { ...newMessage, deleted: true }
                 : item
-            ) as unknown as MessageAndAuthor[]
+            ) as unknown as MessageData[]
         ),
       } as unknown as MessagesToRender)
-    : messages;
+    : messages
 }

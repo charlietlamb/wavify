@@ -2,11 +2,11 @@ import { createContext, useContext } from 'react'
 
 interface ChatFilesWrapContext {
   chat: Chat
-  searchData: (MessageAndAuthor | null)[]
+  searchData: (FileAndSender | null)[]
   filesRef: React.MutableRefObject<HTMLDivElement | null>
   statusFiles: 'pending' | 'error' | 'success'
   bottomRefFiles: React.MutableRefObject<HTMLDivElement | null>
-  renderFiles: (MessageAndAuthor | null)[]
+  renderFiles: (MessageData | null)[]
   hasNextPageFiles: boolean
   fetchNextPageFiles: () => void
   isFetchingNextPageFiles: boolean

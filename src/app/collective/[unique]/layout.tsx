@@ -19,15 +19,16 @@ import {
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
 import { CollectiveProvider } from '@/components/providers/CollectiveProvider'
+import CollectiveToggle from '@/components/collective/CollectiveToggle'
+import CollectiveSidebarWrap from '@/components/collective/CollectiveSidebarWrap'
 
-const CollectiveLayout = async ({
+export default async function CollectiveLayout({
   children,
   params,
 }: {
   children: React.ReactNode
   params: { unique: string }
-}) => {
-  //redirects to / when user joins
+}) {
   const supabase = createServerComponentClient({ cookies })
   const user = await getUser()
   if (!isObject(user)) return redirect('/account')
@@ -76,26 +77,16 @@ const CollectiveLayout = async ({
         className="flex h-auto flex-grow"
         direction="horizontal"
       >
+        <CollectiveSidebarWrap />
         <ResizablePanel
-          className="hidden h-full min-w-60 flex-col md:flex"
-          defaultSize={15}
+          className="relative flex w-full"
+          defaultSize={85}
+          minSize={60}
         >
-          <CollectiveSidebar
-            user={user}
-            collective={collective}
-            colUser={colUser}
-            colUsers={colUsers}
-            roles={roles}
-            spaces={spaces}
-          />
-        </ResizablePanel>
-        <ResizableHandle />
-        <ResizablePanel className="flex w-full " defaultSize={85} minSize={60}>
+          <CollectiveToggle />
           {children}
         </ResizablePanel>
       </ResizablePanelGroup>
     </CollectiveProvider>
   )
 }
-
-export default CollectiveLayout

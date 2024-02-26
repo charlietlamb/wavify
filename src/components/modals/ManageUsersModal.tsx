@@ -1,6 +1,6 @@
 'use client'
 import { Check, Gavel, Loader2, MoreVertical } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import {
@@ -26,8 +26,8 @@ import { useModal } from '../../../hooks/use-modal-store'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { AvatarDemo } from '../me/Avatar'
 import { updateColUserRole } from './functions/updateColUserRole'
-import { useColUserUpdateEffect } from '../collective/hooks/useColUserUpdateEffect'
 import { handleKick } from './functions/handleKick'
+import { useCollective } from '@/state/collective/useCollective'
 
 export const MembersModal = () => {
   const router = useRouter()
@@ -35,32 +35,11 @@ export const MembersModal = () => {
   const [loadingId, setLoadingId] = useState('')
   const supabase = createClientComponentClient()
   const isModalOpen = isOpen && type === 'members'
-  const {
-    user,
-    collective: initCollective,
-    colUsers: initColUsers,
-    roles,
-  } = data as {
+  const { user } = data as {
     user: User
-    collective: Collective
-    colUsers: ColUserAndData[]
-    roles: Role[]
   }
-  const [colUsers, setColUsers] = useState<ColUserAndData[]>([])
-  const [collective, setCollective] = useState<Collective>(initCollective)
+  const { collective, colUsers, roles } = useCollective()
 
-  useEffect(() => {
-    setColUsers(initColUsers)
-    setCollective(initCollective)
-  }, [isOpen])
-
-  useColUserUpdateEffect(
-    supabase,
-    colUsers,
-    setColUsers,
-    collective,
-    '_memberModal'
-  )
   if (!collective) return
   const onKick = async (colUser: ColUserAndData) => {
     setLoadingId(colUser.id)

@@ -1,48 +1,25 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import ButtonLoader from "../me/ButtonLoader";
-import { createRole } from "./roles/createRole";
-import { saveRoles } from "./roles/saveRoles";
+import { useState } from 'react'
+import ButtonLoader from '../me/ButtonLoader'
+import { createRole } from './roles/createRole'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useCollective } from '@/state/collective/useCollective'
 
-export default function RoleButtons({
-  roles,
-  setRoles,
-  collective,
-  supabase,
-  colUser,
-}: {
-  roles: Role[];
-  setRoles: Dispatch<SetStateAction<Role[]>>;
-  collective: Collective;
-  supabase: Supabase;
-  colUser: ColUserAndData;
-}) {
-  const [createLoading, setCreateLoading] = useState(false);
-  const [saveLoading, setSaveLoading] = useState(false);
-  /*
-        <ButtonLoader
-          onClick={() => saveRoles(roles, supabase, setSaveLoading)}
-          isLoading={saveLoading}
-          text="Save Roles"
-        ></ButtonLoader>
-         */
+export default function RoleButtons() {
+  const supabase = createClientComponentClient()
+  const { collective, roles } = useCollective()
+  const [createLoading, setCreateLoading] = useState(false)
+
   return (
-    <div className="flex justify-end w-full mt-4">
+    <div className="mt-4 flex w-full justify-end">
       <div className="flex space-x-4">
         <ButtonLoader
           onClick={() =>
-            createRole(
-              supabase,
-              roles,
-              setRoles,
-              setCreateLoading,
-              collective,
-              colUser
-            )
+            createRole(supabase, setCreateLoading, collective, roles)
           }
           isLoading={createLoading}
           text="Create Role"
         ></ButtonLoader>
       </div>
     </div>
-  );
+  )
 }

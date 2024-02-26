@@ -27,11 +27,10 @@ import { useUser } from '@/state/user/useUser'
 import { useItemContext } from './context'
 import { useCollective } from '@/state/collective/useCollective'
 interface ChatItemProps {
-  message: MessageAndAuthor | null
+  message: MessageData | null
 }
 
 export function ChatItem({ message }: ChatItemProps) {
-  if (!message) return null
   const user = useUser()
   const { type } = useItemContext()
   let collectiveState = null
@@ -41,6 +40,8 @@ export function ChatItem({ message }: ChatItemProps) {
   const collective = collectiveState ? collectiveState.collective : null
   const colUser = collectiveState ? collectiveState.colUser : null
   const { onOpen } = useModal()
+  if (!message) return null
+  const files = message.fileData
   const router = useRouter()
   const onMemberClick = () => {
     if (user.id === message.author) {
@@ -104,37 +105,25 @@ export function ChatItem({ message }: ChatItemProps) {
                 : ''}
             </span>
           </div>
-          {message.deleted && Array.isArray(message.files) ? (
+          {message.deleted && Array.isArray(files) ? (
             <p className="mt-1 text-xs italic text-zinc-500 dark:text-zinc-400">
               files deleted
             </p>
-          ) : Array.isArray(message.files) ? (
+          ) : message.files ? (
             <div className="flex w-full items-end justify-between">
               <div className="flex w-full flex-col gap-y-1">
-                {message.files.map((file: Json) => {
-                  if (file && isObject(file)) {
-                    const fileExtension = getFileExtension(
-                      typeof file.fileUrl === 'string' ? file.fileUrl : ''
-                    )
+                {Array.isArray(files) &&
+                  files.map((file: FileData) => {
+                    const fileExtension = getFileExtension(file.name)
                     const isImage = imageExtensions.includes(fileExtension)
                     const isPlayable =
                       playableExtensions.includes(fileExtension)
                     return (
-                      <div
-                        key={typeof file.fileId === 'string' ? file.fileId : ''}
-                        className="w-full"
-                      >
+                      <div key={file.id} className="w-full">
                         {isImage ? (
                           <button
                             onClick={() => {
-                              download(
-                                typeof file.fileUrl === 'string'
-                                  ? file.fileUrl
-                                  : '',
-                                typeof file.fileName === 'string'
-                                  ? file.fileName
-                                  : ''
-                              )
+                              download(file.url, file.name)
                             }}
                             className="relative mt-2 flex aspect-square h-48 w-48 items-center justify-start overflow-hidden rounded-md border bg-secondary"
                           >
@@ -145,11 +134,7 @@ export function ChatItem({ message }: ChatItemProps) {
                                   ? 'https://github.com/shadcn.png'
                                   : ''
                               }
-                              alt={
-                                typeof file.fileName === 'string'
-                                  ? file.fileName
-                                  : ''
-                              }
+                              alt={file.name}
                               fill
                               className="object-cover"
                             />
@@ -166,21 +151,17 @@ export function ChatItem({ message }: ChatItemProps) {
                               isSender && 'w-full'
                             )}
                           >
-                            {isObject(file) &&
-                            typeof file.fileExt === 'string' &&
-                            imageExtensions.includes(file.fileExt) ? (
+                            {imageExtensions.includes(fileExtension) ? (
                               <FileImage
                                 className={fileClasses}
                                 strokeWidth={1}
                               />
-                            ) : typeof file.fileExt === 'string' &&
-                              musicExtensions.includes(file.fileExt) ? (
+                            ) : musicExtensions.includes(fileExtension) ? (
                               <FileMusic
                                 className={fileClasses}
                                 strokeWidth={1}
                               />
-                            ) : typeof file.fileExt === 'string' &&
-                              zipExtensions.includes(file.fileExt) ? (
+                            ) : zipExtensions.includes(fileExtension) ? (
                               <FileArchive
                                 className={fileClasses}
                                 strokeWidth={1}
@@ -193,30 +174,20 @@ export function ChatItem({ message }: ChatItemProps) {
                             )}
                             <button
                               onClick={() => {
-                                download(
-                                  typeof file.fileUrl === 'string'
-                                    ? file.fileUrl
-                                    : '',
-                                  typeof file.fileName === 'string'
-                                    ? file.fileName
-                                    : ''
-                                )
+                                download(file.url, file.name)
                               }}
                               className={cn(
                                 'ml-2 text-left text-sm text-primary hover:underline dark:text-primary'
                               )}
                             >
-                              {typeof file.fileName === 'string'
-                                ? file.fileName
-                                : 'Unnamed File'}
+                              {file.name}
                             </button>
                           </div>
                         )}
                       </div>
                     )
-                  }
-                  return null
-                })}
+                    return null
+                  })}
               </div>
               {canDeleteAny && (
                 <Trash

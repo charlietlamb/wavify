@@ -3,7 +3,7 @@ import { createContext, useContext } from 'react'
 interface ChatItemWrapContext {
   chatRef: React.MutableRefObject<HTMLDivElement | null>
   bottomRef: React.MutableRefObject<HTMLDivElement | null>
-  render: (MessageAndAuthor | null)[]
+  render: (MessageData | null)[]
   chat: Chat
   type: 'chat' | 'space'
   fileTab?: boolean

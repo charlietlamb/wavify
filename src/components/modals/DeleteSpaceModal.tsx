@@ -14,22 +14,21 @@ import { Button } from '@/components/ui/button'
 import { useModal } from '../../../hooks/use-modal-store'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import ButtonLoader from '../me/ButtonLoader'
+import { useCollective } from '@/state/collective/useCollective'
+import { deleteSpace } from '../collective/space/functions/deleteSpace'
 
 export const DeleteSpaceModal = () => {
   const { isOpen, onClose, type, data } = useModal()
   const supabase = createClientComponentClient<Database>()
   const isModalOpen = isOpen && type === 'deleteSpace'
-  const { collective, space, spaces } = data
+  const { space } = data
+  const { collective, spaces } = useCollective()
 
   const [isLoading, setIsLoading] = useState(false)
   if (!spaces || !space || !collective) return null
   const onClick = async () => {
     setIsLoading(true)
-    const { error: spaceError } = await supabase
-      .from('spaces')
-      .delete()
-      .eq('id', space.id)
-    if (spaceError) throw spaceError
+    deleteSpace(spaces, space, supabase)
     setIsLoading(false)
     onClose()
   }

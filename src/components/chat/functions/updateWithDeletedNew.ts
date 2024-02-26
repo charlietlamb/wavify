@@ -1,13 +1,13 @@
 export function updateWithDeletedNew(
-  messages: (MessageAndAuthor | null)[],
-  newMessage: MessageAndAuthor
+  messages: (MessageData | null)[],
+  newMessage: MessageData
 ) {
   return messages
     .map((message) => {
       if (message && message.id === newMessage.id) {
-        return newMessage;
+        return newMessage
       }
-      return message;
+      return message
     })
-    .filter(Boolean) as unknown as MessageAndAuthor[];
+    .filter(Boolean) as unknown as MessageData[]
 }

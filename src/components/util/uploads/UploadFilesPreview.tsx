@@ -2,25 +2,25 @@ import {
   imageExtensions,
   musicExtensions,
   zipExtensions,
-} from "@/components/chat/data/extensions";
-import { AnimatedCheckIcon } from "@/components/icons/check";
-import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import isObject from "@/lib/isObject";
+} from '@/components/chat/data/extensions'
+import { AnimatedCheckIcon } from '@/components/icons/check'
+import { Card } from '@/components/ui/card'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import isObject from '@/lib/isObject'
 import {
   FileArchive,
   FileIcon,
   FileImage,
   FileMusic,
   Trash2,
-} from "lucide-react";
-import { Dispatch, SetStateAction } from "react";
-import { ActionTooltip } from "../ActionTooltip";
+} from 'lucide-react'
+import { Dispatch, SetStateAction } from 'react'
+import { ActionTooltip } from '../ActionTooltip'
 
 type DisplayFile = {
-  file: File;
-  id: string;
-};
+  file: File
+  id: string
+}
 
 export default function UploadFilesPreview({
   displayFiles,
@@ -28,78 +28,78 @@ export default function UploadFilesPreview({
   scrollRef,
   color,
 }: {
-  displayFiles: DisplayFile[];
-  setDisplayFiles: Dispatch<SetStateAction<DisplayFile[]>>;
-  scrollRef: React.RefObject<HTMLDivElement>;
-  color?: string;
+  displayFiles: DisplayFile[]
+  setDisplayFiles: Dispatch<SetStateAction<DisplayFile[]>>
+  scrollRef: React.RefObject<HTMLDivElement>
+  color?: string
 }) {
-  const fileClasses = "flex-shrink-0 w-12 h-12 text-background_content";
+  const fileClasses = 'flex-shrink-0 w-12 h-12 text-background_content'
   const onAction = (e: React.MouseEvent, id: string) => {
-    e.stopPropagation();
+    e.stopPropagation()
     setDisplayFiles(
       Array.isArray(displayFiles)
         ? displayFiles.filter((file) => file.id !== id)
         : []
-    );
-  };
+    )
+  }
   return (
     <ScrollArea
-      className="mt-2 max-h-[40vh] overflow-y-auto max-w-full"
+      className="mt-2 max-h-[40vh] max-w-full overflow-y-auto"
       ref={scrollRef}
     >
       {displayFiles.length > 0 &&
         displayFiles.map((file, index) => {
-          const fileExt = file.file.name.split(".").pop();
+          const fileExt = file.file.name.split('.').pop()
           return (
             <Card
               key={index}
-              className="flex items-center mt-2 transition-all bg-transparent border-2 rounded-lg hover:rounded-md hover:bg-white/5"
-              style={{ borderColor: color ? color : "#FFF" }}
+              className="mt-2 flex items-center rounded-lg border-2 bg-transparent transition-all hover:rounded-md hover:bg-white/5"
+              style={{ borderColor: color ? color : '#FFF' }}
             >
-              <div className="flex flex-row items-center justify-between w-full">
-                <div className="flex items-center p-4 space-x-3">
+              <div className="flex w-full flex-row items-center justify-between">
+                <div className="flex items-center space-x-3 p-4">
                   {isObject(file) &&
-                  typeof fileExt === "string" &&
+                  typeof fileExt === 'string' &&
                   imageExtensions.includes(fileExt) ? (
                     <FileImage
                       className={fileClasses}
                       strokeWidth={1}
-                      style={{ color: color ? color : "#FFFFFF" }}
+                      style={{ color: color ? color : '#FFFFFF' }}
                     />
-                  ) : typeof fileExt === "string" &&
+                  ) : typeof fileExt === 'string' &&
                     musicExtensions.includes(fileExt) ? (
                     <FileMusic
                       className={fileClasses}
                       strokeWidth={1}
-                      style={{ color: color ? color : "#FFFFFF" }}
+                      style={{ color: color ? color : '#FFFFFF' }}
                     />
-                  ) : typeof fileExt === "string" &&
+                  ) : typeof fileExt === 'string' &&
                     zipExtensions.includes(fileExt) ? (
                     <FileArchive
                       className={fileClasses}
                       strokeWidth={1}
-                      style={{ color: color ? color : "#FFFFFF" }}
+                      style={{ color: color ? color : '#FFFFFF' }}
                     />
                   ) : (
                     <FileIcon
                       className={fileClasses}
                       strokeWidth={1}
-                      style={{ color: color ? color : "#FFFFFF" }}
+                      style={{ color: color ? color : '#FFFFFF' }}
                     />
-                  )}{" "}
+                  )}{' '}
                   <div
                     className="font-medium"
-                    style={{ color: color ? color : "#FFFFFF" }}
+                    style={{ color: color ? color : '#FFFFFF' }}
                   >
-                    <div className="text-lg overflow-hidden overflow-ellipsis whitespace-nowrap max-w-[15vw]">
+                    <div className="max-w-[15vw] overflow-hidden overflow-ellipsis whitespace-nowrap text-lg">
                       {file.file.name}
-                    </div>{" "}
+                    </div>{' '}
                     <div className="text-zinc-500">
                       {(file.file.size / 1024 / 1024).toFixed(2)} MB
-                    </div>{" "}
+                    </div>{' '}
                   </div>
                 </div>
-                <div className="flex flex-row pr-4 gap-x-2">
+                <div className="flex flex-row gap-x-2 pr-4">
                   <AnimatedCheckIcon
                     width={32}
                     height={32}
@@ -108,15 +108,15 @@ export default function UploadFilesPreview({
                   <ActionTooltip label="Delete">
                     <Trash2
                       onClick={(e) => onAction(e, file.id)}
-                      className="flex-shrink-0 w-8 h-8 cursor-pointer"
-                      color={color ? color : "#FFFFFF"}
+                      className="h-8 w-8 flex-shrink-0 cursor-pointer"
+                      color={color ? color : '#FFFFFF'}
                     />
                   </ActionTooltip>
                 </div>
               </div>
             </Card>
-          );
+          )
         })}
     </ScrollArea>
-  );
+  )
 }

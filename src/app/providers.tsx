@@ -16,9 +16,20 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
 import { useUser } from '@/state/user/useUser'
 
 export function StyleProvider({ children }: { children: React.ReactNode }) {
-  const user = useUser()
+  let user: User | null = null
+  try {
+    user = useUser()
+  } catch {
+    user = null
+  } finally {
+  }
   React.useEffect(() => {
-    document.documentElement.style.setProperty('--primary', user.color)
-  }, [user.color])
+    if (user) {
+      document.documentElement.style.setProperty('--primary', user.color)
+    } else {
+      document.documentElement.style.setProperty('--primary', '48 96% 53%')
+    }
+  }, [user])
+
   return <>{children}</>
 }

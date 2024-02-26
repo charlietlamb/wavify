@@ -11,7 +11,6 @@ import { useFileUpdateEffect } from './hooks/useFileUpdateEffect'
 import { useMessageUpdateEffect } from './hooks/useMessageUpdateEffect'
 import { useMessageDeletedEffect } from './hooks/useMessageDeletedEffect'
 import { useMessageSentEffect } from './hooks/useMessageSentEffect'
-import { isMessagesToRender } from './utilityFunctions'
 import useStatusMessageEffect from './hooks/useStatusMessageEffect'
 import { getFiles } from './functions/getFiles'
 import { getMessages } from './functions/getMessages'
@@ -25,15 +24,12 @@ import { ChatState } from '@/state/chat/chatSlice'
 import { RootState } from '@/state/store'
 import { useSelector } from 'react-redux'
 import { cn } from '@/lib/utils'
-import { useUser } from '@/state/user/useUser'
-import { useCollective } from '@/state/collective/useCollective'
-import { useSpace } from '@/state/space/useSpace'
 interface ChatMessagesProps {
   name: string
   chat: Chat | null
   type: 'space' | 'chat'
   fileTab?: boolean
-  searchData?: (MessageAndAuthor | null)[]
+  searchData?: (FileAndSender | null)[]
 }
 
 //need to fix scroll on here
@@ -60,32 +56,28 @@ export function ChatMessages({
   const [messagesToRender, setMessagesToRender] = useState<MessagesToRender>()
   const [messagesToRenderFiles, setMessagesToRenderFiles] =
     useState<MessagesToRender>()
-  const [render, setRender] = useState<(MessageAndAuthor | null)[]>([])
-  const [renderFiles, setRenderFiles] = useState<(MessageAndAuthor | null)[]>(
-    []
-  )
-  const renderStore = useRef<(MessageAndAuthor | null)[]>([])
-  const renderFilesStore = useRef<(MessageAndAuthor | null)[]>([])
-  const [init, setInit] = useState(false)
-  const [initFiles, setInitFiles] = useState(false)
+  const [render, setRender] = useState<(MessageData | null)[]>([])
+  const [renderFiles, setRenderFiles] = useState<(MessageData | null)[]>([])
+  const renderStore = useRef<(MessageData | null)[]>([])
+  const renderFilesStore = useRef<(MessageData | null)[]>([])
   const [pages, setPages] = useState(0)
   const [pagesFiles, setPagesFiles] = useState(0)
   const chatScrollStore = useRef(0)
   const filesScrollStore = useRef(0)
   const [recentType, setRecentType] = useState<'new' | 'old'>('old')
   const [recentTypeFiles, setRecentTypeFiles] = useState<'new' | 'old'>('old')
-  const [newMessagesToRender, setNewMessagesToRender] = useState<
-    MessageAndAuthor[]
-  >([])
+  const [newMessagesToRender, setNewMessagesToRender] = useState<MessageData[]>(
+    []
+  )
   const [newMessagesToRenderFiles, setNewMessagesToRenderFiles] = useState<
-    MessageAndAuthor[]
+    MessageData[]
   >([])
   const [lastFetched, setLastFetched] = useState('')
   const [lastFetchedFiles, setLastFetchedFiles] = useState('')
   const messagesToRenderStore = useRef<MessagesToRender>()
   const messagesToRenderFilesStore = useRef<MessagesToRender>()
-  const newMessagesToRenderStore = useRef<(MessageAndAuthor | null)[]>()
-  const newMessagesToRenderFilesStore = useRef<(MessageAndAuthor | null)[]>()
+  const newMessagesToRenderStore = useRef<(MessageData | null)[]>([])
+  const newMessagesToRenderFilesStore = useRef<(MessageData | null)[]>([])
   const chatState: ChatState = useSelector((state: RootState) => state.chat)
   const {
     data: messages,
@@ -98,7 +90,7 @@ export function ChatMessages({
     queryFn: ({ pageParam = 1 }) =>
       getMessages({ pageParam, setLastFetched, setRecentType, chat }),
     initialPageParam: 1,
-    getNextPageParam: (lastPage: MessageAndAuthor[], allPages) => {
+    getNextPageParam: (lastPage: MessageData[], allPages) => {
       if (lastPage?.length === 0) return undefined
       return allPages.length + 1
     },
@@ -122,7 +114,7 @@ export function ChatMessages({
     queryFn: ({ pageParam = 1 }) =>
       getFiles({ pageParam, setLastFetchedFiles, setRecentTypeFiles, chat }),
     initialPageParam: 1,
-    getNextPageParam: (lastPage: MessageAndAuthor[], allPages) => {
+    getNextPageParam: (lastPage: MessageData[], allPages) => {
       if (lastPage?.length === 0) return undefined
       return allPages.length + 1
     },
@@ -137,26 +129,18 @@ export function ChatMessages({
 
   useStatusMessageEffect(
     status,
-    init,
-    setInit,
-    bottomRef,
-    isMessagesToRender(messages) ? messages : { pages: [] },
+    messages ? messages : { pages: [] },
     setMessagesToRender,
     lastFetched,
-    messagesToRenderStore,
-    chatRef
+    messagesToRenderStore
   )
 
   useStatusMessageEffect(
     statusFiles,
-    initFiles,
-    setInitFiles,
-    bottomRefFiles,
-    isMessagesToRender(files) ? files : { pages: [] },
+    files ? files : { pages: [] },
     setMessagesToRenderFiles,
     lastFetchedFiles,
-    messagesToRenderFilesStore,
-    filesRef
+    messagesToRenderFilesStore
   )
 
   useMessageSentEffect(

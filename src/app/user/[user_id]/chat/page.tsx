@@ -28,7 +28,7 @@ const ChatPage = async ({ params, searchParams }: MemberIdPageProps) => {
   if (!otherUser) return redirect(`/`)
   const chat = await getChat(user, otherUser)
   if (!chat) return redirect(`/`)
-  const searchFilesData = await getSearchFilesData(supabase)
+  const searchFilesData = await getSearchFilesData(supabase, chat)
 
   return (
     <div className="flex h-[80vh] w-full flex-col bg-background">

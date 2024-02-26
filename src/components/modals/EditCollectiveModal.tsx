@@ -11,14 +11,13 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { useRouter } from 'next/navigation'
 import UploadDropZone from '../util/uploads/UploadDropZone'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { AnimatedCheckIcon } from '../icons/check'
 import { AnimatedXIcon } from '../icons/x'
 import { uploadCollectiveImageToS3 } from './modal-actions/createCollectiveActions'
 import { useModal } from '../../../hooks/use-modal-store'
-import { useUser } from '@/state/user/useUser'
+import { useCollective } from '@/state/collective/useCollective'
 
 const iconProps = {
   height: '40',
@@ -27,7 +26,6 @@ const iconProps = {
 }
 
 export const EditCollectiveModal = () => {
-  const user = useUser()
   const [image, setImage] = useState<File[] | File | undefined>(undefined)
   const [loading, setLoading] = useState(false)
   const [username, setUsername] = useState('')
@@ -35,10 +33,10 @@ export const EditCollectiveModal = () => {
   const [errorMessage, setErrorMessage] = useState('')
   const [imgSrc, setImgSrc] = useState('')
   const supabase = createClientComponentClient<Database>()
-  const { isOpen, onClose, type, data } = useModal()
+  const { isOpen, onClose, type } = useModal()
 
   const isModalOpen = isOpen && type === 'editCollective'
-  const { collective } = data
+  const { collective } = useCollective()
 
   //set collective values
   useEffect(() => {

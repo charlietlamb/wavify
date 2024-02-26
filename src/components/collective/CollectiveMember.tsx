@@ -28,7 +28,7 @@ export const CollectiveMember = ({ colUserAndData }: CollectiveUserProps) => {
         'group mb-1 flex w-full items-center justify-between rounded-md px-2  py-2 transition hover:bg-zinc-700/10 dark:hover:bg-zinc-700/50',
 
         params?.userId === colUserAndData.users?.id &&
-          'bg-zinc-700/20 dark:bg-zinc-700'
+        'bg-zinc-700/20 dark:bg-zinc-700'
       )}
     >
       <div className=" flex w-full items-center gap-x-2  ">
@@ -40,7 +40,7 @@ export const CollectiveMember = ({ colUserAndData }: CollectiveUserProps) => {
           className={cn(
             'text-sm font-semibold text-zinc-500 transition group-hover:text-zinc-600 dark:text-zinc-400 dark:group-hover:text-zinc-300',
             params?.userId === colUserAndData.users?.id &&
-              'text-primary dark:text-zinc-200 dark:group-hover:text-white'
+            'text-primary dark:text-zinc-200 dark:group-hover:text-white'
           )}
           style={{ color: colUserAndData.roles?.color }}
         >
@@ -49,5 +49,6 @@ export const CollectiveMember = ({ colUserAndData }: CollectiveUserProps) => {
       </div>
       {colUserAndData.roles?.emoji}
     </button>
+
   )
 }

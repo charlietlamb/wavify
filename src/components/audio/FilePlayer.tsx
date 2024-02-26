@@ -44,10 +44,10 @@ export default function FilePlayer({ file, otherUser }: FilePlayerProps) {
   }, [isDragging])
 
   useEffect(() => {
-    if (audio.fileData && audio.fileData.fileId !== file.fileId) {
+    if (audio.fileData && audio.fileData.id !== file.id) {
       audioFile.pause()
       setIsPlaying(false)
-    } else if (audio.fileData && audio.fileData.fileId === file.fileId) {
+    } else if (audio.fileData && audio.fileData.id === file.id) {
       setIsPlaying(audio.isPlaying)
       if (
         (audio.progress - progress > 5 || audio.progress - progress < -5) &&
@@ -68,7 +68,7 @@ export default function FilePlayer({ file, otherUser }: FilePlayerProps) {
   useEffect(() => {
     audioFile.addEventListener('loadedmetadata', () => {
       setTimeRemaining(audioFile.duration)
-      if (audio.fileData && audio.fileData.fileId === file.fileId) {
+      if (audio.fileData && audio.fileData.id === file.id) {
         dispatch(setTimeRemainingAction(audioFile.duration))
       }
     })
@@ -78,7 +78,7 @@ export default function FilePlayer({ file, otherUser }: FilePlayerProps) {
     audioFile.addEventListener('timeupdate', () => {
       setProgress((audioFile.currentTime / audioFile.duration) * 100)
       setTimeRemaining(audioFile.duration - audioFile.currentTime)
-      if (audio.fileData && audio.fileData.fileId === file.fileId) {
+      if (audio.fileData && audio.fileData.id === file.id) {
         dispatch(
           setProgressAction((audioFile.currentTime / audioFile.duration) * 100)
         )
@@ -100,16 +100,16 @@ export default function FilePlayer({ file, otherUser }: FilePlayerProps) {
     <div className="flex flex-col gap-y-2 pr-4">
       <div>
         <div className="flex justify-between">
-          <h3 className="text-lg font-bold">{file.fileName}</h3>
+          <h3 className="text-lg font-bold">{file.name}</h3>
           <button
             onClick={() => {
-              download(file.fileUrl, file.fileName)
+              download(file.url, file.name)
             }}
           >
             <ArrowDownToLine></ArrowDownToLine>
           </button>
         </div>
-        <p className="text-sm">{file.fileSize.toFixed(2) + ' MB'}</p>
+        <p className="text-sm">{file.size.toFixed(2) + ' MB'}</p>
       </div>
       <div className="flex w-full items-center gap-x-2">
         <button

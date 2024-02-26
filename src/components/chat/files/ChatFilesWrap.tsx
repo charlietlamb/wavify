@@ -1,24 +1,24 @@
-import { useContext } from "react";
-import ChatSearch from "../ChatSearch";
-import ChatFilesContainer from "./ChatFilesContainer";
-import { FilesContext, useFilesContext } from "./context";
+import ChatSearch from '../ChatSearch'
+import ChatFilesContainer from './ChatFilesContainer'
+import { useFilesContext } from './context'
 
 export default function ChatFilesWrap() {
-  const context = useFilesContext();
-  const { searchData, filesRef } = context;
+  const context = useFilesContext()
+  const { chat, searchData, filesRef } = context
   return (
-    <div className="flex flex-grow flex-col w-full items-center ">
+    <div className="flex w-full flex-grow flex-col items-center ">
       <ChatSearch
-        className="w-[90%] my-2"
+        className="my-2 w-[90%]"
+        chat={chat}
         searchData={searchData ? searchData : [null]}
       ></ChatSearch>
 
       <div
-        className="w-full h-auto px-4 overflow-y-auto rounded-md flex-grow"
+        className="h-auto w-full flex-grow overflow-y-auto rounded-md px-4"
         ref={filesRef}
       >
         <ChatFilesContainer />
       </div>
     </div>
-  );
+  )
 }

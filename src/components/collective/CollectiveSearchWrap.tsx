@@ -3,34 +3,45 @@
 import { useEffect, useState } from 'react'
 import { getData } from './(sidebar)/(functions)/getData'
 import CollectiveSearch from './CollectiveSearch'
-import { useColUserUpdateEffect } from './hooks/useColUserUpdateEffect'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useCollective } from '@/state/collective/useCollective'
+import { useUser } from '@/state/user/useUser'
 
 export default function CollectiveSearchWrap() {
-  const { spaces, colUsers: colUsersInit, collective } = useCollective()
-  const supabase = createClientComponentClient()
-  const [colUsers, setColUsers] = useState<ColUserAndData[]>(colUsersInit)
-  const newData = spaces
-    ? (getData(spaces, colUsers) as unknown as SearchData)
-    : ([] as unknown as SearchData)
-  const [data, setData] = useState<SearchData>(newData)
-  useColUserUpdateEffect(
-    supabase,
-    colUsers,
-    setColUsers,
-    collective,
-    '_searchMap'
+  const user = useUser()
+  const { spaces, colUsers, colUser, collective } = useCollective()
+  const [filteredSpaces, setFilteredSpaces] = useState<Space[] | null>(
+    collective.founder === user.id
+      ? spaces
+      : spaces.filter(
+          (space: Space) =>
+            space.allowed.includes(colUser.roles?.id) || space.open
+        )
   )
   useEffect(() => {
-    const newData = spaces
-      ? (getData(spaces, colUsers) as unknown as SearchData)
+    setFilteredSpaces(
+      collective.founder === user.id
+        ? spaces
+        : spaces.filter(
+            (space: Space) =>
+              space.allowed.includes(colUser.roles?.id) || space.open
+          )
+    )
+  }, [spaces])
+  const newData = filteredSpaces
+    ? (getData(filteredSpaces, colUsers) as unknown as SearchData)
+    : ([] as unknown as SearchData)
+  const [data, setData] = useState<SearchData>(newData)
+  useEffect(() => {
+    const newData = filteredSpaces
+      ? (getData(filteredSpaces, colUsers) as unknown as SearchData)
       : ([] as unknown as SearchData)
     setData(newData)
   }, [colUsers])
   return (
     <div className="mt-2">
-      <CollectiveSearch data={spaces ? data : ([] as unknown as SearchData)} />
+      <CollectiveSearch
+        data={filteredSpaces ? data : ([] as unknown as SearchData)}
+      />
     </div>
   )
 }

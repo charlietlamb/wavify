@@ -26,7 +26,7 @@ import { useCollective } from '@/state/collective/useCollective'
 
 export const CollectiveHeader = () => {
   const user = useUser()
-  const { collective, colUser, colUsers, roles, spaces } = useCollective()
+  const { collective, colUser } = useCollective()
   const supabase = createClientComponentClient()
   const { onOpen } = useModal()
   const router = useRouter()
@@ -46,7 +46,7 @@ export const CollectiveHeader = () => {
       <DropdownMenuContent className="w-56 space-y-[2px] text-xs font-medium text-black dark:text-neutral-400">
         {(isFounder || colUser.roles.canInvite) && (
           <DropdownMenuItem
-            onClick={() => onOpen('invite', { collective })}
+            onClick={() => onOpen('invite')}
             className="px-3 py-2 text-sm text-primary"
           >
             Invite People
@@ -55,7 +55,7 @@ export const CollectiveHeader = () => {
         )}
         {(isFounder || colUser.roles.canSettings) && (
           <DropdownMenuItem
-            onClick={() => onOpen('editCollective', { collective })}
+            onClick={() => onOpen('editCollective')}
             className="cursor-pointer px-3 py-2 text-sm"
           >
             Collective Settings
@@ -73,9 +73,7 @@ export const CollectiveHeader = () => {
         )}
         {(isFounder || colUser.roles.canMembers) && (
           <DropdownMenuItem
-            onClick={() =>
-              onOpen('members', { user, collective, colUsers, roles })
-            }
+            onClick={() => onOpen('members')}
             className="cursor-pointer px-3 py-2 text-sm"
           >
             Manage Members
@@ -84,7 +82,7 @@ export const CollectiveHeader = () => {
         )}
         {(isFounder || colUser.roles.canCreate) && (
           <DropdownMenuItem
-            onClick={() => onOpen('createSpace', { collective, spaces, roles })}
+            onClick={() => onOpen('createSpace')}
             className="cursor-pointer px-3 py-2 text-sm"
           >
             Create Space
@@ -94,7 +92,7 @@ export const CollectiveHeader = () => {
         <DropdownMenuSeparator />
         {isFounder && (
           <DropdownMenuItem
-            onClick={() => onOpen('deleteCollective', { collective })}
+            onClick={() => onOpen('deleteCollective')}
             className="cursor-pointer px-3 py-2 text-sm text-rose-500"
           >
             Delete Collective
@@ -103,7 +101,7 @@ export const CollectiveHeader = () => {
         )}
         {!isFounder && (
           <DropdownMenuItem
-            onClick={() => onOpen('leaveCollective', { collective, user })}
+            onClick={() => onOpen('leaveCollective')}
             className="cursor-pointer px-3 py-2 text-sm text-rose-500"
           >
             Leave Collective

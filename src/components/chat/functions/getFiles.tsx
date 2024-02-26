@@ -1,4 +1,5 @@
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { getMessageFiles } from './getMessageFiles'
 
 export const getFiles = async ({
   pageParam,
@@ -26,7 +27,7 @@ export const getFiles = async ({
         `
       )
       .eq('chat', chat.id)
-      .not('files', 'is', null)
+      .not('files', 'is', false)
       .order('createdAt', { ascending: false })
       .range(startIndex, endIndex)
     // Check if the request was successful
@@ -37,10 +38,16 @@ export const getFiles = async ({
     // Return the data from the response
     if (response.data.length > 0) setLastFetchedFiles(response.data[0].id)
     setRecentTypeFiles('old')
-    return1 = response.data
+    return1 = await Promise.all(
+      response.data.map(async (maa: MessageAndAuthor) => {
+        if (!maa.files) return { ...maa, fileData: null }
+        const messageFiles = await getMessageFiles(supabase, maa)
+        return { ...maa, fileData: messageFiles }
+      })
+    )
   } catch {
     return1 = []
   } finally {
-    return return1 as unknown as MessageAndAuthor[]
+    return return1 as unknown as MessageData[]
   }
 }

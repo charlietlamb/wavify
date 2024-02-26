@@ -5,7 +5,7 @@ type ChatScrollProps = {
   bottomRef: HTMLDivElement | null;
   shouldLoadMore: boolean;
   loadMore: () => void;
-  newMessages: (MessageAndAuthor | null)[];
+  newMessages: (MessageData | null)[];
 };
 
 export const useChatScroll = ({

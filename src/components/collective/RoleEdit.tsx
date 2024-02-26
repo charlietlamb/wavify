@@ -11,17 +11,20 @@ import isObject from '@/lib/isObject'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { PopoverPicker } from '../me/PopoverPicker'
 import ButtonLoader from '../me/ButtonLoader'
-import { deleteRole } from './roles/deleteRole'
 import { useState } from 'react'
 import { useModal } from '../../../hooks/use-modal-store'
+import { useCollective } from '@/state/collective/useCollective'
 
 export default function RoleEdit() {
   const { resolvedTheme } = useTheme()
   const context = useRoleContext()
-  const { emoji, setEmoji, name, setName, color, setColor, loading } = context
+  const { emoji, setEmoji, name, setName, color, setColor, loading, role } =
+    context
+  const { roles } = useCollective()
   const supabase = createClientComponentClient()
   const { onOpen } = useModal()
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false)
+
   return (
     <AccordionContent>
       <div className="flex-col space-y-2 border-t-2 border-primary px-4">
@@ -54,15 +57,17 @@ export default function RoleEdit() {
         </div>
         <RoleOptions></RoleOptions>
         <div className="flex justify-end space-x-4">
-          <ButtonLoader
-            isLoading={deleteLoading}
-            text="Delete Role"
-            onClick={() => onOpen('deleteRole', { roleContext: context })}
-          ></ButtonLoader>
+          {role.authority !== 0 && (
+            <ButtonLoader
+              isLoading={deleteLoading}
+              text="Delete Role"
+              onClick={() => onOpen('deleteRole', { role })}
+            ></ButtonLoader>
+          )}
           <ButtonLoader
             isLoading={loading}
             text="Update Role"
-            onClick={() => updateRole(supabase, context)}
+            onClick={() => updateRole(supabase, context, roles)}
           ></ButtonLoader>
         </div>
       </div>

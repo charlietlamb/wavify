@@ -5,6 +5,8 @@ import chatReducer from './chat/chatSlice'
 import userReducer from './user/userSlice'
 import collectiveReducer from './collective/collectiveSlice'
 import spaceReducer from './space/spaceSlice'
+import utilReducer from './util/utilSlice'
+import sidebarReducer from './sidebar/sidebarSlice'
 
 export const makeStore = () => {
   return configureStore({
@@ -15,6 +17,8 @@ export const makeStore = () => {
       user: userReducer,
       collective: collectiveReducer,
       space: spaceReducer,
+      util: utilReducer,
+      sidebar: sidebarReducer,
     },
   })
 }

@@ -115,21 +115,18 @@ export type Database = {
           collective: string | null
           id: string
           role: string | null
-          roleId: string | null
           user: string
         }
         Insert: {
           collective?: string | null
           id: string
           role?: string | null
-          roleId?: string | null
           user: string
         }
         Update: {
           collective?: string | null
           id?: string
           role?: string | null
-          roleId?: string | null
           user?: string
         }
         Relationships: [
@@ -142,13 +139,126 @@ export type Database = {
           },
           {
             foreignKeyName: "colUsers_roleId_fkey"
-            columns: ["roleId"]
+            columns: ["role"]
             isOneToOne: false
             referencedRelation: "roles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "colUsers_user_fkey"
+            columns: ["user"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      files: {
+        Row: {
+          chat: string | null
+          createdAt: string
+          deleted: boolean
+          folder: string | null
+          id: string
+          message: string | null
+          name: string
+          size: number
+          space: string | null
+          system: boolean
+          url: string
+          user: string
+        }
+        Insert: {
+          chat?: string | null
+          createdAt?: string
+          deleted?: boolean
+          folder?: string | null
+          id?: string
+          message?: string | null
+          name?: string
+          size?: number
+          space?: string | null
+          system?: boolean
+          url?: string
+          user: string
+        }
+        Update: {
+          chat?: string | null
+          createdAt?: string
+          deleted?: boolean
+          folder?: string | null
+          id?: string
+          message?: string | null
+          name?: string
+          size?: number
+          space?: string | null
+          system?: boolean
+          url?: string
+          user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_files_chat_fkey"
+            columns: ["chat"]
+            isOneToOne: false
+            referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_files_folder_fkey"
+            columns: ["folder"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_files_message_fkey"
+            columns: ["message"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_files_space_fkey"
+            columns: ["space"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_files_user_fkey"
+            columns: ["user"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      folders: {
+        Row: {
+          createdAt: string
+          id: string
+          name: string
+          parent: string | null
+          user: string
+        }
+        Insert: {
+          createdAt?: string
+          id?: string
+          name: string
+          parent?: string | null
+          user: string
+        }
+        Update: {
+          createdAt?: string
+          id?: string
+          name?: string
+          parent?: string | null
+          user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_folders_user_fkey"
             columns: ["user"]
             isOneToOne: false
             referencedRelation: "users"
@@ -165,7 +275,7 @@ export type Database = {
           deleted: boolean | null
           edited: boolean | null
           editedAt: string | null
-          files: Json | null
+          files: boolean | null
           id: string
         }
         Insert: {
@@ -176,7 +286,7 @@ export type Database = {
           deleted?: boolean | null
           edited?: boolean | null
           editedAt?: string | null
-          files?: Json | null
+          files?: boolean | null
           id?: string
         }
         Update: {
@@ -187,7 +297,7 @@ export type Database = {
           deleted?: boolean | null
           edited?: boolean | null
           editedAt?: string | null
-          files?: Json | null
+          files?: boolean | null
           id?: string
         }
         Relationships: [
@@ -270,6 +380,7 @@ export type Database = {
           id: string
           name: string
           open: boolean
+          order: number
           slug: string
           type: string
         }
@@ -279,6 +390,7 @@ export type Database = {
           id: string
           name: string
           open?: boolean
+          order?: number
           slug: string
           type?: string
         }
@@ -288,6 +400,7 @@ export type Database = {
           id?: string
           name?: string
           open?: boolean
+          order?: number
           slug?: string
           type?: string
         }

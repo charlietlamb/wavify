@@ -66,7 +66,11 @@ export function CollectiveProvider({
   }
 
   function updateSpaces(spaces: Space[]) {
-    store.dispatch(setSpaces(spaces))
+    const sortedSpaces = spaces.sort((a, b) => a.order - b.order)
+    store.dispatch(setSpaces(sortedSpaces))
+  }
+  function updateRoles(roles: Role[]) {
+    store.dispatch(setRoles(roles))
   }
   useCollectiveDispatchEffect(supabase, collective, updateCollective)
   useSpacesDispatchEffect(supabase, spaces, updateSpaces, collective)
@@ -77,7 +81,7 @@ export function CollectiveProvider({
     updateColUsers,
     collective
   )
-  useRolesDispatchEffect(supabase, roles, setRoles, collective)
+  useRolesDispatchEffect(supabase, roles, updateRoles, collective)
 
   return <>{children}</>
 }

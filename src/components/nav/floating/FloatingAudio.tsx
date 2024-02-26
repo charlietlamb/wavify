@@ -30,14 +30,12 @@ export default function FloatingAudio({
   const [progress, setProgress] = useState(0)
   const [timeRemaining, setTimeRemaining] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
-  const [marqueeDirection, setMarqueeDirection] = useState<'left' | 'right'>(
-    'left'
-  )
   const [isMouseDown, setIsMouseDown] = useState(false)
   const progressRef = useRef<HTMLDivElement | null>(null)
   const dispatch = useDispatch()
   const router = useRouter()
   useEffect(() => {
+    //working on audio and rendering chat
     if (!audio.fileData) return
     setIsPlaying(audio.isPlaying)
     setTimeRemaining(audio.timeRemaining)
@@ -46,7 +44,7 @@ export default function FloatingAudio({
     if (
       (audioStore.current &&
         audioStore.current.fileData &&
-        audio.fileData.fileId !== audioStore.current.fileData.fileId) ||
+        audio.fileData.id !== audioStore.current.fileData.id) ||
       !audioStore.current.fileData
     ) {
       //set user and pp
@@ -73,9 +71,9 @@ export default function FloatingAudio({
               >
                 @{audio.user?.username}
               </Button>
-              <Marquee pauseOnHover direction={marqueeDirection}>
+              <Marquee pauseOnHover direction={'left'}>
                 <h3 className="text-m font-bold">
-                  {audio.fileData.fileName}
+                  {audio.fileData.name}
                   <span className="text-zinc-500">{' \u00A0|\u00A0 '}</span>
                 </h3>
               </Marquee>

@@ -15,6 +15,12 @@ export type ModalType =
   | 'deleteMessage'
   | 'deleteRole'
   | 'theme'
+  | 'upload'
+  | 'createFolder'
+  | 'deleteFolder'
+  | 'editFolder'
+  | 'deleteFile'
+  | 'editFile'
 
 interface ModalData {
   collective?: Collective
@@ -26,12 +32,18 @@ interface ModalData {
   apiUrl?: string
   query?: Record<string, any>
   chat?: Chat
-  message?: Message
+  message?: MessageData
   setFiles?: (files: Json) => void
   roles?: Role[]
   role?: Role
   roleContext?: RoleItemContext
   rolesAndAllowed?: RoleAndAllowed[]
+  messageFileType?: 'conversation' | 'space'
+  files?: FileAndSender[]
+  folders?: FolderAndSender[]
+  parent?: string | null
+  folder?: FolderAndSender
+  file?: FileAndSender
 }
 
 interface ModalStore {

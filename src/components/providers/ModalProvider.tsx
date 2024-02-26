@@ -15,11 +15,15 @@ import { MessageFileModal } from '@/components/modals/MessageFileModal'
 import { DeleteMessageModal } from '@/components/modals/DeleteMessageModal'
 import { DeleteRoleModal } from '../modals/DeleteRoleModal'
 import ThemeModal from '../modals/ThemeModal'
-import { useUser } from '@/state/user/useUser'
+import { UploadFileModal } from '../files/modals/UploadFileModal'
+import { CreateFolderModal } from '../files/modals/CreateFolderModal'
+import { DeleteFolderModal } from '../files/modals/DeleteFolderModal'
+import { EditFolderModal } from '../files/modals/EditFolderModal'
+import { DeleteFileModal } from '../files/modals/DeleteFileModal'
+import { EditFileModal } from '../files/modals/EditFileModal'
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false)
-  const user = useUser()
 
   useEffect(() => {
     setIsMounted(true)
@@ -44,6 +48,12 @@ export const ModalProvider = () => {
       <DeleteMessageModal />
       <DeleteRoleModal />
       <ThemeModal />
+      <UploadFileModal />
+      <CreateFolderModal />
+      <DeleteFolderModal />
+      <EditFolderModal />
+      <DeleteFileModal />
+      <EditFileModal />
     </>
   )
 }

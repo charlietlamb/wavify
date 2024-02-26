@@ -11,7 +11,14 @@ interface CollectiveReturn {
 
 export function useCollective(): CollectiveReturn {
   const collective = useSelector((state: RootState) => state.collective)
-  if (!collective.collective) throw new Error('No collective found')
+  if (!collective.collective)
+    return {
+      collective: {} as Collective,
+      colUser: {} as ColUserAndData,
+      colUsers: [] as ColUserAndData[],
+      roles: [] as Role[],
+      spaces: [] as Space[],
+    }
   if (!collective.colUser) throw new Error('No colUser found')
   if (!collective.colUsers) throw new Error('No colUsers found')
   if (!collective.spaces) throw new Error('No spaces found')

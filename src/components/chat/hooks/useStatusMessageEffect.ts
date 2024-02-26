@@ -1,20 +1,16 @@
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect } from 'react'
 
 export default function useStatusMessageEffect(
-  status: "success" | "pending" | "error",
-  init: boolean,
-  setInit: Dispatch<SetStateAction<boolean>>,
-  bottomRef: React.RefObject<HTMLDivElement>,
+  status: 'success' | 'pending' | 'error',
   messages: MessagesToRender,
   setMessagesToRender: Dispatch<SetStateAction<MessagesToRender | undefined>>,
   lastFetched: string,
-  messageToRenderStore: React.MutableRefObject<MessagesToRender | undefined>,
-  chatRef: React.RefObject<HTMLDivElement>
+  messageToRenderStore: React.MutableRefObject<MessagesToRender | undefined>
 ) {
   useEffect(() => {
-    if (status === "success") {
-      messageToRenderStore.current = messages;
-      setMessagesToRender(messages);
+    if (status === 'success') {
+      messageToRenderStore.current = messages
+      setMessagesToRender(messages)
     }
-  }, [lastFetched]);
+  }, [lastFetched, status])
 }

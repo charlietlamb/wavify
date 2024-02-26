@@ -14,7 +14,7 @@ import { MediaRoom } from '../media/MediaRoom'
 interface SpaceProps {
   space: Space
   chat: Chat | null
-  searchFilesData: (MessageAndAuthor | null)[] | undefined
+  searchFilesData: (FileAndSender | null)[] | undefined
 }
 
 export default function Space({ space, chat, searchFilesData }: SpaceProps) {

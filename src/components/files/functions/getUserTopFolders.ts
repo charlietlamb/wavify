@@ -1,0 +1,10 @@
+export async function getUserTopFolders(supabase: Supabase, user: User) {
+  const { data, error } = await supabase
+    .from('folders')
+    .select('*, user(username, profile_pic_url)')
+    .eq('user', user.id)
+    .is('parent', null)
+    .order('createdAt', { ascending: false })
+  if (error) throw error
+  return data
+}

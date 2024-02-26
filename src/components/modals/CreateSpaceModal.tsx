@@ -26,8 +26,7 @@ import { Label } from '../ui/label'
 import ButtonLoader from '../me/ButtonLoader'
 import { spaceTypes } from '../collective/space/data'
 import SpaceRoles from '../collective/space/SpaceRoles'
-import { updateRoles } from './functions/updateRoles'
-import { useSpacesUpdateEffect } from '../collective/hooks/useSpacesUpdateEffect'
+import { useCollective } from '@/state/collective/useCollective'
 const iconProps = {
   height: '40',
   width: '40',
@@ -38,25 +37,17 @@ export const CreateSpaceModal = () => {
   const [loading, setLoading] = useState(false)
   const [spaceName, setSpaceName] = useState('')
   const { isOpen, onClose, type, data } = useModal()
-  const {
-    spaceType: theSpaceType,
-    collective,
-    spaces: initSpaces,
-    roles,
-  } = data as {
+  const { spaceType: theSpaceType } = data as {
     spaceType: SpaceType
-    collective: Collective
-    spaces: Space[]
-    roles: Role[]
   }
+  const { collective, roles, spaces: spacesState } = useCollective()
   const [spaceType, setSpaceType] = useState<SpaceType>('text')
   const [username, setUsername] = useState('')
   const [usernameAvailable, setUsernameAvailable] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const supabase = createClientComponentClient<Database>()
   const router = useRouter()
-  const [spaces, setSpaces] = useState<Space[]>(initSpaces)
-  useSpacesUpdateEffect(supabase, spaces, setSpaces, collective)
+  const [spaces, setSpaces] = useState<Space[]>([])
   const [spaceOpen, setSpaceOpen] = useState(true)
   const [isClosing, setIsClosing] = useState(false)
   const [rolesAndAllowed, setRolesAndAllowed] = useState<RoleAndAllowed[]>(
@@ -73,10 +64,9 @@ export const CreateSpaceModal = () => {
           ?.map((role) => ({ ...role, allowed: false }))
           ?.sort((a, b) => a.authority - b.authority)
       )
-      setSpaces(initSpaces)
-      updateRoles(supabase, setRolesAndAllowed, collective)
+      setSpaces(spacesState)
     }
-  }, [isOpen])
+  }, [isOpen, spacesState, roles, collective])
 
   const isModalOpen = isOpen && type === 'createSpace'
   useEffect(() => {
@@ -98,6 +88,7 @@ export const CreateSpaceModal = () => {
           .filter((role) => role.allowed)
           .map((role) => role.id),
         open: spaceOpen,
+        order: spaces.filter((space) => space.type === spaceType).length,
       }
       const { error } = await supabase.from('spaces').insert({
         ...space,

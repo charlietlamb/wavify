@@ -4,16 +4,16 @@ export async function getSpace(
   supabase: Supabase
 ) {
   const { data, error } = await supabase
-    .from("spaces")
+    .from('spaces')
     .select()
-    .eq("slug", space_slug)
-    .eq("collective", collective.id);
-  if (error) throw error;
-  let returnData = [];
+    .eq('slug', space_slug)
+    .eq('collective', collective.id)
+  if (error) throw error
+  let returnData = []
   if (Array.isArray(data)) {
-    returnData = data[0];
+    returnData = data[0]
   } else {
-    returnData = data;
+    returnData = data
   }
-  return returnData as unknown as Space;
+  return returnData as unknown as Space
 }

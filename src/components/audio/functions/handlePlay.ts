@@ -7,9 +7,9 @@ import {
   setProgress,
   setTimeRemaining,
   setUser,
-} from "@/state/audio/audioSlice";
-import { Dispatch as DispatchRedux } from "@reduxjs/toolkit";
-import { Dispatch, SetStateAction } from "react";
+} from '@/state/audio/audioSlice'
+import { Dispatch as DispatchRedux } from '@reduxjs/toolkit'
+import { Dispatch, SetStateAction } from 'react'
 
 export function handlePlay(
   audio: AudioState,
@@ -24,19 +24,19 @@ export function handlePlay(
   timeRemaining: number,
   duration: number
 ) {
-  setIsPlayingSingle(!isPlaying);
-  dispatch(setIsPlaying(!isPlaying));
+  setIsPlayingSingle(!isPlaying)
+  dispatch(setIsPlaying(!isPlaying))
   if (!isPlaying) {
-    audioFile.play();
-    if (audio.fileData?.fileId !== fileData.fileId) {
-      dispatch(setUser(artist));
-      dispatch(setFileData(fileData));
-      dispatch(setProgress(progress));
-      dispatch(setImageSrc(imageSrc));
-      dispatch(setTimeRemaining(timeRemaining));
-      dispatch(setDuration(duration));
+    audioFile.play()
+    if (audio.fileData?.id !== fileData.id) {
+      dispatch(setUser(artist))
+      dispatch(setFileData(fileData))
+      dispatch(setProgress(progress))
+      dispatch(setImageSrc(imageSrc))
+      dispatch(setTimeRemaining(timeRemaining))
+      dispatch(setDuration(duration))
     }
   } else {
-    audioFile.pause();
+    audioFile.pause()
   }
 }
