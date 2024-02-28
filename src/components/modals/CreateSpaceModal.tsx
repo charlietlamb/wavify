@@ -78,6 +78,16 @@ export const CreateSpaceModal = () => {
   async function submitSpaceDetails() {
     setLoading(true)
     if (spaceName !== '' && spaceName !== 'roles' && usernameAvailable) {
+      const folder = spaceType === 'library' ? uuidv4() : null
+      if (folder) {
+        const folderData = {
+          id: folder,
+          name: spaceName,
+          parent: null,
+        }
+        const { error } = await supabase.from('folders').insert(folderData)
+        if (error) throw error
+      }
       const id = uuidv4()
       const space = {
         id,
@@ -89,12 +99,10 @@ export const CreateSpaceModal = () => {
           .map((role) => role.id),
         open: spaceOpen,
         order: spaces.filter((space) => space.type === spaceType).length,
-      }
-      const { error } = await supabase.from('spaces').insert({
-        ...space,
         collective: collective.id,
-        open: true,
-      })
+        folder,
+      }
+      const { error } = await supabase.from('spaces').insert(space)
       if (error) {
         setErrorMessage('There was an error creating space.')
         throw error

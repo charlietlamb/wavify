@@ -1,21 +1,41 @@
-import { Hash, Mic, Video } from "lucide-react";
+import { Archive, Hash, LibraryBig, Mic, Video } from 'lucide-react'
 
 export const iconMap = {
-  ["text"]: <Hash className="w-4 h-4 mr-2" />,
-  ["audio"]: <Mic className="w-4 h-4 mr-2" />,
-  ["video"]: <Video className="w-4 h-4 mr-2" />,
-};
+  ['text']: <Hash className="mr-2 h-4 w-4" />,
+  ['audio']: <Mic className="mr-2 h-4 w-4" />,
+  ['video']: <Video className="mr-2 h-4 w-4" />,
+  ['library']: <LibraryBig className="mr-2 h-4 w-4" />,
+  ['archive']: <Archive className="mr-2 h-4 w-4" />,
+}
 export const iconMapSidebar = {
-  ["text"]: (
-    <Hash className="flex-shrink-0 w-5 h-5 text-zinc-500 dark:text-zinc-400" />
+  ['text']: (
+    <Hash className="h-5 w-5 flex-shrink-0 text-zinc-500 dark:text-zinc-400" />
   ),
-  ["audio"]: (
-    <Mic className="flex-shrink-0 w-5 h-5 text-zinc-500 dark:text-zinc-400" />
+  ['audio']: (
+    <Mic className="h-5 w-5 flex-shrink-0 text-zinc-500 dark:text-zinc-400" />
   ),
-  ["video"]: (
-    <Video className="flex-shrink-0 w-5 h-5 text-zinc-500 dark:text-zinc-400" />
+  ['video']: (
+    <Video className="h-5 w-5 flex-shrink-0 text-zinc-500 dark:text-zinc-400" />
   ),
-};
+  ['library']: (
+    <LibraryBig className="h-5 w-5 flex-shrink-0 text-zinc-500 dark:text-zinc-400" />
+  ),
+  ['archive']: (
+    <Archive className="h-5 w-5 flex-shrink-0 text-zinc-500 dark:text-zinc-400" />
+  ),
+}
 
-export const spaceTypes: SpaceType[] = ["text", "audio", "video"];
-export const spaceLabels = ['Text Spaces', 'Audio Spaces', 'Video Spaces']
+export const spaceTypes: SpaceType[] = [
+  'text',
+  'audio',
+  'video',
+  'library',
+  'postbox',
+]
+export const spaceLabels = [
+  'Text Spaces',
+  'Audio Spaces',
+  'Video Spaces',
+  'Libraries',
+  'Postboxes',
+]

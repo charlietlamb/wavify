@@ -3,9 +3,9 @@
 import { useUser } from '@/state/user/useUser'
 import { FilesContext } from './state/context'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { FileMode, Filters, SortingType, View } from './data/data'
-import { useFileUserUpdateEffect } from './hooks/useFileUserUpdateEffect'
+import { useFileUpdateEffect } from './hooks/useFileUpdateEffect'
 import { useFilesFolderUpdateEffect } from './hooks/useFilesFolderUpdateEffect'
 import { useFolderUpdateEffect } from './hooks/useFolderUpdateEffect'
 import { useFolderChangeEffect } from './hooks/useFolderChangeEffect'
@@ -16,14 +16,15 @@ export default function FilesProvider({
   initSearchFiles,
   initFiles,
   initFolders,
+  space,
   children,
 }: {
   initSearchFiles: FileAndSender[]
   initFiles: FileAndSender[]
   initFolders: FolderAndSender[]
+  space?: Space
   children: React.ReactNode
 }) {
-  const user = useUser()
   const supabase = createClientComponentClient()
   const [mode, setMode] = useState<FileMode>('all')
   const [path, setPath] = useState<Path[]>([])
@@ -32,25 +33,28 @@ export default function FilesProvider({
   const [parent, setParent] = useState<string | null>(null)
   const parentStore = useRef<string | null>(null)
   const [files, setFiles] = useState<FileAndSender[]>(initFiles)
-  const [changeFiles, setChangeFiles] = useState<FileAndSender[]>(initFiles)
+  const fileStore = useRef<FileAndSender[]>(initFiles)
   const [view, setView] = useState<View>('grid')
-  useFilesFolderUpdateEffect(
-    supabase,
-    user,
-    parent,
-    changeFiles,
-    setChangeFiles
-  )
   const [folders, setFolders] = useState<FolderAndSender[]>(initFolders)
+  const folderStore = useRef<FolderAndSender[]>(initFolders)
   const [changeFolders, setChangeFolders] =
     useState<FolderAndSender[]>(initFolders)
-  useFolderUpdateEffect(supabase, user, parent, changeFolders, setChangeFolders)
   const [searchFiles, setSearchFiles] =
     useState<FileAndSender[]>(initSearchFiles)
-  useFileUserUpdateEffect(supabase, user, files, setSearchFiles)
   const filters: Filters = {
     music: filterByMusic,
   }
+  const user = useUser()
+  useFolderUpdateEffect(
+    supabase,
+    user,
+    parent,
+    folderStore,
+    setChangeFolders,
+    space
+  )
+  useFileUpdateEffect(supabase, user, files, setSearchFiles, space)
+  useFilesFolderUpdateEffect(supabase, user, parent, fileStore, space)
   useFolderChangeEffect(
     supabase,
     user,
@@ -59,18 +63,21 @@ export default function FilesProvider({
     filters,
     sorting,
     parent,
-    parentStore
+    parentStore,
+    folderStore,
+    space
   )
 
   useFileChangeEffect(
     supabase,
     user,
-    changeFiles,
     setFiles,
     filters,
     sorting,
     parent,
-    parentStore
+    parentStore,
+    fileStore,
+    space
   )
 
   usePathChangeEffect(supabase, parent, setPath)
@@ -95,6 +102,7 @@ export default function FilesProvider({
         setFolders,
         view,
         setView,
+        space,
       }}
     >
       {children}

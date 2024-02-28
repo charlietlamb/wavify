@@ -13,11 +13,7 @@ import { getRoles } from './roles/(functions)/getRoles'
 import { getColUsers } from '@/components/modals/functions/getColUsers'
 import { getAllSpaces } from './(functions)/getAllSpaces'
 import { getColUserDataFromUserAndCol } from '@/components/collective/(sidebar)/(functions)/getColUserDataFromUserAndCol'
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@/components/ui/resizable'
+import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { CollectiveProvider } from '@/components/providers/CollectiveProvider'
 import CollectiveToggle from '@/components/collective/CollectiveToggle'
 import CollectiveSidebarWrap from '@/components/collective/CollectiveSidebarWrap'

@@ -12,6 +12,13 @@ export async function deleteSpace(
       (space1) => space1.order > space.order && space1.type === space.type
     )
   ) {
+    if (space.folder) {
+      const { error: folderError } = await supabase
+        .from('folders')
+        .delete()
+        .eq('id', space.folder)
+      if (folderError) throw folderError
+    }
     const { data: updateData, error: updateError } = await supabase
       .from('spaces')
       .select()

@@ -21,7 +21,7 @@ export const CreateFolderModal = () => {
   const [error, setError] = useState<string | null>(null)
   const [folderName, setFolderName] = useState('')
   const isModalOpen = isOpen && type === 'createFolder'
-  const { folders, parent } = data
+  const { folders, parent, space } = data
   const user = useUser()
 
   const handleClose = () => {
@@ -42,6 +42,7 @@ export const CreateFolderModal = () => {
         name: folderName,
         parent,
       }
+
       const { error } = await supabase.from('folders').insert(folderToUpload)
       if (error) throw error
     } catch (error) {

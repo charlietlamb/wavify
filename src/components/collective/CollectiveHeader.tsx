@@ -23,6 +23,9 @@ import { useRouter } from 'next/navigation'
 import { useHeaderChangeEffect } from './(header)/(hooks)/useHeaderChangeEffect'
 import { useUser } from '@/state/user/useUser'
 import { useCollective } from '@/state/collective/useCollective'
+import { useAppSelector } from '@/state/hooks'
+import { RootState } from '@/state/store'
+import { cn } from '@/lib/utils'
 
 export const CollectiveHeader = () => {
   const user = useUser()
@@ -35,10 +38,18 @@ export const CollectiveHeader = () => {
   }
   const isFounder = collective.founder === colUser.users?.id
   useHeaderChangeEffect(supabase, user, collective, router)
+  const { collective: collectiveToggle } = useAppSelector(
+    (state: RootState) => state.sidebar
+  )
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none" asChild>
-        <button className="text-md flex h-12 flex-shrink-0 items-center border-b-2 border-neutral-200 px-3 font-semibold transition hover:bg-zinc-700/10 dark:border-neutral-800 dark:hover:bg-zinc-700/50">
+        <button
+          className={cn(
+            'text-md flex h-12 flex-shrink-0 items-center border-b-2 border-neutral-200 px-3 font-semibold transition hover:bg-zinc-700/10 dark:border-neutral-800 dark:hover:bg-zinc-700/50',
+            collectiveToggle && 'hidden'
+          )}
+        >
           {collective.unique}
           <ChevronDown className="ml-auto h-5 w-5" />
         </button>

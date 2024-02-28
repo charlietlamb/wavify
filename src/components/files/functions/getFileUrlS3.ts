@@ -1,9 +1,9 @@
 'use server'
-import s3 from '../../../../wasabiClient'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { GetObjectCommand } from '@aws-sdk/client-s3'
+import s3 from '../../../../wasabiClient'
 
-export default async function downloadChatImage(key: string) {
+export default async function getFileUrlS3(key: string) {
   const command = new GetObjectCommand({
     Bucket: process.env.NEXT_PUBLIC_WASABI_BUCKET,
     Key: key,

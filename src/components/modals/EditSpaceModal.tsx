@@ -25,9 +25,8 @@ import isObject from '@/lib/isObject'
 import ButtonLoader from '../me/ButtonLoader'
 import { spaceTypes } from '../collective/space/data'
 import SpaceRoles from '../collective/space/SpaceRoles'
-import { updateRolesAndAllowed } from './functions/updateRolesAndAllowed'
 import { useCollective } from '@/state/collective/useCollective'
-
+import { v4 as uuidv4 } from 'uuid'
 const iconProps = {
   height: '40',
   width: '40',
@@ -100,7 +99,32 @@ export const EditSpaceModal = () => {
   async function submitSpaceDetails() {
     setLoading(true)
     if (spaceName !== '') {
-      const { data, error } = await supabase
+      let folder = space.folder
+      if (
+        ['library', 'postbox'].includes(spaceType) &&
+        spaceType !== space.type
+      ) {
+        const { error: folderError } = await supabase
+          .from('folders')
+          .delete()
+          .eq('id', space.folder)
+        if (folderError) throw folderError
+        folder = null
+      }
+      if (
+        ['library', 'postbox'].includes(spaceType) &&
+        space.type !== spaceType
+      ) {
+        folder = uuidv4()
+        const folderData = {
+          id: folder,
+          name: spaceName,
+          parent: null,
+        }
+        const { error } = await supabase.from('folders').insert(folderData)
+        if (error) throw error
+      }
+      const { error } = await supabase
         .from('spaces')
         .update({
           id: space.id,
@@ -115,6 +139,7 @@ export const EditSpaceModal = () => {
             space.type === spaceType
               ? space.order
               : spaces.filter((space) => space.type === spaceType).length,
+          folder,
         })
         .eq('id', isObject(space) && space.id ? space.id : '')
       if (error) {
@@ -124,8 +149,6 @@ export const EditSpaceModal = () => {
         setSpaceName('')
         setUsername('')
         onClose()
-        //router.refresh();
-        //router.push(`/collective/${collective.unique}/${username}`);
       }
     } else {
       setErrorMessage('Please enter a valid spaceName.')

@@ -1,40 +1,80 @@
 import { useEffect } from 'react'
 import { Filters, SortingType } from '../data/data'
-import { musicExtensions } from '@/components/chat/data/extensions'
 import { sortFolders } from '../functions/sortFolders'
-import { getUserFoldersFromParent } from '../functions/getUserFoldersFromParent'
 import { getUserTopFolders } from '../functions/getUserTopFolders'
+import { getUserTopFoldersQuick } from '../functions/getUserTopFoldersQuick'
+import { getFoldersFromParentQuick } from '../functions/getFoldersFromParentQuick'
+import { getFoldersFromParent } from '../functions/getFoldersFromParent'
 
 export async function useFolderChangeEffect(
   supabase: Supabase,
   user: User,
-  changeFolders: FolderAndSender[],
+  folders: FolderAndSender[],
   setFolders: React.Dispatch<React.SetStateAction<FolderAndSender[]>>,
   filters: Filters,
   sorting: SortingType,
   parent: string | null,
-  parentStore: React.MutableRefObject<string | null>
+  parentStore: React.MutableRefObject<string | null>,
+  folderStore: React.MutableRefObject<FolderAndSender[]>,
+  space: Space | undefined
 ) {
   useEffect(() => {
-    const setFoldersAsync = async (parent: string | null) => {
-      setFolders(
-        parent
-          ? await getUserFoldersFromParent(supabase, user, parent)
-          : await getUserTopFolders(supabase, user)
-      )
-    }
+    const p = space && !parent ? space.folder : parent
 
-    if (parentStore.current !== parent) {
-      //parentStore.current = parent //This is done in useFilesChangeEffect
-      setFoldersAsync(parent)
+    async function updateFoldersSorting() {
+      let folders = folderStore.current.filter((folder) => folder.parent === p)
+      const filteredFolders = folders.filter((folder) => {
+        if (filters.music) {
+          return folder.music
+        }
+        return true
+      })
+      const sortedFolders = sortFolders(filteredFolders, sorting)
+      setFolders(sortedFolders)
     }
-    const filteredFolders = changeFolders.filter((folder) => {
-      if (filters.music) {
-        return musicExtensions.includes(folder.name.split('.').pop() || '')
+    updateFoldersSorting()
+  }, [filters.music, sorting])
+
+  useEffect(() => {
+    const p = space && !parent ? space.folder : parent
+
+    async function updateFolders() {
+      if (parentStore.current !== parent) {
+        //parentStore.current = parent //This is done in useFilesChangeEffect
+        folderStore.current = parent
+          ? await getFoldersFromParentQuick(supabase, parent)
+          : space && space.folder
+            ? await getFoldersFromParentQuick(supabase, space.folder)
+            : await getUserTopFoldersQuick(supabase, user)
+
+        const filteredFolders = folderStore.current.filter((folder) => {
+          if (filters.music) {
+            return folder.music
+          }
+          return true
+        })
+        const sortedFolders = sortFolders(filteredFolders, sorting)
+        setFolders(sortedFolders)
+        folderStore.current = parent
+          ? await getFoldersFromParent(supabase, parent)
+          : space && space.folder
+            ? await getFoldersFromParent(supabase, space.folder)
+            : await getUserTopFolders(supabase, user)
+      } else {
+        folderStore.current = folders
       }
-      return true
-    })
-    const sortedFolders = sortFolders(filteredFolders, sorting)
-    setFolders(sortedFolders)
-  }, [changeFolders, filters.music, sorting, parent])
+      let foldersFilter = folderStore.current.filter(
+        (folder) => folder.parent === p
+      )
+      const filteredFolders = foldersFilter.filter((folder) => {
+        if (filters.music) {
+          return folder.music
+        }
+        return true
+      })
+      const sortedFolders = sortFolders(filteredFolders, sorting)
+      setFolders(sortedFolders)
+    }
+    updateFolders()
+  }, [parent, user, supabase, folders])
 }

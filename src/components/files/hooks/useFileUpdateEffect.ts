@@ -1,11 +1,13 @@
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { getUserFiles } from '../functions/getUserFiles'
+import { getLibrarySearchFiles } from '@/app/library/functions/getLibrarySearchFiles'
 
-export function useFileUserUpdateEffect(
+export function useFileUpdateEffect(
   supabase: Supabase,
   user: User,
   fileData: FileAndSender[],
-  setFileData: Dispatch<SetStateAction<FileAndSender[]>>
+  setFileData: Dispatch<SetStateAction<FileAndSender[]>>,
+  space: Space | undefined
 ) {
   useEffect(() => {
     const channel = supabase
@@ -23,9 +25,14 @@ export function useFileUserUpdateEffect(
             newPayload &&
             typeof newPayload === 'object' &&
             payload.eventType !== 'DELETE' &&
-            newPayload.user === user.id
+            (newPayload.user === user.id ||
+              (space && newPayload.space === space.id))
           ) {
-            setFileData(await getUserFiles(supabase, user))
+            setFileData(
+              !space
+                ? await getUserFiles(supabase, user)
+                : await getLibrarySearchFiles(supabase, space)
+            )
           } else if (
             payload.eventType === 'DELETE' &&
             fileData.some((file) => file.id === payload.old.id)

@@ -1,13 +1,13 @@
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { getUserTopFiles } from '../functions/getUserTopFiles'
-import { getUserFilesFromParent } from '../functions/getUserFilesFromParent'
+import { getFilesFromParent } from '../functions/getFilesFromParent'
 
 export function useFilesFolderUpdateEffect(
   supabase: Supabase,
   user: User,
   parent: string | null,
-  fileData: FileAndSender[],
-  setFileData: Dispatch<SetStateAction<FileAndSender[]>>
+  fileStore: React.MutableRefObject<FileAndSender[]>,
+  space: Space | undefined
 ) {
   useEffect(() => {
     const channel = supabase
@@ -24,27 +24,31 @@ export function useFilesFolderUpdateEffect(
           if (
             newPayload &&
             typeof newPayload === 'object' &&
-            newPayload.user === user.id &&
-            newPayload.folder === parent &&
+            (newPayload.user === user.id ||
+              (space && newPayload.space === space.id)) &&
             payload.eventType !== 'DELETE'
           ) {
             if (payload.eventType === 'INSERT') {
-              setFileData(
-                parent
-                  ? await getUserFilesFromParent(supabase, user, parent)
-                  : await getUserTopFiles(supabase, user)
-              )
+              fileStore.current = [
+                ...fileStore.current,
+                newPayload as FileAndSender,
+              ]
             } else {
-              const oldFiles = fileData.filter(
+              const oldFiles = fileStore.current.filter(
                 (file) => file.id !== newPayload.id
               )
-              setFileData([...oldFiles, newPayload as unknown as FileAndSender])
+              fileStore.current = [
+                ...oldFiles,
+                newPayload as unknown as FileAndSender,
+              ]
             }
           } else if (
             payload.eventType === 'DELETE' &&
-            fileData.some((file) => file.id === payload.old.id)
+            fileStore.current.some((file) => file.id === payload.old.id)
           ) {
-            setFileData(fileData.filter((file) => file.id !== payload.old.id))
+            fileStore.current = fileStore.current.filter(
+              (file) => file.id !== payload.old.id
+            )
           }
         }
       )
@@ -53,5 +57,5 @@ export function useFilesFolderUpdateEffect(
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [supabase, user, fileData, parent, setFileData])
+  }, [supabase, user, parent, fileStore.current])
 }

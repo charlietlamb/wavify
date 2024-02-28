@@ -76,20 +76,30 @@ export const MessageFileModal = () => {
             ext ? ext : ''
           }`
           const base64File = await fileToBase64(file)
-          uploadFileToS3(base64File, file.type, url, file.name)
-
-          const fileToAdd = {
-            id: fileId,
-            user: user.id,
-            message: messageId,
-            chat: chatData ? chatData.id : null,
-            space: chatData ? chatData.space : null,
-            name: file.name,
-            size: file.size / 1024 / 1024,
+          const error = await uploadFileToS3(
+            base64File,
+            file.type,
             url,
+            file.name
+          )
+          if (error) {
+            throw new Error('Error uploading file')
+          } else {
+            const fileToAdd = {
+              id: fileId,
+              user: user.id,
+              message: messageId,
+              chat: chatData ? chatData.id : null,
+              space: chatData ? chatData.space : null,
+              name: file.name,
+              size: file.size / 1024 / 1024,
+              url,
+            }
+            const { error: fileError } = await supabase
+              .from('files')
+              .insert(fileToAdd)
+            if (fileError) throw fileError
           }
-          const { error } = await supabase.from('files').insert(fileToAdd)
-          if (error) throw error
         }
 
         if (error) throw error

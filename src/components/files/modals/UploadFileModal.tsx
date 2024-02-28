@@ -21,7 +21,8 @@ export const UploadFileModal = () => {
   const [files, setFiles] = useState<File[]>([])
   const [loading, setLoading] = useState(false)
   const supabase = createClientComponentClient()
-  const { parent, files: currentFiles } = data
+  const { parent, files: currentFiles, space } = data
+  console.log(parent)
   const isModalOpen = isOpen && type === 'upload'
   const user = useUser()
   function addFile(upload: File | File[] | null) {
@@ -78,19 +79,29 @@ export const UploadFileModal = () => {
           var ext = file.name.split('.').pop()
           var url = `${user.id}/${fileId}.${ext ? ext : ''}`
           const base64File = await fileToBase64(file)
-          uploadFileToS3(base64File, file.type, url, file.name)
-
-          const fileToAdd = {
-            id: fileId,
-            user: user.id,
-            name: fileName,
-            size: file.size / 1024 / 1024,
-            folder: parent,
-            system: true,
+          const error = await uploadFileToS3(
+            base64File,
+            file.type,
             url,
+            file.name
+          )
+          if (error) {
+            throw new Error('Error uploading file to S3')
+          } else {
+            const fileToAdd = {
+              id: fileId,
+              user: user.id,
+              name: fileName,
+              size: file.size / 1024 / 1024,
+              folder: parent,
+              system: true,
+              url,
+            }
+            const { error: fileError } = await supabase
+              .from('files')
+              .insert(fileToAdd)
+            if (fileError) throw fileError
           }
-          const { error } = await supabase.from('files').insert(fileToAdd)
-          if (error) throw error
         }
 
         handleClose()

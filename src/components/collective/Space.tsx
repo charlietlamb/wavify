@@ -10,6 +10,7 @@ import isObject from '@/lib/isObject'
 import { ChatMessages } from '../chat/ChatMessages'
 import { ChatInput } from '../chat/ChatInput'
 import { MediaRoom } from '../media/MediaRoom'
+import Library from './library/Library'
 
 interface SpaceProps {
   space: Space
@@ -66,7 +67,7 @@ export default function Space({ space, chat, searchFilesData }: SpaceProps) {
       {isObject(space) &&
         (space.type === 'audio' || space.type === 'video') && (
           <MediaRoom
-            chatId={isObject(space) ? space.id : ''}
+            chatId={typeof space.id === 'string' ? space.id : ''}
             video={space.type === 'video'}
             audio={true}
           />

@@ -65,10 +65,10 @@ export default function FloatingMenu({
             <Separator className="my-1" />
             <Button
               variant="ghost"
-              onClick={() => router.push('/files')}
+              onClick={() => router.push('/library')}
               className={menuButtonClassName}
             >
-              Files
+              Library
             </Button>
             <Separator className="my-1" />
             <ButtonLoader

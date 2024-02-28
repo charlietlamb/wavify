@@ -1,8 +1,12 @@
 import {
   Cog,
   Download,
+  FileArchive,
   File as FileIcon,
+  FileImage,
+  FileMusic,
   MoreHorizontal,
+  MoveUp,
   Trash2,
 } from 'lucide-react'
 import { useFilesContext } from '../state/context'
@@ -18,14 +22,33 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { getFileSizeString } from '../functions/getFileSizeString'
 import { download } from '@/components/chat/functions/download'
+import { moveFileToParent } from '../functions/moveFileToParent'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import isObject from '@/lib/isObject'
+import {
+  imageExtensions,
+  musicExtensions,
+  zipExtensions,
+} from '@/components/chat/data/extensions'
 
 export default function File({ file }: { file: FileAndSender }) {
-  const { files, parent, setParent } = useFilesContext()
+  const { files, parent } = useFilesContext()
+  const fileExtension = file.name.split('.').pop()!
   const { onOpen } = useModal()
+  const supabase = createClientComponentClient()
+  const fileClasses = 'min-w-6 min-h-6'
   return (
-    <div className="flex w-full flex-col rounded-xl border-2 border-zinc-200 px-2 py-4 transition-all hover:rounded-md hover:bg-zinc-950">
+    <div className="flex w-full flex-col rounded-xl border-2 border-zinc-200 bg-background_content px-2 py-4 transition-all hover:rounded-md hover:bg-zinc-950">
       <div className="flex items-center gap-x-2">
-        <FileIcon className="min-h-6 min-w-6" />
+        {isObject(file) && imageExtensions.includes(fileExtension) ? (
+          <FileImage className={fileClasses} />
+        ) : musicExtensions.includes(fileExtension) ? (
+          <FileMusic className={fileClasses} />
+        ) : zipExtensions.includes(fileExtension) ? (
+          <FileArchive className={fileClasses} />
+        ) : (
+          <FileIcon className={fileClasses} />
+        )}
         <p className="overflow-hidden overflow-ellipsis whitespace-nowrap text-lg">
           {file.name}
         </p>
@@ -42,6 +65,23 @@ export default function File({ file }: { file: FileAndSender }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+              {file.folder && (
+                <>
+                  <DropdownMenuItem
+                    className="group flex w-full cursor-pointer justify-between"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      moveFileToParent(supabase, file)
+                    }}
+                  >
+                    <p className="transition-all group-hover:text-primary">
+                      Move To Parent
+                    </p>
+                    <MoveUp className="h-4 w-4 text-zinc-500 group-hover:animate-pulse" />
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                </>
+              )}
               <DropdownMenuItem
                 className="group flex w-full cursor-pointer justify-between"
                 onClick={(e) => {

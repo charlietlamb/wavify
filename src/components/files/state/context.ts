@@ -19,6 +19,7 @@ interface ChatFilesWrapContext {
   setFolders: Dispatch<SetStateAction<FolderAndSender[]>>
   view: View
   setView: Dispatch<SetStateAction<View>>
+  space: Space | undefined
 }
 
 export const FilesContext = createContext<ChatFilesWrapContext | undefined>(

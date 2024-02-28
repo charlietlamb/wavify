@@ -3,7 +3,7 @@ import s3 from '../../../../wasabiClient'
 
 export async function deleteFileFromS3(url: string) {
   const params = {
-    Bucket: process.env.NEXT_PUBLIC_WASABI_CHATS_BUCKET,
+    Bucket: process.env.NEXT_PUBLIC_WASABI_BUCKET,
     Key: url,
   }
 

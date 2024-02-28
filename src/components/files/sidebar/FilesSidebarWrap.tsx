@@ -5,11 +5,14 @@ import { RootState } from '@/state/store'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import FilesSidebar from './FilesSidebar'
+import { useFilesContext } from '../state/context'
 
 export default function FilesSidebarWrap() {
+  const { space } = useFilesContext()
   const { files: filesState } = useAppSelector(
     (state: RootState) => state.sidebar
   )
+  if (space) return null
   return (
     <motion.div
       animate={{ width: filesState ? '0px' : '15rem' }}

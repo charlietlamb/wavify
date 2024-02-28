@@ -166,7 +166,7 @@ export type Database = {
           space: string | null
           system: boolean
           url: string
-          user: string
+          user: string | null
         }
         Insert: {
           chat?: string | null
@@ -180,7 +180,7 @@ export type Database = {
           space?: string | null
           system?: boolean
           url?: string
-          user: string
+          user?: string | null
         }
         Update: {
           chat?: string | null
@@ -194,7 +194,7 @@ export type Database = {
           space?: string | null
           system?: boolean
           url?: string
-          user?: string
+          user?: string | null
         }
         Relationships: [
           {
@@ -240,23 +240,30 @@ export type Database = {
           id: string
           name: string
           parent: string | null
-          user: string
+          user: string | null
         }
         Insert: {
           createdAt?: string
           id?: string
           name: string
           parent?: string | null
-          user: string
+          user?: string | null
         }
         Update: {
           createdAt?: string
           id?: string
           name?: string
           parent?: string | null
-          user?: string
+          user?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "public_folders_parent_fkey"
+            columns: ["parent"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "public_folders_user_fkey"
             columns: ["user"]
@@ -377,6 +384,7 @@ export type Database = {
         Row: {
           allowed: string[]
           collective: string
+          folder: string | null
           id: string
           name: string
           open: boolean
@@ -387,6 +395,7 @@ export type Database = {
         Insert: {
           allowed: string[]
           collective: string
+          folder?: string | null
           id: string
           name: string
           open?: boolean
@@ -397,6 +406,7 @@ export type Database = {
         Update: {
           allowed?: string[]
           collective?: string
+          folder?: string | null
           id?: string
           name?: string
           open?: boolean
@@ -405,6 +415,13 @@ export type Database = {
           type?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "public_spaces_folder_fkey"
+            columns: ["folder"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "spaces_collective_fkey"
             columns: ["collective"]

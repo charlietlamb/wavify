@@ -59,7 +59,7 @@ declare global {
     | null
     | { [key: string]: Json | undefined }
     | Json[]
-  type SpaceType = 'text' | 'audio' | 'video'
+  type SpaceType = 'text' | 'audio' | 'video' | 'library' | 'postbox'
 
   type MessageAuthor = {
     users: {
@@ -88,9 +88,11 @@ declare global {
       username: string
       profile_pic_url: string
     }
+    size: number
+    music: boolean
   }
 
-  type FolderAndSender = FileData & FolderSender
+  type FolderAndSender = Folder & FolderSender
 
   type Path = {
     id: string | null
