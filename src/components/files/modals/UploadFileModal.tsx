@@ -22,7 +22,6 @@ export const UploadFileModal = () => {
   const [loading, setLoading] = useState(false)
   const supabase = createClientComponentClient()
   const { parent, files: currentFiles, space } = data
-  console.log(parent)
   const isModalOpen = isOpen && type === 'upload'
   const user = useUser()
   function addFile(upload: File | File[] | null) {

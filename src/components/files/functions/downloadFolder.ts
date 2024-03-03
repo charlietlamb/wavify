@@ -1,13 +1,19 @@
 import { getFolderZip } from './getFolderZip'
 import { Dispatch, SetStateAction } from 'react'
+import { getUserFolderZip } from './getUserFolderZip'
 
 export async function downloadFolder(
   folder: FolderAndSender,
+  space: Space | undefined,
   supabase: Supabase,
   setFolderLoading: Dispatch<SetStateAction<boolean>>
 ) {
+  //need to handle downloading user folders
   setFolderLoading(true)
-  const archive = await getFolderZip(folder, supabase)
+  const archive =
+    folder.parent === 'pb'
+      ? await getUserFolderZip(folder, space, supabase)
+      : await getFolderZip(folder, supabase)
   if (!archive) return
   const url = URL.createObjectURL(archive)
 

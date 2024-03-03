@@ -3,27 +3,17 @@ import FilesDashboard from '@/components/files/dashboard/FilesDashboard'
 import FilesDashboardHeader from '@/components/files/dashboard/FilesDashboardHeader'
 import FilesSidebarWrap from '@/components/files/sidebar/FilesSidebarWrap'
 
-interface LibraryProps {
+interface PostboxProps {
   space: Space
   initSearchFiles: FileAndSender[]
   initFiles: FileAndSender[]
   initFolders: FolderAndSender[]
 }
 
-export default function Library({
-  space,
-  initSearchFiles,
-  initFiles,
-  initFolders,
-}: LibraryProps) {
+export default function Postbox(props: PostboxProps) {
   return (
     <div className="flex w-full flex-col">
-      <FilesProvider
-        initSearchFiles={initSearchFiles}
-        initFiles={initFiles}
-        initFolders={initFolders}
-        space={space}
-      >
+      <FilesProvider {...props} postbox={true}>
         <FilesDashboardHeader />
         <div className="flex flex-grow overflow-y-auto">
           <FilesSidebarWrap />

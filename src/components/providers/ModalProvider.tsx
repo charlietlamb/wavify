@@ -21,6 +21,7 @@ import { DeleteFolderModal } from '../files/modals/DeleteFolderModal'
 import { EditFolderModal } from '../files/modals/EditFolderModal'
 import { DeleteFileModal } from '../files/modals/DeleteFileModal'
 import { EditFileModal } from '../files/modals/EditFileModal'
+import { ReturnPostModal } from '../files/modals/ReturnPostModal'
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false)
@@ -54,6 +55,7 @@ export const ModalProvider = () => {
       <EditFolderModal />
       <DeleteFileModal />
       <EditFileModal />
+      <ReturnPostModal />
     </>
   )
 }

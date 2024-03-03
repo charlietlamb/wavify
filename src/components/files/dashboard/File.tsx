@@ -30,9 +30,11 @@ import {
   musicExtensions,
   zipExtensions,
 } from '@/components/chat/data/extensions'
+import { useUser } from '@/state/user/useUser'
 
 export default function File({ file }: { file: FileAndSender }) {
-  const { files, parent } = useFilesContext()
+  const { files, parent, postbox } = useFilesContext()
+  const user = useUser()
   const fileExtension = file.name.split('.').pop()!
   const { onOpen } = useModal()
   const supabase = createClientComponentClient()
@@ -65,7 +67,8 @@ export default function File({ file }: { file: FileAndSender }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              {file.folder && (
+              {((!postbox && file.folder) ||
+                (postbox && !file.folder?.includes('u:'))) && (
                 <>
                   <DropdownMenuItem
                     className="group flex w-full cursor-pointer justify-between"
@@ -82,16 +85,20 @@ export default function File({ file }: { file: FileAndSender }) {
                   <DropdownMenuSeparator />
                 </>
               )}
-              <DropdownMenuItem
-                className="group flex w-full cursor-pointer justify-between"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onOpen('editFile', { file, files, parent })
-                }}
-              >
-                <p className="transition-all group-hover:text-primary">Edit</p>
-                <Cog className="h-4 w-4 text-zinc-500 group-hover:animate-spin" />
-              </DropdownMenuItem>
+              {(!postbox || file.user === user.id) && (
+                <DropdownMenuItem
+                  className="group flex w-full cursor-pointer justify-between"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onOpen('editFile', { file, files, parent })
+                  }}
+                >
+                  <p className="transition-all group-hover:text-primary">
+                    Edit
+                  </p>
+                  <Cog className="h-4 w-4 text-zinc-500 group-hover:animate-spin" />
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem
                 className="group flex w-full cursor-pointer justify-between"
                 onClick={(e) => {
@@ -104,18 +111,20 @@ export default function File({ file }: { file: FileAndSender }) {
                 </p>
                 <Download className="h-4 w-4 text-zinc-500 group-hover:animate-pulse" />
               </DropdownMenuItem>
-              <DropdownMenuItem
-                className="group flex w-full cursor-pointer justify-between"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onOpen('deleteFile', { file })
-                }}
-              >
-                <p className="transition-all group-hover:text-red-500">
-                  Delete
-                </p>
-                <Trash2 className="h-4 w-4 text-zinc-500 group-hover:animate-pulse" />
-              </DropdownMenuItem>
+              {(!postbox || file.user === user.id) && (
+                <DropdownMenuItem
+                  className="group flex w-full cursor-pointer justify-between"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onOpen('deleteFile', { file })
+                  }}
+                >
+                  <p className="transition-all group-hover:text-red-500">
+                    Delete
+                  </p>
+                  <Trash2 className="h-4 w-4 text-zinc-500 group-hover:animate-pulse" />
+                </DropdownMenuItem>
+              )}
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>

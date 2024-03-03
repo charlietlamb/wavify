@@ -21,6 +21,7 @@ export type ModalType =
   | 'editFolder'
   | 'deleteFile'
   | 'editFile'
+  | 'returnPost'
 
 interface ModalData {
   collective?: Collective

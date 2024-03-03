@@ -8,14 +8,14 @@ import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd'
 import { handleFileDragEnd } from '../functions/handleFileDragEnd'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import NoFiles from './NoFiles'
+import NoPost from './NoPost'
+import { AnimatePresence, motion } from 'framer-motion'
 
 export default function FilesFiles() {
-  const { files, folders, view } = useFilesContext()
+  const { files, folders, view, postbox } = useFilesContext()
   const supabase = createClientComponentClient()
-  console.log(files)
-  console.log(folders)
   return (
-    <div className="flex min-h-full flex-col overflow-y-auto">
+    <div className="flex flex-grow flex-col overflow-y-auto">
       {files.length + folders.length > 0 ? (
         <DragDropContext
           onDragEnd={(result) =>
@@ -28,11 +28,14 @@ export default function FilesFiles() {
                 ref={provided.innerRef}
                 {...provided.droppableProps}
                 className={cn(
-                  'grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5',
+                  'grid grid-cols-1 items-start gap-4 overflow-visible sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5',
                   view === 'column' &&
                     'sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1'
                 )}
-                style={{ transform: 'none' }}
+                style={{
+                  transform: 'none',
+                  overflowAnchor: 'auto',
+                }}
               >
                 {folders.map((folder, index) => (
                   <Droppable droppableId={folder.id} key={folder.id}>
@@ -41,10 +44,10 @@ export default function FilesFiles() {
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                         className={cn(
-                          'h-full w-full',
+                          'w-full',
                           snapshot.isDraggingOver && 'animate-pulse'
                         )}
-                        style={{ transform: 'none' }}
+                        style={{ transform: 'none', overflow: 'visible' }}
                       >
                         <Draggable draggableId={folder.id} index={index}>
                           {(provided, snapshot) => (
@@ -52,23 +55,34 @@ export default function FilesFiles() {
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
-                              className="w-full"
+                              className="h-auto w-full"
                               style={
                                 snapshot.isDragging
                                   ? {
                                       position: 'fixed',
                                       top: 0,
                                       left: 0,
+                                      alignItems: 'flex-start',
                                       ...provided.draggableProps.style,
                                     }
-                                  : { transform: 'none' }
+                                  : { transform: 'none', overflow: 'visible' }
                               }
                             >
-                              <Folder folder={folder} />
+                              <AnimatePresence>
+                                <motion.div
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  transition={{ duration: 0.6 }}
+                                  key={folder.id}
+                                >
+                                  <Folder folder={folder} />
+                                </motion.div>
+                              </AnimatePresence>
                             </div>
                           )}
                         </Draggable>
-                        {provided.placeholder}
+                        {/* {provided.placeholder} */}
                       </div>
                     )}
                   </Droppable>
@@ -80,30 +94,43 @@ export default function FilesFiles() {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className="h-full w-full"
+                        className="h-auto w-full"
                         style={
                           snapshot.isDragging
                             ? {
                                 position: 'fixed',
                                 top: 0,
                                 left: 0,
+                                overflow: 'visible',
                                 ...provided.draggableProps.style,
                               }
-                            : { transform: 'none' }
+                            : { transform: 'none', overflow: 'visible' }
                         }
                       >
-                        <File file={file} />
+                        <AnimatePresence>
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.6 }}
+                            key={file.id}
+                          >
+                            <File file={file} />
+                          </motion.div>
+                        </AnimatePresence>
                       </div>
                     )}
                   </Draggable>
                 ))}
-                {provided.placeholder}
+                {/* {provided.placeholder} */}
               </div>
             )}
           </Droppable>
         </DragDropContext>
-      ) : (
+      ) : !postbox ? (
         <NoFiles />
+      ) : (
+        <NoPost />
       )}
     </div>
   )

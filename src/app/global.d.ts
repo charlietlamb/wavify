@@ -52,6 +52,8 @@ declare global {
   type ColUser = DB['public']['Tables']['colUsers']['Row']
   type FileData = DB['public']['Tables']['files']['Row']
   type Folder = DB['public']['Tables']['folders']['Row']
+  type Postbox = DB['public']['Tables']['postboxes']['Row']
+  type Transient = DB['public']['Tables']['transients']['Row']
   type Json =
     | string
     | number
@@ -59,7 +61,13 @@ declare global {
     | null
     | { [key: string]: Json | undefined }
     | Json[]
-  type SpaceType = 'text' | 'audio' | 'video' | 'library' | 'postbox'
+  type SpaceType =
+    | 'text'
+    | 'audio'
+    | 'video'
+    | 'library'
+    | 'postbox'
+    | 'transient'
 
   type MessageAuthor = {
     users: {

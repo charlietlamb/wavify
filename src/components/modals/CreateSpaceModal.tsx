@@ -50,20 +50,32 @@ export const CreateSpaceModal = () => {
   const [spaces, setSpaces] = useState<Space[]>([])
   const [spaceOpen, setSpaceOpen] = useState(true)
   const [isClosing, setIsClosing] = useState(false)
-  const [rolesAndAllowed, setRolesAndAllowed] = useState<RoleAndAllowed[]>(
-    roles
-      ?.map((role) => ({ ...role, allowed: false }))
-      ?.sort((a, b) => a.authority - b.authority)
-  )
+  const andAllowed = roles
+    ?.map((role) => ({ ...role, allowed: false }))
+    ?.sort((a, b) => a.authority - b.authority)
+  const [rolesAndAllowed, setRolesAndAllowed] =
+    useState<RoleAndAllowed[]>(andAllowed)
+  const [rolesAndSend, setRolesAndSend] = useState<RoleAndAllowed[]>(andAllowed)
+  const [rolesAndReceive, setRolesAndReceive] =
+    useState<RoleAndAllowed[]>(andAllowed)
+  const [rolesAndPost, setRolesAndPost] = useState<RoleAndAllowed[]>(andAllowed)
+  const [rolesAndAccess, setRolesAndAccess] =
+    useState<RoleAndAllowed[]>(andAllowed)
 
   useEffect(() => {
     if (type === 'createSpace' && collective) {
       setSpaceOpen(true)
-      setRolesAndAllowed(
-        roles
-          ?.map((role) => ({ ...role, allowed: false }))
-          ?.sort((a, b) => a.authority - b.authority)
-      )
+      const andAllowed = roles
+        ?.map((role) => ({ ...role, allowed: false }))
+        ?.sort((a, b) => a.authority - b.authority)
+      const andAllowedTrue = roles
+        ?.map((role) => ({ ...role, allowed: true }))
+        ?.sort((a, b) => a.authority - b.authority)
+      setRolesAndAllowed(andAllowed)
+      setRolesAndSend(andAllowedTrue)
+      setRolesAndReceive(andAllowed)
+      setRolesAndPost(andAllowed)
+      setRolesAndAccess(andAllowedTrue)
       setSpaces(spacesState)
     }
   }, [isOpen, spacesState, roles, collective])
@@ -78,7 +90,9 @@ export const CreateSpaceModal = () => {
   async function submitSpaceDetails() {
     setLoading(true)
     if (spaceName !== '' && spaceName !== 'roles' && usernameAvailable) {
-      const folder = spaceType === 'library' ? uuidv4() : null
+      const folder = ['library', 'postbox'].includes(spaceType)
+        ? uuidv4()
+        : null
       if (folder) {
         const folderData = {
           id: folder,
@@ -101,6 +115,18 @@ export const CreateSpaceModal = () => {
         order: spaces.filter((space) => space.type === spaceType).length,
         collective: collective.id,
         folder,
+        pbSend: rolesAndSend
+          .filter((role) => role.allowed)
+          .map((role) => role.id),
+        pbReceive: rolesAndReceive
+          .filter((role) => role.allowed)
+          .map((role) => role.id),
+        tPost: rolesAndPost
+          .filter((role) => role.allowed)
+          .map((role) => role.id),
+        tAccess: rolesAndAccess
+          .filter((role) => role.allowed)
+          .map((role) => role.id),
       }
       const { error } = await supabase.from('spaces').insert(space)
       if (error) {
@@ -266,6 +292,42 @@ export const CreateSpaceModal = () => {
               ></ButtonLoader>
             )}
           </div>
+          {spaceType === 'postbox' && (
+            <>
+              <div className="flex flex-col space-y-2">
+                <Label>Can Send Post</Label>
+                <SpaceRoles
+                  rolesAndAllowed={rolesAndSend}
+                  setRolesAndAllowed={setRolesAndSend}
+                ></SpaceRoles>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label>Can Receive Post</Label>
+                <SpaceRoles
+                  rolesAndAllowed={rolesAndReceive}
+                  setRolesAndAllowed={setRolesAndReceive}
+                ></SpaceRoles>
+              </div>
+            </>
+          )}
+          {spaceType === 'transient' && (
+            <>
+              <div className="flex flex-col space-y-2">
+                <Label>Can Post Content</Label>
+                <SpaceRoles
+                  rolesAndAllowed={rolesAndPost}
+                  setRolesAndAllowed={setRolesAndPost}
+                ></SpaceRoles>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label>Can Access Content</Label>
+                <SpaceRoles
+                  rolesAndAllowed={rolesAndAccess}
+                  setRolesAndAllowed={setRolesAndAccess}
+                ></SpaceRoles>
+              </div>
+            </>
+          )}
         </div>
         <DialogFooter className="flex flex-col px-6 py-4">
           <ButtonLoader

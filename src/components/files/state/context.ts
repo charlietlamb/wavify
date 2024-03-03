@@ -20,6 +20,12 @@ interface ChatFilesWrapContext {
   view: View
   setView: Dispatch<SetStateAction<View>>
   space: Space | undefined
+  postbox: boolean
+  postboxSend: boolean
+  postboxReceive: boolean
+  transient: boolean
+  transientPost: boolean
+  transientAccess: boolean
 }
 
 export const FilesContext = createContext<ChatFilesWrapContext | undefined>(

@@ -69,20 +69,11 @@ export default async function CollectiveLayout({
       roles={roles}
       spaces={spaces}
     >
-      <ResizablePanelGroup
-        className="flex h-auto flex-grow"
-        direction="horizontal"
-      >
-        <CollectiveSidebarWrap />
-        <ResizablePanel
-          className="relative flex w-full"
-          defaultSize={85}
-          minSize={60}
-        >
-          <CollectiveToggle />
-          {children}
-        </ResizablePanel>
-      </ResizablePanelGroup>
+      <CollectiveSidebarWrap />
+      <div className="relative flex w-full">
+        <CollectiveToggle />
+        {children}
+      </div>
     </CollectiveProvider>
   )
 }

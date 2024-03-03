@@ -5,6 +5,9 @@ import { getUserTopFolders } from '../functions/getUserTopFolders'
 import { getUserTopFoldersQuick } from '../functions/getUserTopFoldersQuick'
 import { getFoldersFromParentQuick } from '../functions/getFoldersFromParentQuick'
 import { getFoldersFromParent } from '../functions/getFoldersFromParent'
+import { getPostboxTopFolders } from '@/components/collective/postbox/functions/getPostboxTopFolders'
+import { getPostboxUsers } from '../postbox/functions/getPostboxUsers'
+import { getTransientFolders } from '@/components/collective/transient/functions/getTransientFolders'
 
 export async function useFolderChangeEffect(
   supabase: Supabase,
@@ -16,7 +19,11 @@ export async function useFolderChangeEffect(
   parent: string | null,
   parentStore: React.MutableRefObject<string | null>,
   folderStore: React.MutableRefObject<FolderAndSender[]>,
-  space: Space | undefined
+  space: Space | undefined,
+  postbox: boolean,
+  postboxFolders: FolderAndSender[],
+  postboxLastFetched: string,
+  transient: boolean
 ) {
   useEffect(() => {
     const p = space && !parent ? space.folder : parent
@@ -37,15 +44,32 @@ export async function useFolderChangeEffect(
 
   useEffect(() => {
     const p = space && !parent ? space.folder : parent
-
     async function updateFolders() {
       if (parentStore.current !== parent) {
         //parentStore.current = parent //This is done in useFilesChangeEffect
-        folderStore.current = parent
-          ? await getFoldersFromParentQuick(supabase, parent)
-          : space && space.folder
-            ? await getFoldersFromParentQuick(supabase, space.folder)
-            : await getUserTopFoldersQuick(supabase, user)
+        if (
+          space &&
+          (postbox || transient) &&
+          (parent?.includes('u:') || parent === 'pb' || parent === 't')
+        ) {
+          if (parent === 'pb') {
+            folderStore.current = await getPostboxUsers(supabase, space)
+          } else if (parent === 't') {
+            folderStore.current = await getTransientFolders(supabase, space)
+          } else {
+            folderStore.current = await getPostboxTopFolders(
+              supabase,
+              space,
+              parent.split('u:')[1]
+            )
+          }
+        } else {
+          folderStore.current = parent
+            ? await getFoldersFromParentQuick(supabase, parent)
+            : space && space.folder
+              ? await getFoldersFromParentQuick(supabase, space.folder)
+              : await getUserTopFoldersQuick(supabase, user)
+        }
 
         const filteredFolders = folderStore.current.filter((folder) => {
           if (filters.music) {
@@ -55,13 +79,39 @@ export async function useFolderChangeEffect(
         })
         const sortedFolders = sortFolders(filteredFolders, sorting)
         setFolders(sortedFolders)
-        folderStore.current = parent
-          ? await getFoldersFromParent(supabase, parent)
-          : space && space.folder
-            ? await getFoldersFromParent(supabase, space.folder)
-            : await getUserTopFolders(supabase, user)
+        if (
+          !(
+            space &&
+            (postbox || transient) &&
+            (parent?.includes('u:') || parent === 'pb' || parent === 't')
+          )
+        ) {
+          folderStore.current = parent
+            ? await getFoldersFromParent(supabase, parent)
+            : space && space.folder
+              ? await getFoldersFromParent(supabase, space.folder)
+              : await getUserTopFolders(supabase, user)
+        }
       } else {
-        folderStore.current = folders
+        if (
+          space &&
+          (postbox || transient) &&
+          (parent?.includes('u:') || parent === 'pb' || parent === 't')
+        ) {
+          if (parent === 'pb') {
+            folderStore.current = await getPostboxUsers(supabase, space)
+          } else if (parent === 't') {
+            folderStore.current = await getTransientFolders(supabase, space)
+          } else {
+            folderStore.current = await getPostboxTopFolders(
+              supabase,
+              space,
+              parent.split('u:')[1]
+            )
+          }
+        } else {
+          folderStore.current = folders
+        }
       }
       let foldersFilter = folderStore.current.filter(
         (folder) => folder.parent === p
@@ -76,5 +126,13 @@ export async function useFolderChangeEffect(
       setFolders(sortedFolders)
     }
     updateFolders()
-  }, [parent, user, supabase, folders])
+  }, [
+    parent,
+    user,
+    supabase,
+    folders,
+    postbox,
+    postboxFolders,
+    postboxLastFetched,
+  ])
 }

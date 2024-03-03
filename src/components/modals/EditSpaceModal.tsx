@@ -51,6 +51,10 @@ export const EditSpaceModal = () => {
   const [isClosing, setIsClosing] = useState(false)
 
   const [rolesAndAllowed, setRolesAndAllowed] = useState<RoleAndAllowed[]>([])
+  const [rolesAndSend, setRolesAndSend] = useState<RoleAndAllowed[]>([])
+  const [rolesAndReceive, setRolesAndReceive] = useState<RoleAndAllowed[]>([])
+  const [rolesAndPost, setRolesAndPost] = useState<RoleAndAllowed[]>([])
+  const [rolesAndAccess, setRolesAndAccess] = useState<RoleAndAllowed[]>([])
 
   useEffect(() => {
     if (space) {
@@ -63,6 +67,38 @@ export const EditSpaceModal = () => {
           .map((role) => ({
             ...role,
             allowed: space?.allowed.includes(role.id),
+          }))
+          .sort((a, b) => a.authority - b.authority)
+      )
+      setRolesAndSend(
+        roles
+          .map((role) => ({
+            ...role,
+            allowed: space?.pbSend.includes(role.id),
+          }))
+          .sort((a, b) => a.authority - b.authority)
+      )
+      setRolesAndReceive(
+        roles
+          .map((role) => ({
+            ...role,
+            allowed: space?.pbReceive.includes(role.id),
+          }))
+          .sort((a, b) => a.authority - b.authority)
+      )
+      setRolesAndPost(
+        roles
+          .map((role) => ({
+            ...role,
+            allowed: space?.tPost.includes(role.id),
+          }))
+          .sort((a, b) => a.authority - b.authority)
+      )
+      setRolesAndAccess(
+        roles
+          .map((role) => ({
+            ...role,
+            allowed: space?.tAccess.includes(role.id),
           }))
           .sort((a, b) => a.authority - b.authority)
       )
@@ -140,6 +176,18 @@ export const EditSpaceModal = () => {
               ? space.order
               : spaces.filter((space) => space.type === spaceType).length,
           folder,
+          pbSend: rolesAndSend
+            .filter((role) => role.allowed)
+            .map((role) => role.id),
+          pbReceive: rolesAndReceive
+            .filter((role) => role.allowed)
+            .map((role) => role.id),
+          tPost: rolesAndPost
+            .filter((role) => role.allowed)
+            .map((role) => role.id),
+          tAccess: rolesAndAccess
+            .filter((role) => role.allowed)
+            .map((role) => role.id),
         })
         .eq('id', isObject(space) && space.id ? space.id : '')
       if (error) {
@@ -275,6 +323,42 @@ export const EditSpaceModal = () => {
               ></ButtonLoader>
             )}
           </div>
+          {spaceType === 'postbox' && (
+            <>
+              <div className="flex flex-col space-y-2">
+                <Label>Can Send Post</Label>
+                <SpaceRoles
+                  rolesAndAllowed={rolesAndSend}
+                  setRolesAndAllowed={setRolesAndSend}
+                ></SpaceRoles>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label>Can Receive Post</Label>
+                <SpaceRoles
+                  rolesAndAllowed={rolesAndReceive}
+                  setRolesAndAllowed={setRolesAndReceive}
+                ></SpaceRoles>
+              </div>
+            </>
+          )}
+          {spaceType === 'transient' && (
+            <>
+              <div className="flex flex-col space-y-2">
+                <Label>Can Post Content</Label>
+                <SpaceRoles
+                  rolesAndAllowed={rolesAndPost}
+                  setRolesAndAllowed={setRolesAndPost}
+                ></SpaceRoles>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label>Can Access Content</Label>
+                <SpaceRoles
+                  rolesAndAllowed={rolesAndAccess}
+                  setRolesAndAllowed={setRolesAndAccess}
+                ></SpaceRoles>
+              </div>
+            </>
+          )}
         </div>
         <DialogFooter className="flex flex-col px-6 py-4">
           <ButtonLoader

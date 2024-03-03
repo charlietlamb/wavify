@@ -324,6 +324,62 @@ export type Database = {
           }
         ]
       }
+      postboxes: {
+        Row: {
+          created_at: string
+          file: string | null
+          folder: string | null
+          id: string
+          space: string
+          user: string
+        }
+        Insert: {
+          created_at?: string
+          file?: string | null
+          folder?: string | null
+          id?: string
+          space: string
+          user: string
+        }
+        Update: {
+          created_at?: string
+          file?: string | null
+          folder?: string | null
+          id?: string
+          space?: string
+          user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_postboxes_file_fkey"
+            columns: ["file"]
+            isOneToOne: false
+            referencedRelation: "files"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_postboxes_folder_fkey"
+            columns: ["folder"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_postboxes_space_fkey"
+            columns: ["space"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_postboxes_user_fkey"
+            columns: ["user"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       roles: {
         Row: {
           authority: number
@@ -389,7 +445,11 @@ export type Database = {
           name: string
           open: boolean
           order: number
+          pbReceive: string[]
+          pbSend: string[]
           slug: string
+          tAccess: string[]
+          tPost: string[]
           type: string
         }
         Insert: {
@@ -400,7 +460,11 @@ export type Database = {
           name: string
           open?: boolean
           order?: number
+          pbReceive?: string[]
+          pbSend?: string[]
           slug: string
+          tAccess?: string[]
+          tPost?: string[]
           type?: string
         }
         Update: {
@@ -411,7 +475,11 @@ export type Database = {
           name?: string
           open?: boolean
           order?: number
+          pbReceive?: string[]
+          pbSend?: string[]
           slug?: string
+          tAccess?: string[]
+          tPost?: string[]
           type?: string
         }
         Relationships: [
@@ -427,6 +495,52 @@ export type Database = {
             columns: ["collective"]
             isOneToOne: false
             referencedRelation: "collectives"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      transients: {
+        Row: {
+          created_at: string
+          folder: string
+          id: string
+          space: string
+          user: string
+        }
+        Insert: {
+          created_at?: string
+          folder: string
+          id?: string
+          space: string
+          user: string
+        }
+        Update: {
+          created_at?: string
+          folder?: string
+          id?: string
+          space?: string
+          user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_transients_folder_fkey"
+            columns: ["folder"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_transients_space_fkey"
+            columns: ["space"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_transients_user_fkey"
+            columns: ["user"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           }
         ]
