@@ -1,6 +1,5 @@
 import { setMaster } from '@/state/audio/audioSlice'
 import { Dispatch } from '@reduxjs/toolkit'
-import { useDispatch } from 'react-redux'
 
 export function handleProgressClick(
   e: React.MouseEvent<HTMLDivElement, MouseEvent>,

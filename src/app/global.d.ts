@@ -54,6 +54,9 @@ declare global {
   type Folder = DB['public']['Tables']['folders']['Row']
   type Postbox = DB['public']['Tables']['postboxes']['Row']
   type Transient = DB['public']['Tables']['transients']['Row']
+  type Schedule = DB['public']['Tables']['schedules']['Row']
+  type Feedback = DB['public']['Tables']['feedbacks']['Row']
+  type CommentType = DB['public']['Tables']['comments']['Row']
   type Json =
     | string
     | number
@@ -68,6 +71,8 @@ declare global {
     | 'library'
     | 'postbox'
     | 'transient'
+    | 'feedback'
+    | 'store'
 
   type MessageAuthor = {
     users: {
@@ -135,4 +140,6 @@ declare global {
     allowed: boolean
   }
   type RoleAndAllowed = Role & AndAllowed
+
+  type CommentAndUser = CommentType & AndUser
 }

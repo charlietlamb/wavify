@@ -26,6 +26,19 @@ interface ChatFilesWrapContext {
   transient: boolean
   transientPost: boolean
   transientAccess: boolean
+  transientFolders: FolderAndSender[]
+  setTransientFolders: Dispatch<SetStateAction<FolderAndSender[]>>
+  schedule: Schedule | undefined
+  setSchedule: Dispatch<SetStateAction<Schedule | undefined>>
+  schedules: Schedule[]
+  setSchedules: Dispatch<SetStateAction<Schedule[]>>
+  feedback: boolean
+  feedbackGet: boolean
+  feedbackGive: boolean
+  feedbackFolders: FolderAndSender[]
+  setFeedbackFolders: Dispatch<SetStateAction<FolderAndSender[]>>
+  feedbackFiles: FileAndSender[]
+  setFeedbackFiles: Dispatch<SetStateAction<FileAndSender[]>>
 }
 
 export const FilesContext = createContext<ChatFilesWrapContext | undefined>(

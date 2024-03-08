@@ -153,6 +153,124 @@ export type Database = {
           }
         ]
       }
+      comments: {
+        Row: {
+          createdAt: string
+          file: string | null
+          folder: string | null
+          id: string
+          lastEditedAt: string
+          message: string
+          space: string
+          user: string
+        }
+        Insert: {
+          createdAt?: string
+          file?: string | null
+          folder?: string | null
+          id?: string
+          lastEditedAt?: string
+          message?: string
+          space: string
+          user: string
+        }
+        Update: {
+          createdAt?: string
+          file?: string | null
+          folder?: string | null
+          id?: string
+          lastEditedAt?: string
+          message?: string
+          space?: string
+          user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_comments_file_fkey"
+            columns: ["file"]
+            isOneToOne: false
+            referencedRelation: "files"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_comments_folder_fkey"
+            columns: ["folder"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_comments_space_fkey"
+            columns: ["space"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_comments_user_fkey"
+            columns: ["user"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      feedbacks: {
+        Row: {
+          created_at: string
+          file: string | null
+          folder: string | null
+          id: string
+          space: string
+          user: string
+        }
+        Insert: {
+          created_at?: string
+          file?: string | null
+          folder?: string | null
+          id?: string
+          space: string
+          user: string
+        }
+        Update: {
+          created_at?: string
+          file?: string | null
+          folder?: string | null
+          id?: string
+          space?: string
+          user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_feedbacks_file_fkey"
+            columns: ["file"]
+            isOneToOne: false
+            referencedRelation: "files"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_feedbacks_folder_fkey"
+            columns: ["folder"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_feedbacks_space_fkey"
+            columns: ["space"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_feedbacks_user_fkey"
+            columns: ["user"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       files: {
         Row: {
           chat: string | null
@@ -162,6 +280,7 @@ export type Database = {
           id: string
           message: string | null
           name: string
+          preview: number
           size: number
           space: string | null
           system: boolean
@@ -176,6 +295,7 @@ export type Database = {
           id?: string
           message?: string | null
           name?: string
+          preview?: number
           size?: number
           space?: string | null
           system?: boolean
@@ -190,6 +310,7 @@ export type Database = {
           id?: string
           message?: string | null
           name?: string
+          preview?: number
           size?: number
           space?: string | null
           system?: boolean
@@ -436,10 +557,44 @@ export type Database = {
           }
         ]
       }
+      schedules: {
+        Row: {
+          end: string
+          id: string
+          name: string
+          space: string
+          start: string
+        }
+        Insert: {
+          end: string
+          id?: string
+          name?: string
+          space: string
+          start: string
+        }
+        Update: {
+          end?: string
+          id?: string
+          name?: string
+          space?: string
+          start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_schedules_space_fkey"
+            columns: ["space"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       spaces: {
         Row: {
           allowed: string[]
           collective: string
+          fGet: string[]
+          fGive: string[]
           folder: string | null
           id: string
           name: string
@@ -455,6 +610,8 @@ export type Database = {
         Insert: {
           allowed: string[]
           collective: string
+          fGet?: string[]
+          fGive?: string[]
           folder?: string | null
           id: string
           name: string
@@ -470,6 +627,8 @@ export type Database = {
         Update: {
           allowed?: string[]
           collective?: string
+          fGet?: string[]
+          fGive?: string[]
           folder?: string | null
           id?: string
           name?: string
@@ -501,23 +660,26 @@ export type Database = {
       }
       transients: {
         Row: {
-          created_at: string
+          createdAt: string
           folder: string
           id: string
+          schedule: string
           space: string
           user: string
         }
         Insert: {
-          created_at?: string
+          createdAt?: string
           folder: string
           id?: string
+          schedule: string
           space: string
           user: string
         }
         Update: {
-          created_at?: string
+          createdAt?: string
           folder?: string
           id?: string
+          schedule?: string
           space?: string
           user?: string
         }
@@ -527,6 +689,13 @@ export type Database = {
             columns: ["folder"]
             isOneToOne: false
             referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_transients_schedule_fkey"
+            columns: ["schedule"]
+            isOneToOne: false
+            referencedRelation: "schedules"
             referencedColumns: ["id"]
           },
           {

@@ -1,4 +1,5 @@
 import { RoleItemContext } from '@/components/collective/roles/context'
+import { Dispatch, SetStateAction } from 'react'
 import { create } from 'zustand'
 
 export type ModalType =
@@ -22,6 +23,14 @@ export type ModalType =
   | 'deleteFile'
   | 'editFile'
   | 'returnPost'
+  | 'updateTimer'
+  | 'schedule'
+  | 'removeTransient'
+  | 'deleteSchedule'
+  | 'editPreview'
+  | 'removeFeedback'
+  | 'leaveComment'
+  | 'comments'
 
 interface ModalData {
   collective?: Collective
@@ -45,6 +54,15 @@ interface ModalData {
   parent?: string | null
   folder?: FolderAndSender
   file?: FileAndSender
+  schedule?: Schedule | undefined
+  schedules?: Schedule[]
+  transientFolders?: FolderAndSender[]
+  setTransientFolders?: Dispatch<SetStateAction<FolderAndSender[]>>
+  setSchedules?: Dispatch<SetStateAction<Schedule[]>>
+  heading?: string
+  description?: string
+  setComments?: Dispatch<SetStateAction<CommentAndUser[]>>
+  feedbackGive?: boolean
 }
 
 interface ModalStore {

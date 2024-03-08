@@ -1,4 +1,13 @@
-import { Archive, Hash, Hourglass, LibraryBig, Mic, Video } from 'lucide-react'
+import {
+  Archive,
+  CircleDollarSign,
+  Hash,
+  Hourglass,
+  LibraryBig,
+  MessageCircleQuestion,
+  Mic,
+  Video,
+} from 'lucide-react'
 
 export const iconMap = {
   ['text']: <Hash className="mr-2 h-4 w-4" />,
@@ -7,6 +16,8 @@ export const iconMap = {
   ['library']: <LibraryBig className="mr-2 h-4 w-4" />,
   ['postbox']: <Archive className="mr-2 h-4 w-4" />,
   ['transient']: <Hourglass className="mr-2 h-4 w-4" />,
+  ['feedback']: <MessageCircleQuestion className="mr-2 h-4 w-4" />,
+  ['store']: <CircleDollarSign className="mr-2 h-4 w-4" />,
 }
 export const iconMapSidebar = {
   ['text']: (
@@ -27,6 +38,12 @@ export const iconMapSidebar = {
   ['transient']: (
     <Hourglass className="h-5 w-5 flex-shrink-0 text-zinc-500 dark:text-zinc-400" />
   ),
+  ['feedback']: (
+    <MessageCircleQuestion className="h-5 w-5 flex-shrink-0 text-zinc-500 dark:text-zinc-400" />
+  ),
+  ['store']: (
+    <CircleDollarSign className="h-5 w-5 flex-shrink-0 text-zinc-500 dark:text-zinc-400" />
+  ),
 }
 
 export const spaceTypes: SpaceType[] = [
@@ -36,6 +53,8 @@ export const spaceTypes: SpaceType[] = [
   'library',
   'postbox',
   'transient',
+  'feedback',
+  'store',
 ]
 export const spaceLabels = [
   'Text Spaces',
@@ -44,4 +63,6 @@ export const spaceLabels = [
   'Libraries',
   'Postboxes',
   'Transients',
+  'Feedback Spaces',
+  'Stores',
 ]

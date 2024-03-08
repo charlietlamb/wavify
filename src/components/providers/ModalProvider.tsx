@@ -22,6 +22,13 @@ import { EditFolderModal } from '../files/modals/EditFolderModal'
 import { DeleteFileModal } from '../files/modals/DeleteFileModal'
 import { EditFileModal } from '../files/modals/EditFileModal'
 import { ReturnPostModal } from '../files/modals/ReturnPostModal'
+import { UpdateTimerModal } from '../collective/transient/UpdateTimerModal'
+import { ScheduleModal } from '../collective/transient/ScheduleModal'
+import { RemoveTransientModal } from '../collective/transient/RemoveTransientModal'
+import { DeleteScheduleModal } from '../collective/transient/DeleteScheduleModal'
+import { EditPreviewModal } from '../audio/EditPreviewModal'
+import { LeaveCommentModal } from '../collective/feedback/LeaveCommentModal'
+import { CommentsModal } from '../collective/feedback/CommentsModal'
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false)
@@ -56,6 +63,13 @@ export const ModalProvider = () => {
       <DeleteFileModal />
       <EditFileModal />
       <ReturnPostModal />
+      <UpdateTimerModal />
+      <ScheduleModal />
+      <RemoveTransientModal />
+      <DeleteScheduleModal />
+      <EditPreviewModal />
+      <LeaveCommentModal />
+      <CommentsModal />
     </>
   )
 }

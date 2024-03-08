@@ -8,6 +8,9 @@ import { getFoldersFromParent } from '../functions/getFoldersFromParent'
 import { getPostboxTopFolders } from '@/components/collective/postbox/functions/getPostboxTopFolders'
 import { getPostboxUsers } from '../postbox/functions/getPostboxUsers'
 import { getTransientFolders } from '@/components/collective/transient/functions/getTransientFolders'
+import { getFeedbackUserFolders } from '@/components/collective/feedback/functions/getFeedbackUserFolders'
+import { getUserFromId } from '../functions/getUserFromId'
+import { getUserFeedbackFolders } from '@/components/collective/feedback/functions/getUserFeedbackFolders'
 
 export async function useFolderChangeEffect(
   supabase: Supabase,
@@ -23,11 +26,14 @@ export async function useFolderChangeEffect(
   postbox: boolean,
   postboxFolders: FolderAndSender[],
   postboxLastFetched: string,
-  transient: boolean
+  transient: boolean,
+  transientFolders: FolderAndSender[],
+  schedule: Schedule | undefined,
+  feedback: boolean,
+  feedbackFolders: FolderAndSender[]
 ) {
   useEffect(() => {
     const p = space && !parent ? space.folder : parent
-
     async function updateFoldersSorting() {
       let folders = folderStore.current.filter((folder) => folder.parent === p)
       const filteredFolders = folders.filter((folder) => {
@@ -44,18 +50,39 @@ export async function useFolderChangeEffect(
 
   useEffect(() => {
     const p = space && !parent ? space.folder : parent
+    console.log(parent)
     async function updateFolders() {
       if (parentStore.current !== parent) {
         //parentStore.current = parent //This is done in useFilesChangeEffect
         if (
           space &&
-          (postbox || transient) &&
-          (parent?.includes('u:') || parent === 'pb' || parent === 't')
+          (postbox || transient || feedback) &&
+          (parent?.includes('u:') ||
+            parent === 'pb' ||
+            parent === 't' ||
+            parent === 'f' ||
+            parent?.includes('fd:'))
         ) {
           if (parent === 'pb') {
             folderStore.current = await getPostboxUsers(supabase, space)
           } else if (parent === 't') {
-            folderStore.current = await getTransientFolders(supabase, space)
+            folderStore.current = await getTransientFolders(
+              supabase,
+              space,
+              schedule
+            )
+          } else if (parent === 'f') {
+            folderStore.current = await getFeedbackUserFolders(supabase, space)
+          } else if (parent?.includes('fd:')) {
+            const otherUser = await getUserFromId(
+              supabase,
+              parent.split(':')[1]
+            )
+            folderStore.current = await getUserFeedbackFolders(
+              supabase,
+              otherUser,
+              space
+            )
           } else {
             folderStore.current = await getPostboxTopFolders(
               supabase,
@@ -82,8 +109,12 @@ export async function useFolderChangeEffect(
         if (
           !(
             space &&
-            (postbox || transient) &&
-            (parent?.includes('u:') || parent === 'pb' || parent === 't')
+            (postbox || transient || feedback) &&
+            (parent?.includes('u:') ||
+              parent === 'pb' ||
+              parent === 't' ||
+              parent === 'f' ||
+              parent?.includes('fd:'))
           )
         ) {
           folderStore.current = parent
@@ -95,13 +126,33 @@ export async function useFolderChangeEffect(
       } else {
         if (
           space &&
-          (postbox || transient) &&
-          (parent?.includes('u:') || parent === 'pb' || parent === 't')
+          (postbox || transient || feedback) &&
+          (parent?.includes('u:') ||
+            parent === 'pb' ||
+            parent === 't' ||
+            parent?.includes('fd:') ||
+            parent === 'f')
         ) {
           if (parent === 'pb') {
             folderStore.current = await getPostboxUsers(supabase, space)
           } else if (parent === 't') {
-            folderStore.current = await getTransientFolders(supabase, space)
+            folderStore.current = await getTransientFolders(
+              supabase,
+              space,
+              schedule
+            )
+          } else if (parent === 'f') {
+            folderStore.current = await getFeedbackUserFolders(supabase, space)
+          } else if (parent?.includes('fd:')) {
+            const otherUser = await getUserFromId(
+              supabase,
+              parent.split(':')[1]
+            )
+            folderStore.current = await getUserFeedbackFolders(
+              supabase,
+              otherUser,
+              space
+            )
           } else {
             folderStore.current = await getPostboxTopFolders(
               supabase,
@@ -110,9 +161,27 @@ export async function useFolderChangeEffect(
             )
           }
         } else {
-          folderStore.current = folders
+          if (!transient) {
+            folderStore.current = folders
+          } else if (parent) {
+            folderStore.current = await getFoldersFromParentQuick(
+              supabase,
+              parent
+            )
+            const filteredFolders = folderStore.current.filter((folder) => {
+              if (filters.music) {
+                return folder.music
+              }
+              return true
+            })
+            const sortedFolders = sortFolders(filteredFolders, sorting)
+            setFolders(sortedFolders)
+            folderStore.current = await getFoldersFromParent(supabase, parent)
+          }
         }
       }
+      console.log(folderStore.current)
+      console.log(p)
       let foldersFilter = folderStore.current.filter(
         (folder) => folder.parent === p
       )
@@ -134,5 +203,9 @@ export async function useFolderChangeEffect(
     postbox,
     postboxFolders,
     postboxLastFetched,
+    transientFolders,
+    schedule,
+    space,
+    feedbackFolders,
   ])
 }

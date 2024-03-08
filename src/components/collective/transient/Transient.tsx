@@ -8,12 +8,17 @@ interface LibraryProps {
   initSearchFiles: FileAndSender[]
   initFiles: FileAndSender[]
   initFolders: FolderAndSender[]
+  initSchedules: Schedule[]
 }
 
 export default function Transient(props: LibraryProps) {
   return (
     <div className="flex w-full flex-col">
-      <FilesProvider {...props} transient={true}>
+      <FilesProvider
+        {...props}
+        transient={true}
+        transientFoldersInit={props.initFolders}
+      >
         <FilesDashboardHeader />
         <div className="flex flex-grow overflow-y-auto">
           <FilesSidebarWrap />

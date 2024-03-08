@@ -14,6 +14,13 @@ import { usePathChangeEffect } from './hooks/usePathChangeEffect'
 import { useCollective } from '@/state/collective/useCollective'
 import { usePostboxUpdateEffect } from './postbox/hooks/usePostboxUpdateEffect'
 import { usePostboxChangeEffect } from './hooks/usePostboxChangeEffect'
+import { useTransientUpdateEffect } from '../collective/transient/hooks/useTransientUpdateEffect'
+import { useTransientChangeEffect } from '../collective/transient/hooks/useTransientChangeEffect'
+import { useSpaceUpdateEffect } from './hooks/useSpaceUpdateEffect'
+import { useSchedulesUpdateEffect } from './hooks/useSchedulesUpdateEffect'
+import { useSchedulesChangeEffect } from './hooks/useSchedulesChangeEffect'
+import { useFeedbackUpdateEffect } from '../collective/feedback/hooks/useFeedbackUpdateEffect'
+import { useFeedbackChangeEffect } from '../collective/feedback/hooks/useFeedbackChangeEffect'
 
 export default function FilesProvider({
   initSearchFiles,
@@ -24,6 +31,10 @@ export default function FilesProvider({
   postboxFoldersInit = [],
   transient = false,
   transientFoldersInit = [],
+  initSchedules = [],
+  feedback = false,
+  feedbackFilesInit = [],
+  feedbackFoldersInit = [],
   children,
 }: {
   initSearchFiles: FileAndSender[]
@@ -34,6 +45,10 @@ export default function FilesProvider({
   postboxFoldersInit?: FolderAndSender[]
   transient?: boolean
   transientFoldersInit?: FolderAndSender[]
+  initSchedules?: Schedule[]
+  feedback?: boolean
+  feedbackFilesInit?: FileAndSender[]
+  feedbackFoldersInit?: FolderAndSender[]
   children: React.ReactNode
 }) {
   const user = useUser()
@@ -55,18 +70,28 @@ export default function FilesProvider({
     space && colUser && transient
       ? space.tAccess.includes(colUser.roles.id)
       : false
+  const feedbackGet =
+    space && colUser && feedback ? space.fGet.includes(colUser.roles.id) : false
+  const feedbackGive =
+    space && colUser && feedback
+      ? space.fGive.includes(colUser.roles.id)
+      : false
   const [mode, setMode] = useState<FileMode>('all')
   const [path, setPath] = useState<Path[]>([])
   const [sorting, setSorting] = useState<SortingType>('default')
   const [filterByMusic, setFilterByMusic] = useState<boolean>(false)
   const [parent, setParent] = useState<string | null>(
-    postboxReceive
+    postbox && postboxReceive
       ? 'pb'
-      : postboxSend
+      : postbox && postboxSend
         ? 'u:' + user.id
         : transient
           ? 't'
-          : null
+          : feedback && feedbackGive
+            ? 'f'
+            : feedback && feedbackGet
+              ? 'fd:' + user.id
+              : null
   )
   const parentStore = useRef<string | null>(null)
   const [files, setFiles] = useState<FileAndSender[]>(initFiles)
@@ -82,9 +107,26 @@ export default function FilesProvider({
   const [postboxLastFetched, setPostboxLastFetched] = useState<string>(
     new Date().toISOString()
   )
+  const [transientFolders, setTransientFolders] = useState(transientFoldersInit)
   const filters: Filters = {
     music: filterByMusic,
   }
+
+  const [spaceCurrent, setSpaceCurrent] = useState<Space | undefined>(space)
+  const [schedule, setSchedule] = useState<Schedule | undefined>(
+    initSchedules.find((schedule: Schedule) => {
+      const now = new Date()
+      const start = new Date(schedule.start)
+      const end = new Date(schedule.end)
+      return now >= start && now <= end
+    })
+  )
+  const [schedules, setSchedules] = useState<Schedule[]>(initSchedules)
+
+  const [feedbackFiles, setFeedbackFiles] =
+    useState<FileAndSender[]>(feedbackFilesInit)
+  const [feedbackFolders, setFeedbackFolders] =
+    useState<FolderAndSender[]>(feedbackFoldersInit)
 
   useFolderUpdateEffect(
     supabase,
@@ -105,6 +147,28 @@ export default function FilesProvider({
     space,
     setPostboxLastFetched
   )
+  useTransientUpdateEffect(
+    supabase,
+    user,
+    transientFolders,
+    setTransientFolders,
+    space,
+    schedule
+  )
+
+  useFeedbackUpdateEffect(
+    supabase,
+    user,
+    feedbackFiles,
+    setFeedbackFiles,
+    feedbackFolders,
+    setFeedbackFolders,
+    space
+  )
+
+  useSpaceUpdateEffect(supabase, user, spaceCurrent, setSpaceCurrent)
+
+  useSchedulesUpdateEffect(supabase, user, space, schedules, setSchedules)
 
   useFolderChangeEffect(
     supabase,
@@ -120,7 +184,11 @@ export default function FilesProvider({
     postbox,
     postboxFolders,
     postboxLastFetched,
-    transient
+    transient,
+    transientFolders,
+    schedule,
+    feedback,
+    feedbackFolders
   )
 
   useFileChangeEffect(
@@ -132,7 +200,8 @@ export default function FilesProvider({
     parent,
     parentStore,
     fileStore,
-    space
+    space,
+    feedbackFiles
   )
 
   usePathChangeEffect(
@@ -142,10 +211,32 @@ export default function FilesProvider({
     space,
     postbox,
     postboxFolders,
-    postboxReceive
+    postboxReceive,
+    transient,
+    transientFolders,
+    feedback,
+    feedbackFolders,
+    feedbackGive
   )
 
   usePostboxChangeEffect(supabase, postbox, setPostboxFolders, space, parent)
+  useTransientChangeEffect(
+    supabase,
+    transient,
+    setTransientFolders,
+    space,
+    parent,
+    schedule
+  )
+  useFeedbackChangeEffect(
+    supabase,
+    feedback,
+    setFeedbackFolders,
+    setFeedbackFiles,
+    space,
+    parent
+  )
+  useSchedulesChangeEffect(schedules, setSchedule)
   if (postbox && !postboxSend && !postboxReceive) return
   return (
     <FilesContext.Provider
@@ -167,13 +258,26 @@ export default function FilesProvider({
         setFolders,
         view,
         setView,
-        space,
+        space: spaceCurrent,
         postbox,
         postboxSend,
         postboxReceive,
         transient,
         transientPost,
         transientAccess,
+        transientFolders,
+        setTransientFolders,
+        schedule,
+        setSchedule,
+        schedules,
+        setSchedules,
+        feedback,
+        feedbackGet,
+        feedbackGive,
+        feedbackFolders,
+        setFeedbackFolders,
+        feedbackFiles,
+        setFeedbackFiles,
       }}
     >
       {children}

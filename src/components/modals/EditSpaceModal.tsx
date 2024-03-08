@@ -55,6 +55,8 @@ export const EditSpaceModal = () => {
   const [rolesAndReceive, setRolesAndReceive] = useState<RoleAndAllowed[]>([])
   const [rolesAndPost, setRolesAndPost] = useState<RoleAndAllowed[]>([])
   const [rolesAndAccess, setRolesAndAccess] = useState<RoleAndAllowed[]>([])
+  const [rolesAndGet, setRolesAndGet] = useState<RoleAndAllowed[]>([])
+  const [rolesAndGive, setRolesAndGive] = useState<RoleAndAllowed[]>([])
 
   useEffect(() => {
     if (space) {
@@ -99,6 +101,22 @@ export const EditSpaceModal = () => {
           .map((role) => ({
             ...role,
             allowed: space?.tAccess.includes(role.id),
+          }))
+          .sort((a, b) => a.authority - b.authority)
+      )
+      setRolesAndGet(
+        roles
+          .map((role) => ({
+            ...role,
+            allowed: space?.fGet.includes(role.id),
+          }))
+          .sort((a, b) => a.authority - b.authority)
+      )
+      setRolesAndGive(
+        roles
+          .map((role) => ({
+            ...role,
+            allowed: space?.fGive.includes(role.id),
           }))
           .sort((a, b) => a.authority - b.authority)
       )
@@ -186,6 +204,12 @@ export const EditSpaceModal = () => {
             .filter((role) => role.allowed)
             .map((role) => role.id),
           tAccess: rolesAndAccess
+            .filter((role) => role.allowed)
+            .map((role) => role.id),
+          fGet: rolesAndGet
+            .filter((role) => role.allowed)
+            .map((role) => role.id),
+          fGive: rolesAndGive
             .filter((role) => role.allowed)
             .map((role) => role.id),
         })
@@ -355,6 +379,24 @@ export const EditSpaceModal = () => {
                 <SpaceRoles
                   rolesAndAllowed={rolesAndAccess}
                   setRolesAndAllowed={setRolesAndAccess}
+                ></SpaceRoles>
+              </div>
+            </>
+          )}
+          {spaceType === 'feedback' && (
+            <>
+              <div className="flex flex-col space-y-2">
+                <Label>Can Get Feedback</Label>
+                <SpaceRoles
+                  rolesAndAllowed={rolesAndGet}
+                  setRolesAndAllowed={setRolesAndGet}
+                ></SpaceRoles>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label>Can Give Feedback</Label>
+                <SpaceRoles
+                  rolesAndAllowed={rolesAndGive}
+                  setRolesAndAllowed={setRolesAndGive}
                 ></SpaceRoles>
               </div>
             </>

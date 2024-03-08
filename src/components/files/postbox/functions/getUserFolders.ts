@@ -18,7 +18,7 @@ export async function getUserFolders(
   const folderIdsString = `(${folderIds.join(',')})`
   const { data, error } = await supabase
     .from('folders')
-    .select('*,user(username,profile_pic_url)')
+    .select('*,users(username,profile_pic_url)')
     .eq('user', user.id)
     .not('id', 'in', folderIdsString)
     .order('createdAt', { ascending: false })

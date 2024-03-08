@@ -19,6 +19,13 @@ import { getColUser } from '../(functions)/getColUser'
 import { getPostboxUsers } from '@/components/files/postbox/functions/getPostboxUsers'
 import Transient from '@/components/collective/transient/Transient'
 import { getTransientFolders } from '@/components/collective/transient/functions/getTransientFolders'
+import { getTransientSchedule } from '@/components/collective/transient/functions/getTransientSchedule'
+import { getTransientSchedules } from '@/components/collective/transient/functions/getTransientSchedules'
+import { getFeedbackUserFolders } from '@/components/collective/feedback/functions/getFeedbackUserFolders'
+import { getFeedbackUserFiles } from '@/components/collective/feedback/functions/getFeedbackUserFiles'
+import Feedback from '@/components/collective/feedback/Feedback'
+import { getUserFeedbackFiles } from '@/components/collective/feedback/functions/getUserFeedbackFiles'
+import { getUserFeedbackFolders } from '@/components/collective/feedback/functions/getUserFeedbackFolders'
 
 interface spacePageParams {
   unique: string
@@ -94,18 +101,46 @@ export default async function page({ params }: spacePageProps) {
 
     const initSearchFiles: FileAndSender[] = []
     const initFiles: FileAndSender[] = []
-    console.log('oioi')
-    const initFolders: FolderAndSender[] = await getTransientFolders(
+    const schedule: Schedule | undefined = await getTransientSchedule(
       supabase,
       space
     )
-
+    const initFolders: FolderAndSender[] = await getTransientFolders(
+      supabase,
+      space,
+      schedule
+    )
+    const schedules: Schedule[] = await getTransientSchedules(supabase, space)
     return (
       <Transient
         space={space}
         initSearchFiles={initSearchFiles}
         initFiles={initFiles}
         initFolders={initFolders}
+        initSchedules={schedules}
+      />
+    )
+  }
+
+  if (space.type === 'feedback') {
+    // const canGet = space.fGet.includes(colUser.roles.id)
+    // const canGive = space.fGive.includes(colUser.roles.id)
+    // if (!canGet && !canGive) return redirect(`/collective/${params.unique}`)
+
+    // const initSearchFiles: FileAndSender[] = []
+    // const initFiles: FileAndSender[] = canGive
+    //   ? []
+    //   : await getUserFeedbackFiles(supabase, user, space)
+    // const initFolders: FolderAndSender[] = canGive
+    //   ? await getFeedbackUserFolders(supabase, space)
+    //   : await getUserFeedbackFolders(supabase, user, space)
+
+    return (
+      <Feedback
+        space={space}
+        initSearchFiles={[]}
+        initFiles={[]}
+        initFolders={[]}
       />
     )
   }

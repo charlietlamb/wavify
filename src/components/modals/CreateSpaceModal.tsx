@@ -61,6 +61,8 @@ export const CreateSpaceModal = () => {
   const [rolesAndPost, setRolesAndPost] = useState<RoleAndAllowed[]>(andAllowed)
   const [rolesAndAccess, setRolesAndAccess] =
     useState<RoleAndAllowed[]>(andAllowed)
+  const [rolesAndGet, setRolesAndGet] = useState<RoleAndAllowed[]>(andAllowed)
+  const [rolesAndGive, setRolesAndGive] = useState<RoleAndAllowed[]>(andAllowed)
 
   useEffect(() => {
     if (type === 'createSpace' && collective) {
@@ -76,6 +78,8 @@ export const CreateSpaceModal = () => {
       setRolesAndReceive(andAllowed)
       setRolesAndPost(andAllowed)
       setRolesAndAccess(andAllowedTrue)
+      setRolesAndGet(andAllowedTrue)
+      setRolesAndGive(andAllowed)
       setSpaces(spacesState)
     }
   }, [isOpen, spacesState, roles, collective])
@@ -125,6 +129,10 @@ export const CreateSpaceModal = () => {
           .filter((role) => role.allowed)
           .map((role) => role.id),
         tAccess: rolesAndAccess
+          .filter((role) => role.allowed)
+          .map((role) => role.id),
+        fGet: rolesAndGet.filter((role) => role.allowed).map((role) => role.id),
+        fGive: rolesAndGive
           .filter((role) => role.allowed)
           .map((role) => role.id),
       }
@@ -324,6 +332,24 @@ export const CreateSpaceModal = () => {
                 <SpaceRoles
                   rolesAndAllowed={rolesAndAccess}
                   setRolesAndAllowed={setRolesAndAccess}
+                ></SpaceRoles>
+              </div>
+            </>
+          )}
+          {spaceType === 'feedback' && (
+            <>
+              <div className="flex flex-col space-y-2">
+                <Label>Can Get Feedback</Label>
+                <SpaceRoles
+                  rolesAndAllowed={rolesAndGet}
+                  setRolesAndAllowed={setRolesAndGet}
+                ></SpaceRoles>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label>Can Give Feedback</Label>
+                <SpaceRoles
+                  rolesAndAllowed={rolesAndGive}
+                  setRolesAndAllowed={setRolesAndGive}
                 ></SpaceRoles>
               </div>
             </>

@@ -10,9 +10,10 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import NoFiles from './NoFiles'
 import NoPost from './NoPost'
 import { AnimatePresence, motion } from 'framer-motion'
+import NoTransient from '@/components/collective/transient/NoTransient'
 
 export default function FilesFiles() {
-  const { files, folders, view, postbox } = useFilesContext()
+  const { files, folders, view, postbox, transient } = useFilesContext()
   const supabase = createClientComponentClient()
   return (
     <div className="flex flex-grow flex-col overflow-y-auto">
@@ -87,50 +88,58 @@ export default function FilesFiles() {
                     )}
                   </Droppable>
                 ))}
-                {files.map((file, index) => (
-                  <Draggable key={file.id} draggableId={file.id} index={index}>
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className="h-auto w-full"
-                        style={
-                          snapshot.isDragging
-                            ? {
-                                position: 'fixed',
-                                top: 0,
-                                left: 0,
-                                overflow: 'visible',
-                                ...provided.draggableProps.style,
-                              }
-                            : { transform: 'none', overflow: 'visible' }
-                        }
-                      >
-                        <AnimatePresence>
-                          <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.6 }}
-                            key={file.id}
-                          >
-                            <File file={file} />
-                          </motion.div>
-                        </AnimatePresence>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
+                {files.map((file, index) => {
+                  return (
+                    <Draggable
+                      key={file.id}
+                      draggableId={file.id}
+                      index={index}
+                    >
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className="h-auto w-full"
+                          style={
+                            snapshot.isDragging
+                              ? {
+                                  position: 'fixed',
+                                  top: 0,
+                                  left: 0,
+                                  overflow: 'visible',
+                                  ...provided.draggableProps.style,
+                                }
+                              : { transform: 'none', overflow: 'visible' }
+                          }
+                        >
+                          <AnimatePresence>
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.6 }}
+                              key={file.id}
+                            >
+                              <File file={file} />
+                            </motion.div>
+                          </AnimatePresence>
+                        </div>
+                      )}
+                    </Draggable>
+                  )
+                })}
                 {/* {provided.placeholder} */}
               </div>
             )}
           </Droppable>
         </DragDropContext>
-      ) : !postbox ? (
-        <NoFiles />
-      ) : (
+      ) : postbox ? (
         <NoPost />
+      ) : transient ? (
+        <NoTransient />
+      ) : (
+        <NoFiles />
       )}
     </div>
   )

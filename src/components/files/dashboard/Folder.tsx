@@ -2,6 +2,11 @@ import {
   Cog,
   Download,
   Folder as FolderIcon,
+  MessageCircle,
+  MessageCircleOff,
+  MessageCircleQuestionIcon,
+  MessagesSquare,
+  MinusCircle,
   MoreHorizontal,
   MoveUp,
   Trash2,
@@ -22,13 +27,28 @@ import { getFileSizeString } from '../functions/getFileSizeString'
 import { downloadFolder } from '../functions/downloadFolder'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import Spinner from '@/components/me/Spinner'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { moveFolderToParent } from '../functions/moveFolderToParent'
 import { useUser } from '@/state/user/useUser'
 import { useCollective } from '@/state/collective/useCollective'
+import { isUUID } from '@/lib/isUUID'
+import { checkFolderHasComments } from '@/components/collective/feedback/functions/checkFolderHasComments'
 
 export default function Folder({ folder }: { folder: FolderAndSender }) {
-  const { folders, parent, setParent, postbox, space } = useFilesContext()
+  const {
+    folders,
+    parent,
+    setParent,
+    postbox,
+    postboxSend,
+    space,
+    transient,
+    transientPost,
+    transientFolders,
+    setTransientFolders,
+    feedback,
+    feedbackGive,
+  } = useFilesContext()
   const { colUser } = useCollective()
   const canReceive = space?.pbReceive.includes(colUser.roles.id)
   const { onOpen } = useModal()
@@ -45,6 +65,11 @@ export default function Folder({ folder }: { folder: FolderAndSender }) {
       setParent(folder.id)
     }
   }
+  const [comments, setComments] = useState<CommentAndUser[]>([])
+
+  useEffect(() => {
+    checkFolderHasComments(supabase, folder, setComments)
+  }, [])
   return (
     <div
       className="flex w-full cursor-pointer flex-col rounded-xl border-2 border-zinc-200 bg-zinc-900 px-2 py-4 transition-all hover:rounded-md hover:bg-zinc-800"
@@ -77,10 +102,73 @@ export default function Folder({ folder }: { folder: FolderAndSender }) {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                {((!postbox && folder.parent) ||
+                {!!comments.length && (
+                  <DropdownMenuItem
+                    className="group flex w-full cursor-pointer justify-between"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onOpen('comments', {
+                        space,
+                        folder,
+                        feedbackGive,
+                      })
+                    }}
+                  >
+                    <p className="transition-all group-hover:text-primary">
+                      {feedbackGive ? 'View Feedback' : 'View Comments'}
+                    </p>
+                    <MessagesSquare className="h-4 w-4 text-zinc-500 group-hover:animate-pulse" />
+                  </DropdownMenuItem>
+                )}
+                {(!feedback || (feedback && feedbackGive)) &&
+                  isUUID(folder.id) && (
+                    <>
+                      <DropdownMenuItem
+                        className="group flex w-full cursor-pointer justify-between"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (feedbackGive) {
+                            onOpen('leaveComment', {
+                              space,
+                              folder,
+                              heading: 'Give Feedback',
+                              description:
+                                'Give feedback to a producer. Let them know what you think about their work.',
+                            })
+                          } else {
+                            onOpen('leaveComment', {
+                              space,
+                              folder,
+                            })
+                          }
+                        }}
+                      >
+                        <p className="transition-all group-hover:text-primary">
+                          {feedbackGive ? 'Give Feedback' : 'Leave Comment'}
+                        </p>
+                        {feedbackGive ? (
+                          <MessageCircleQuestionIcon className="h-4 w-4 text-zinc-500 group-hover:animate-pulse" />
+                        ) : (
+                          <MessageCircle className="h-4 w-4 text-zinc-500 group-hover:animate-pulse" />
+                        )}
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                {((!postbox && !transient && !feedback && folder.parent) ||
                   (postbox &&
+                    postboxSend &&
+                    folder.user === user.id &&
                     folder.parent !== 'pb' &&
-                    !folder.parent?.includes('u:'))) && (
+                    !folder.parent?.includes('u:')) ||
+                  (transient &&
+                    transientPost &&
+                    folder.user === user.id &&
+                    folder.parent !== 't' &&
+                    feedback &&
+                    feedbackGive &&
+                    folder.user === user.id &&
+                    folder.parent !== 'f') ||
+                  !folder.parent?.includes('fd:')) && (
                   <>
                     <DropdownMenuItem
                       className="group flex w-full cursor-pointer justify-between"
@@ -94,10 +182,10 @@ export default function Folder({ folder }: { folder: FolderAndSender }) {
                       </p>
                       <MoveUp className="h-4 w-4 text-zinc-500 group-hover:animate-pulse" />
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
                   </>
                 )}
-                {!postbox && (
+                <DropdownMenuSeparator />
+                {!postbox && !transient && !feedback && (
                   <DropdownMenuItem
                     className="group flex w-full cursor-pointer justify-between"
                     onClick={(e) => {
@@ -123,7 +211,7 @@ export default function Folder({ folder }: { folder: FolderAndSender }) {
                   </p>
                   <Download className="h-4 w-4 text-zinc-500 group-hover:animate-pulse" />
                 </DropdownMenuItem>
-                {!postbox ? (
+                {!postbox && !transient && !feedback ? (
                   <DropdownMenuItem
                     className="group flex w-full cursor-pointer justify-between"
                     onClick={(e) => {
@@ -136,7 +224,7 @@ export default function Folder({ folder }: { folder: FolderAndSender }) {
                     </p>
                     <Trash2 className="h-4 w-4 text-zinc-500 group-hover:animate-pulse" />
                   </DropdownMenuItem>
-                ) : (
+                ) : postbox ? (
                   (folder.parent === 'pb' || folder.parent?.includes('u:')) &&
                   (canReceive || folder.user === user.id) && (
                     <DropdownMenuItem
@@ -152,6 +240,45 @@ export default function Folder({ folder }: { folder: FolderAndSender }) {
                           : 'Return Post'}
                       </p>
                       <Undo2 className="h-4 w-4 text-zinc-500 group-hover:animate-pulse" />
+                    </DropdownMenuItem>
+                  )
+                ) : feedback ? (
+                  (folder.parent === 'f' || folder.parent?.includes('fd:')) &&
+                  (feedbackGive || folder.user === user.id) && (
+                    <DropdownMenuItem
+                      className="group flex w-full cursor-pointer justify-between"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onOpen('removeFeedback', { folder, space })
+                      }}
+                    >
+                      <p className="transition-all group-hover:text-red-500">
+                        {folder.parent === 'f'
+                          ? 'Remove All Feedback'
+                          : 'Remove Feedback'}
+                      </p>
+                      <MessageCircleOff className="h-4 w-4 text-zinc-500 group-hover:animate-pulse" />
+                    </DropdownMenuItem>
+                  )
+                ) : (
+                  folder.parent === 't' &&
+                  (transientPost || folder.user === user.id) && (
+                    <DropdownMenuItem
+                      className="group flex w-full cursor-pointer justify-between"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onOpen('removeTransient', {
+                          folder,
+                          space,
+                          transientFolders,
+                          setTransientFolders,
+                        })
+                      }}
+                    >
+                      <p className="transition-all group-hover:text-red-500">
+                        Remove Folder
+                      </p>
+                      <MinusCircle className="h-4 w-4 text-zinc-500 group-hover:animate-pulse" />
                     </DropdownMenuItem>
                   )
                 )}
