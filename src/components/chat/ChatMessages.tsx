@@ -227,7 +227,7 @@ export function ChatMessages({
           </FilesContext.Provider>
         </ResizablePanel>
       )}
-      {fileTab && <ResizableHandle />}
+      {fileTab && <ResizableHandle withHandle={true} className="bg-zinc-700" />}
       <ResizablePanel
         defaultSize={fileTab ? 70 : 100}
         minSize={50}

@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import ButtonLoader from '@/components/me/ButtonLoader'
+import ButtonLoader from '@/components/utils/ButtonLoader'
 import { useModal } from '../../../hooks/use-modal-store'
 import { Progress } from '../ui/progress'
 import { AudioState, setMaster } from '@/state/audio/audioSlice'

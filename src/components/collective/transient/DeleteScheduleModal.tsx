@@ -13,7 +13,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useModal } from '../../../../hooks/use-modal-store'
-import ButtonLoader from '@/components/me/ButtonLoader'
+import ButtonLoader from '@/components/utils/ButtonLoader'
 
 export const DeleteScheduleModal = () => {
   const { isOpen, onClose, type, data } = useModal()

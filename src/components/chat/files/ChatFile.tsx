@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
-import ResizableDiv from '../../me/ResizableDiv'
-import { UserAvatar } from '../../me/UserAvatar'
+import ResizableDiv from '../../utils/ResizableDiv'
+import { UserAvatar } from '../../utils/UserAvatar'
 import isObject from '@/lib/isObject'
 import { useRouter } from 'next/navigation'
 import { FileArchive, FileIcon, FileImage, FileMusic } from 'lucide-react'
@@ -29,7 +29,8 @@ export default function ChatFile({ message }: ChatItemProps) {
   }
   const isSender = user.id === message.author
 
-  const fileClasses = 'w-10 h-10 fill-transparent stroke-primary min-w-10'
+  const fileClasses =
+    'w-10 h-10 fill-transparent stroke-primary min-w-10 text-zinc-200'
 
   async function download(fileUrl: string, fileName: string) {
     const url = await downloadChatImage(fileUrl)
@@ -54,8 +55,8 @@ export default function ChatFile({ message }: ChatItemProps) {
             <ResizableDiv
               key={uuid()}
               className={cn(
-                'group relative flex w-full cursor-auto items-center rounded-lg bg-background_content p-2 transition hover:bg-primary/5',
-                isSender && 'ml-auto bg-zinc-950 hover:bg-primary/5'
+                'group relative flex w-full cursor-auto items-center rounded-lg border border-zinc-900 bg-transparent p-2 transition hover:border-zinc-800',
+                isSender && 'ml-auto border-zinc-700 hover:border-zinc-600'
               )}
             >
               <div className={cn('group flex w-full items-center gap-x-2')}>
@@ -86,7 +87,7 @@ export default function ChatFile({ message }: ChatItemProps) {
                       <button
                         onClick={() => download(file.url, file.name)}
                         className={cn(
-                          'ml-2 text-left text-sm text-primary hover:underline dark:text-primary'
+                          'ml-2 text-left text-sm text-zinc-200 hover:underline dark:text-zinc-200'
                         )}
                       >
                         {file.name}

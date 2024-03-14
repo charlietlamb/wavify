@@ -13,7 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/button'
 import { Separator } from '../ui/separator'
 import { useRouter } from 'next/navigation'
-import ButtonLoader from '../me/ButtonLoader'
+import ButtonLoader from '../utils/ButtonLoader'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 export default function FloatingMenu({

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import ButtonLoader from '../me/ButtonLoader'
+import ButtonLoader from '../utils/ButtonLoader'
 import { createRole } from './roles/createRole'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useCollective } from '@/state/collective/useCollective'

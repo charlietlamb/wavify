@@ -10,7 +10,7 @@ import {
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useUser } from '@/state/user/useUser'
 import { useModal } from '../../../../hooks/use-modal-store'
-import ButtonLoader from '@/components/me/ButtonLoader'
+import ButtonLoader from '@/components/utils/ButtonLoader'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 

@@ -67,7 +67,10 @@ export const ChatInput = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="border-t border-zinc-700"
+      >
         <FormField
           control={form.control}
           name="content"
@@ -80,13 +83,13 @@ export const ChatInput = ({
                     onClick={() =>
                       onOpen('messageFile', { messageFileType: type, chat })
                     }
-                    className="absolute left-8 top-7 flex h-[24px] w-[24px] items-center justify-center rounded-full bg-zinc-500 p-1 transition hover:bg-zinc-800 dark:bg-zinc-400 dark:hover:bg-zinc-300"
+                    className="absolute left-8 top-7 flex h-[24px] w-[24px] items-center justify-center rounded-full bg-zinc-200 p-1 transition hover:bg-zinc-100"
                   >
-                    <Plus className="text-white dark:text-[#313338]" />
+                    <Plus className="text-zinc-700" />
                   </button>
                   <Input
                     disabled={isLoading}
-                    className="border-0 border-none bg-zinc-200/90 px-14 py-6 text-zinc-600 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-zinc-950 dark:text-zinc-200"
+                    className="border border-zinc-700 bg-transparent px-14 py-6 text-zinc-200 transition focus-visible:border-zinc-200 focus-visible:ring-0 focus-visible:ring-offset-0"
                     placeholder={`Message ${
                       type === 'conversation'
                         ? name

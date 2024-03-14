@@ -9,12 +9,12 @@ import {
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { UserAvatar } from '../../me/UserAvatar'
+import { UserAvatar } from '../../utils/UserAvatar'
 import { useModal } from '../../../../hooks/use-modal-store'
 import { ActionTooltip } from '../../util/ActionTooltip'
 import isObject from '@/lib/isObject'
 import { formatDistanceToNow } from 'date-fns'
-import ResizableDiv from '../../me/ResizableDiv'
+import ResizableDiv from '../../utils/ResizableDiv'
 import {
   imageExtensions,
   musicExtensions,
@@ -66,13 +66,13 @@ export function ChatItem({ message }: ChatItemProps) {
     canDeleteAny = true
   }
 
-  const fileClasses = 'w-10 h-10 fill-transparent stroke-primary min-w-10'
+  const fileClasses = 'w-10 h-10 fill-transparent stroke-zinc-200 min-w-10'
 
   return (
     <ResizableDiv
       className={cn(
-        'group relative flex cursor-auto items-center rounded-lg bg-background_content p-4 transition',
-        isSender && 'ml-auto bg-zinc-950'
+        'group relative flex cursor-auto items-center rounded-lg border border-zinc-900 bg-transparent p-4 transition hover:border-zinc-800',
+        isSender && 'ml-auto border-zinc-700 hover:border-zinc-600'
       )}
     >
       <div className={cn('group flex w-full items-start gap-x-2')}>

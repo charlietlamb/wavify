@@ -12,7 +12,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command'
-import { UserAvatar } from '@/components/me/UserAvatar'
+import { UserAvatar } from '@/components/utils/UserAvatar'
 import downloadChatImage from '@/components/chat/actions/downloadFile'
 import { useFilesContext } from '../state/context'
 

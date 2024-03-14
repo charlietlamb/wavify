@@ -1,6 +1,7 @@
 'use client'
 import {
   Award,
+  Boxes,
   ChevronDown,
   LogOut,
   PlusCircle,
@@ -46,12 +47,12 @@ export const CollectiveHeader = () => {
       <DropdownMenuTrigger className="focus:outline-none" asChild>
         <button
           className={cn(
-            'text-md flex h-12 flex-shrink-0 items-center border-b-2 border-neutral-200 px-3 font-semibold transition hover:bg-zinc-700/10 dark:border-neutral-800 dark:hover:bg-zinc-700/50',
+            'text-md flex flex-shrink-0 flex-grow items-center justify-start rounded-md border border-zinc-700 bg-transparent px-3 py-0 font-semibold text-zinc-200 transition hover:border-zinc-200',
             collectiveToggle && 'hidden'
           )}
         >
+          <Boxes className="min-size-3"></Boxes>
           {collective.unique}
-          <ChevronDown className="ml-auto h-5 w-5" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 space-y-[2px] text-xs font-medium text-black dark:text-neutral-400">

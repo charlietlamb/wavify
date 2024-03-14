@@ -28,7 +28,7 @@ export default async function RootLayout({
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
       <body
         className={cn(
-          'debug-screens flex min-h-screen flex-col bg-background antialiased'
+          'debug-screens flex min-h-screen max-w-full flex-col overflow-x-hidden bg-background antialiased'
         )}
       >
         <NextProvider>

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Separator } from '../ui/separator'
 import AppNavBarToggle from './AppNavBarToggle'
+import Wavify from '../wavify/Wavify'
 
 interface appNavBarProps {
   user: User
@@ -19,13 +20,7 @@ export default async function AppNavBar({ user }: appNavBarProps) {
     <div className="flex items-center justify-between rounded-md border-b-1 border-zinc-300 px-[1rem]">
       <div className="flex items-center gap-x-2">
         <Link href="/">
-          <Image
-            src="/w-logo.png"
-            alt="Wavify"
-            width={1024}
-            height={1024}
-            className="height-auto w-[1.5rem]"
-          />
+          <Wavify className="w-8 text-zinc-200" />
         </Link>
         <NavMenu collectives={collectives} />
       </div>

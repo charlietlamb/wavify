@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import ButtonLoader from '@/components/me/ButtonLoader'
+import ButtonLoader from '@/components/utils/ButtonLoader'
 import { useModal } from '../../../../hooks/use-modal-store'
 import { cn } from '@/lib/utils'
 import {

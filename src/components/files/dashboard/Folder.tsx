@@ -26,7 +26,7 @@ import {
 import { getFileSizeString } from '../functions/getFileSizeString'
 import { downloadFolder } from '../functions/downloadFolder'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import Spinner from '@/components/me/Spinner'
+import Spinner from '@/components/utils/Spinner'
 import { useEffect, useState } from 'react'
 import { moveFolderToParent } from '../functions/moveFolderToParent'
 import { useUser } from '@/state/user/useUser'

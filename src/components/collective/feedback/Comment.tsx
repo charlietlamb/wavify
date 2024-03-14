@@ -1,4 +1,4 @@
-import { UserAvatar } from '@/components/me/UserAvatar'
+import { UserAvatar } from '@/components/utils/UserAvatar'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
 

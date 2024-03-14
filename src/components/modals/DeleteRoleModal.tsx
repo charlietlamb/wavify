@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button'
 import { useModal } from '../../../hooks/use-modal-store'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import isObject from '@/lib/isObject'
-import ButtonLoader from '../me/ButtonLoader'
+import ButtonLoader from '../utils/ButtonLoader'
 import { deleteRole } from '../collective/roles/deleteRole'
 import { useCollective } from '@/state/collective/useCollective'
 

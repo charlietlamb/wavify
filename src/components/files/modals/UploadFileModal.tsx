@@ -14,7 +14,7 @@ import { useUser } from '@/state/user/useUser'
 import { useModal } from '../../../../hooks/use-modal-store'
 import { uploadFileToS3 } from '@/components/modals/modal-actions/uploadFile'
 import UploadDropZone from '@/components/util/uploads/UploadDropZone'
-import ButtonLoader from '@/components/me/ButtonLoader'
+import ButtonLoader from '@/components/utils/ButtonLoader'
 
 export const UploadFileModal = () => {
   const { isOpen, onClose, type, data } = useModal()

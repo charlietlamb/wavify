@@ -8,10 +8,10 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog'
 import { useModal } from '../../../hooks/use-modal-store'
-import ButtonLoader from '../me/ButtonLoader'
+import ButtonLoader from '../utils/ButtonLoader'
 import { useEffect, useState } from 'react'
 import { Button } from '../ui/button'
-import { PopoverPicker } from '../me/PopoverPicker'
+import { PopoverPicker } from '../utils/PopoverPicker'
 import { hexToHSL } from '../nav/functions/hexToHSL'
 import { isHSL } from '../nav/functions/isHSL'
 import { setUserColor } from './functions/setUserColor'

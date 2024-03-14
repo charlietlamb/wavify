@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useModal } from '../../../hooks/use-modal-store'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { AvatarDemo } from '../me/Avatar'
+import { AvatarDemo } from '../utils/Avatar'
 import { updateColUserRole } from './functions/updateColUserRole'
 import { handleKick } from './functions/handleKick'
 import { useCollective } from '@/state/collective/useCollective'

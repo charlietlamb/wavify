@@ -1,7 +1,7 @@
 'use client'
 
 import { ChatVideoButton } from './ChatVideoButton'
-import { UserAvatar } from '../me/UserAvatar'
+import { UserAvatar } from '../utils/UserAvatar'
 import { CollectiveToggle } from '../util/CollectiveToggle'
 import isObject from '@/lib/isObject'
 import { iconMap } from '../collective/space/data'
@@ -39,7 +39,7 @@ export const ChatHeader = ({
   const chatState: ChatState = useSelector((state: RootState) => state.chat)
   const dispatch = useDispatch()
   return (
-    <div className="text-md flex h-12 items-center px-3 py-3 font-semibold ">
+    <div className="text-md flex h-12 items-center border-b border-zinc-700 px-3 py-3 font-semibold">
       {type === 'space' ? <CollectiveToggle /> : null}
       {type === 'space' && iconMap[space?.type as keyof typeof iconMap]}
       {type === 'conversation' && (

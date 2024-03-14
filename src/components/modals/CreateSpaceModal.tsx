@@ -23,7 +23,7 @@ import { useModal } from '../../../hooks/use-modal-store'
 import { AnimatedCheckIcon } from '../icons/check'
 import { AnimatedXIcon } from '../icons/x'
 import { Label } from '../ui/label'
-import ButtonLoader from '../me/ButtonLoader'
+import ButtonLoader from '../utils/ButtonLoader'
 import { spaceTypes } from '../collective/space/data'
 import SpaceRoles from '../collective/space/SpaceRoles'
 import { useCollective } from '@/state/collective/useCollective'
@@ -284,7 +284,7 @@ export const CreateSpaceModal = () => {
                   }}
                   text="Make Space Public"
                   isLoading={isClosing}
-                  variant="white"
+                  variant="zinc"
                 ></ButtonLoader>
               </>
             ) : (
@@ -296,7 +296,7 @@ export const CreateSpaceModal = () => {
                 }}
                 text="Restrict Roles"
                 isLoading={isClosing}
-                variant="white"
+                variant="zinc"
               ></ButtonLoader>
             )}
           </div>

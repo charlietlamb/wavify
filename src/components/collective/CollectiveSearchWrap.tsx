@@ -6,7 +6,7 @@ import CollectiveSearch from './CollectiveSearch'
 import { useCollective } from '@/state/collective/useCollective'
 import { useUser } from '@/state/user/useUser'
 
-export default function CollectiveSearchWrap() {
+export default function CollectiveSearchWrap({ small }: { small?: boolean }) {
   const user = useUser()
   const { spaces, colUsers, colUser, collective } = useCollective()
   const [filteredSpaces, setFilteredSpaces] = useState<Space[] | null>(
@@ -38,10 +38,9 @@ export default function CollectiveSearchWrap() {
     setData(newData)
   }, [colUsers])
   return (
-    <div className="mt-2">
-      <CollectiveSearch
-        data={filteredSpaces ? data : ([] as unknown as SearchData)}
-      />
-    </div>
+    <CollectiveSearch
+      data={filteredSpaces ? data : ([] as unknown as SearchData)}
+      small={small}
+    />
   )
 }
