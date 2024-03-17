@@ -107,11 +107,6 @@ declare global {
 
   type FolderAndSender = Folder & FolderSender
 
-  type Path = {
-    id: string | null
-    name: string
-  }
-
   type AndRole = {
     roles: Role
   }
@@ -142,4 +137,12 @@ declare global {
   type RoleAndAllowed = Role & AndAllowed
 
   type CommentAndUser = CommentType & AndUser
+
+  type Path = {
+    id: string
+    type: string
+    name: string
+    files: boolean
+    folders: boolean
+  }
 }

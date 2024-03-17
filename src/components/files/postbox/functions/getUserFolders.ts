@@ -1,4 +1,4 @@
-import { getFolderData } from '../../functions/getFolderData'
+import { getFolderData } from '../../functions/getFolders/getFolderData'
 
 export async function getUserFolders(
   supabase: Supabase,

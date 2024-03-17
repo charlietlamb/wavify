@@ -1,13 +1,11 @@
-import { Dispatch, SetStateAction, useEffect } from 'react'
-import { getUserTopFiles } from '../functions/getUserTopFiles'
-import { getFilesFromParent } from '../functions/getFilesFromParent'
+import { useEffect } from 'react'
 
 export function useFilesFolderUpdateEffect(
   supabase: Supabase,
   user: User,
-  parent: string | null,
   fileStore: React.MutableRefObject<FileAndSender[]>,
-  space: Space | undefined
+  space: Space | undefined,
+  path: Path[]
 ) {
   useEffect(() => {
     const channel = supabase
@@ -57,5 +55,5 @@ export function useFilesFolderUpdateEffect(
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [supabase, user, parent, fileStore.current])
+  }, [supabase, user, path, fileStore.current])
 }

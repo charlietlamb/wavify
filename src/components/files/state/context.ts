@@ -7,8 +7,6 @@ interface ChatFilesWrapContext {
   setMode: Dispatch<SetStateAction<FileMode>>
   path: Path[]
   setPath: Dispatch<SetStateAction<Path[]>>
-  parent: string | null
-  setParent: Dispatch<SetStateAction<string | null>>
   sorting: SortingType
   setSorting: Dispatch<SetStateAction<SortingType>>
   filterByMusic: boolean

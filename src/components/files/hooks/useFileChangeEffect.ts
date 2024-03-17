@@ -13,11 +13,11 @@ export async function useFileChangeEffect(
   setFiles: React.Dispatch<React.SetStateAction<FileAndSender[]>>,
   filters: Filters,
   sorting: SortingType,
-  parent: string | null,
   parentStore: React.MutableRefObject<string | null>,
   fileStore: React.MutableRefObject<FileAndSender[]>,
   space: Space | undefined,
-  feedbackFiles: FileAndSender[]
+  feedbackFiles: FileAndSender[],
+  path: Path[]
 ) {
   useEffect(() => {
     if (
@@ -88,15 +88,6 @@ export async function useFileChangeEffect(
         }
       }
     }
-    if (
-      parent?.includes('u:') ||
-      parent === 'pb' ||
-      parent === 't' ||
-      parent === 'f'
-    ) {
-      setFiles([])
-    } else {
-      updateFiles()
-    }
+    updateFiles()
   }, [supabase, user, parent, fileStore.current, feedbackFiles])
 }

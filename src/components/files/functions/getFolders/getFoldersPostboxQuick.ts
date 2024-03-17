@@ -1,8 +1,16 @@
 import isObject from '@/lib/isObject'
-import { getFolderData } from '../../functions/getFolders/getFolderData'
-import { getFolder } from '../../functions/getFolders/getFolder'
+import { useFilesContext } from '../../state/context'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
-export async function getPostboxUsers(supabase: Supabase, space: Space) {
+export async function getFoldersPostboxQuick() {
+  const supabase = createClientComponentClient()
+  const { path } = useFilesContext()
+
+  const { data: space, error: spaceError } = await supabase
+    .from('spaces')
+    .select('*')
+    .eq('id', path[path.length - 1].id)
+    .single()
   const { data, error } = await supabase
     .from('postboxes')
     .select('*,users(*)')
@@ -29,29 +37,18 @@ export async function getPostboxUsers(supabase: Supabase, space: Space) {
         .select('*,users(username,profile_pic_url)')
         .eq('user', user.id)
       if (error) throw error
-      let size = 0
-      let music = false
-      for (const folder of data) {
-        const newFolder = await getFolder(supabase, folder.folder)
-        const { size: folderSize, music: folderMusic } = await getFolderData(
-          supabase,
-          newFolder
-        )
-        size += folderSize
-        if (!music && folderMusic) music = true
-      }
       return {
         id: user.id,
         name: user.username,
         parent: `pb`,
         user: user.id,
         createdAt: new Date().toISOString(),
-        size,
-        music,
         users: {
           username: user.username,
           profile_pic_url: user.profile_pic_url,
         },
+        size: 0,
+        music: false,
       }
     })
   )

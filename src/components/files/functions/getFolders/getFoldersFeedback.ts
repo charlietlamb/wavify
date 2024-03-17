@@ -1,12 +1,17 @@
 import { getFolder } from '@/components/files/functions/getFolders/getFolder'
 import { getFolderData } from '@/components/files/functions/getFolders/getFolderData'
 import isObject from '@/lib/isObject'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useFilesContext } from '../../state/context'
 
-export async function getFeedbackUserFolders(supabase: Supabase, space: Space) {
+export async function getFoldersFeedback() {
+  const supabase = createClientComponentClient()
+  const { path } = useFilesContext()
+  const spaceId = path[path.length - 1].id
   const { data, error } = await supabase
     .from('feedbacks')
     .select('*,users!public_feedbacks_user_fkey(*)')
-    .eq('space', space.id)
+    .eq('space', spaceId)
     .not('folder', 'is', null)
 
   if (error) throw error
@@ -45,9 +50,9 @@ export async function getFeedbackUserFolders(supabase: Supabase, space: Space) {
         }
       }
       return {
-        id: 'fd:' + user.id,
+        id: user.id,
         name: user.username,
-        parent: `f`,
+        parent: null,
         user: user.id,
         createdAt: new Date().toISOString(),
         size,

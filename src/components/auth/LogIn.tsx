@@ -7,50 +7,42 @@ import OAuth from './OAuth'
 import Link from 'next/link'
 import ButtonLoader from '../utils/ButtonLoader'
 
-export default function SignUp() {
+export default function LogIn() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const supabase = createClientComponentClient()
-  const handleSignUp = async () => {
-    const specialCharPattern = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/
-    if (password.length >= 8 && specialCharPattern.test(password)) {
-      setLoading(true)
-      const { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-        options: {
-          emailRedirectTo: `${location.origin}/auth/callback`,
-        },
-      })
-      if (error) {
-        setError(error.message)
-        setLoading(false)
-      } else {
-        setLoading(true)
-      }
-    } else {
-      setError(
-        'Password is too weak. It should be at least 8 characters long and contain at least one special character.'
-      )
-    }
+  const handleSignIn = async () => {
+    setLoading(true)
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+    if (error) setError('Invalid login details.')
+    setLoading(false)
   }
+
+  //   async function resetPasswordEmail() {
+  //     await supabase.auth.resetPasswordForEmail(r_email, {
+  //       redirectTo: `${location.origin}/api/auth/callback?next=/account/update-password`, //update this
+  //     })
+  //   }
   return (
     <div className="flex flex-col items-center gap-y-2">
-      <h2 className="text-2xl font-bold text-zinc-200">Create an account</h2>
+      <h2 className="text-2xl font-bold text-zinc-200">Log In</h2>
       <p className="text-zinc-700">
-        Enter your email and a password to create an account.
+        Enter your email and a password to log in.
       </p>
       <Input
-        className="focus-visible:ring-0 focus-visible:border-zinc-200 border border-zinc-700 bg-transparent text-zinc-200"
+        className="border border-zinc-700 bg-transparent text-zinc-200 focus-visible:border-zinc-200 focus-visible:ring-0"
         placeholder="mail@example.com"
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
       <Input
-        className="focus-visible:ring-0 focus-visible:border-zinc-200 border border-zinc-700 bg-transparent text-zinc-200"
+        className="border border-zinc-700 bg-transparent text-zinc-200 focus-visible:border-zinc-200 focus-visible:ring-0"
         placeholder="password"
         type="password"
         value={password}
@@ -58,7 +50,7 @@ export default function SignUp() {
       />
       <ButtonLoader
         variant="zinc"
-        onClick={() => handleSignUp()}
+        onClick={() => handleSignIn()}
         text="Sign Up With Email"
         isLoading={loading}
       />

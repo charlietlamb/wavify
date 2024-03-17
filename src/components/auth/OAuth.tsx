@@ -47,26 +47,26 @@ export default function OAuth() {
     setOAuthError('')
   }
   return (
-    <div className="grid columns-3 gap-x-2">
+    <div className="grid grid-cols-3 gap-x-2">
       <ButtonLoaderIcon
         onClick={signInWithDiscord}
         className="flex flex-row items-center justify-center"
         isLoading={loading && loadingTarget === 'discord'}
-        icon={<SiDiscord />}
+        icon={<SiDiscord className="min-w-4" />}
         variant="zinc_outline"
       ></ButtonLoaderIcon>
       <ButtonLoaderIcon
         onClick={signInWithSpotify}
         className="flex flex-row items-center justify-center"
         isLoading={loading && loadingTarget === 'spotify'}
-        icon={<SiSpotify />}
+        icon={<SiSpotify className="min-w-4" />}
         variant="zinc_outline"
       ></ButtonLoaderIcon>
       <ButtonLoaderIcon
         onClick={handleSignInWithGoogle}
         className="flex flex-row items-center justify-center"
         isLoading={loading && loadingTarget === 'google'}
-        icon={<BsGoogle />}
+        icon={<BsGoogle className="min-w-4" />}
         variant="zinc_outline"
       ></ButtonLoaderIcon>
     </div>

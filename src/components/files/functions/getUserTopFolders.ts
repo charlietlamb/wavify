@@ -1,4 +1,4 @@
-import { getFolderData } from './getFolderData'
+import { getFolderData } from './getFolders/getFolderData'
 
 export async function getUserTopFolders(supabase: Supabase, user: User) {
   const { data, error } = await supabase

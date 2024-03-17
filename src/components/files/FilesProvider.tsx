@@ -80,20 +80,6 @@ export default function FilesProvider({
   const [path, setPath] = useState<Path[]>([])
   const [sorting, setSorting] = useState<SortingType>('default')
   const [filterByMusic, setFilterByMusic] = useState<boolean>(false)
-  const [parent, setParent] = useState<string | null>(
-    postbox && postboxReceive
-      ? 'pb'
-      : postbox && postboxSend
-        ? 'u:' + user.id
-        : transient
-          ? 't'
-          : feedback && feedbackGive
-            ? 'f'
-            : feedback && feedbackGet
-              ? 'fd:' + user.id
-              : null
-  )
-  const parentStore = useRef<string | null>(null)
   const [files, setFiles] = useState<FileAndSender[]>(initFiles)
   const fileStore = useRef<FileAndSender[]>(initFiles)
   const [view, setView] = useState<View>('grid')
@@ -131,13 +117,13 @@ export default function FilesProvider({
   useFolderUpdateEffect(
     supabase,
     user,
-    parent,
     folderStore,
     setChangeFolders,
-    space
+    space,
+    path
   )
   useFileUpdateEffect(supabase, user, files, setSearchFiles, space)
-  useFilesFolderUpdateEffect(supabase, user, parent, fileStore, space)
+  useFilesFolderUpdateEffect(supabase, user, fileStore, space, path)
 
   usePostboxUpdateEffect(
     supabase,
@@ -177,8 +163,6 @@ export default function FilesProvider({
     setFolders,
     filters,
     sorting,
-    parent,
-    parentStore,
     folderStore,
     space,
     postbox,
@@ -188,7 +172,8 @@ export default function FilesProvider({
     transientFolders,
     schedule,
     feedback,
-    feedbackFolders
+    feedbackFolders,
+    path
   )
 
   useFileChangeEffect(
@@ -197,16 +182,14 @@ export default function FilesProvider({
     setFiles,
     filters,
     sorting,
-    parent,
-    parentStore,
     fileStore,
     space,
-    feedbackFiles
+    feedbackFiles,
+    path
   )
 
   usePathChangeEffect(
     supabase,
-    parent,
     setPath,
     space,
     postbox,
@@ -219,13 +202,12 @@ export default function FilesProvider({
     feedbackGive
   )
 
-  usePostboxChangeEffect(supabase, postbox, setPostboxFolders, space, parent)
+  usePostboxChangeEffect(supabase, postbox, setPostboxFolders, space)
   useTransientChangeEffect(
     supabase,
     transient,
     setTransientFolders,
     space,
-    parent,
     schedule
   )
   useFeedbackChangeEffect(
@@ -233,8 +215,7 @@ export default function FilesProvider({
     feedback,
     setFeedbackFolders,
     setFeedbackFiles,
-    space,
-    parent
+    space
   )
   useSchedulesChangeEffect(schedules, setSchedule)
   if (postbox && !postboxSend && !postboxReceive) return
@@ -246,8 +227,6 @@ export default function FilesProvider({
         setMode,
         path,
         setPath,
-        parent,
-        setParent,
         sorting,
         setSorting,
         filterByMusic,

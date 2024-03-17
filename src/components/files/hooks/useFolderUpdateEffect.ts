@@ -1,14 +1,14 @@
 import { Dispatch, SetStateAction, useEffect } from 'react'
-import { getFolderData } from '../functions/getFolderData'
-import { getFolder } from '../functions/getFolder'
+import { getFolderData } from '../functions/getFolders/getFolderData'
+import { getFolder } from '../functions/getFolders/getFolder'
 
 export function useFolderUpdateEffect(
   supabase: Supabase,
   user: User,
-  parent: string | null,
   folderStore: React.MutableRefObject<FolderAndSender[]>,
   setFolders: Dispatch<SetStateAction<FolderAndSender[]>>,
-  space: Space | undefined
+  space: Space | undefined,
+  path: Path[]
 ) {
   useEffect(() => {
     const channel = supabase
@@ -71,7 +71,7 @@ export function useFolderUpdateEffect(
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [supabase, user, parent, folderStore.current])
+  }, [supabase, user, path, folderStore.current])
 
   useEffect(() => {
     const channel = supabase
@@ -118,5 +118,5 @@ export function useFolderUpdateEffect(
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [supabase, user, parent, folderStore.current])
+  }, [supabase, user, path, folderStore.current])
 }

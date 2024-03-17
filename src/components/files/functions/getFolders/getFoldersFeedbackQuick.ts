@@ -1,12 +1,17 @@
 import { getFolder } from '@/components/files/functions/getFolders/getFolder'
 import { getFolderData } from '@/components/files/functions/getFolders/getFolderData'
 import isObject from '@/lib/isObject'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useFilesContext } from '../../state/context'
 
-export async function getFeedbackUserFolders(supabase: Supabase, space: Space) {
+export async function getFoldersFeedbackQuick() {
+  const supabase = createClientComponentClient()
+  const { path } = useFilesContext()
+  const spaceId = path[path.length - 1].id
   const { data, error } = await supabase
     .from('feedbacks')
     .select('*,users!public_feedbacks_user_fkey(*)')
-    .eq('space', space.id)
+    .eq('space', spaceId)
     .not('folder', 'is', null)
 
   if (error) throw error
@@ -30,28 +35,14 @@ export async function getFeedbackUserFolders(supabase: Supabase, space: Space) {
         .select('*,users!public_feedbacks_user_fkey(username,profile_pic_url)')
         .eq('user', user.id)
       if (error) throw error
-      let size = 0
-      let music = false
-      console.log(data)
-      for (const folder of data) {
-        if (folder.folder) {
-          const newFolder = await getFolder(supabase, folder.folder)
-          const { size: folderSize, music: folderMusic } = await getFolderData(
-            supabase,
-            newFolder
-          )
-          size += folderSize
-          if (!music && folderMusic) music = true
-        }
-      }
       return {
-        id: 'fd:' + user.id,
+        id: user.id,
         name: user.username,
-        parent: `f`,
+        parent: null,
         user: user.id,
         createdAt: new Date().toISOString(),
-        size,
-        music,
+        size: 0,
+        music: false,
         users: {
           username: user.username,
           profile_pic_url: user.profile_pic_url,

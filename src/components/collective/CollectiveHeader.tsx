@@ -47,7 +47,7 @@ export const CollectiveHeader = () => {
       <DropdownMenuTrigger className="focus:outline-none" asChild>
         <button
           className={cn(
-            'text-md flex flex-shrink-0 flex-grow items-center justify-start rounded-md border border-zinc-700 bg-transparent px-3 py-0 font-semibold text-zinc-200 transition hover:border-zinc-200',
+            'text-md flex flex-shrink-0 flex-grow items-center justify-start gap-x-1 rounded-md border border-zinc-700 bg-transparent px-3 py-0 font-semibold text-zinc-200 transition hover:border-zinc-200',
             collectiveToggle && 'hidden'
           )}
         >

@@ -1,26 +1,23 @@
 import { getFolderData } from '@/components/files/functions/getFolders/getFolderData'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useFilesContext } from '../../state/context'
 
-export async function getTransientFolders(
-  supabase: Supabase,
-  space: Space,
-  schedule: Schedule | undefined
-) {
+export async function getFoldersTransient() {
+  const supabase = createClientComponentClient()
+  const { path, schedule } = useFilesContext()
   if (!schedule) return []
+  const spaceId = path[path.length - 1].id
   const { data, error } = await supabase
     .from('transients')
     .select('*,folders(*)')
-    .eq('space', space.id)
+    .eq('space', spaceId)
     .eq('schedule', schedule.id)
   if (error) throw error
   const folders = data
     ?.map((t: Transient & { folders: Folder }) => t.folders)
     .flat()
-  const foldersWithParent = folders.map((folder: Folder) => ({
-    ...folder,
-    parent: 't',
-  }))
   const foldersToReturn = []
-  for (const folder of foldersWithParent) {
+  for (const folder of folders) {
     const { size, music } = await getFolderData(
       supabase,
       folder as FolderAndSender

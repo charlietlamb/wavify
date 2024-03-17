@@ -42,8 +42,9 @@ import { useEffect, useState } from 'react'
 import { checkFileHasComments } from '@/components/collective/feedback/functions/checkFileHasComments'
 
 export default function File({ file }: { file: FileAndSender }) {
-  const { space, files, parent, postbox, transient, feedback, feedbackGive } =
+  const { space, files, path, postbox, transient, feedback, feedbackGive } =
     useFilesContext()
+  const parent = path[path.length - 1].id
   const user = useUser()
   const fileExtension = file.name.split('.').pop()!
   const { onOpen } = useModal()
@@ -55,7 +56,7 @@ export default function File({ file }: { file: FileAndSender }) {
     checkFileHasComments(supabase, file, setComments)
   }, [])
   return (
-    <div className="flex w-full flex-col rounded-xl border-2 border-zinc-200 bg-background_content px-2 py-4 transition-all hover:rounded-md hover:bg-zinc-950">
+    <div className="flex w-full cursor-pointer flex-col rounded-xl border border-zinc-700 bg-zinc-950 px-2 py-4 transition-all hover:rounded-md hover:border-zinc-200">
       <div className="flex items-center gap-x-2">
         {isObject(file) && playableExtensions.includes(fileExtension) ? (
           <FilePlayButton file={file} className={fileClasses} />

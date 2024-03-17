@@ -33,12 +33,13 @@ import { useUser } from '@/state/user/useUser'
 import { useCollective } from '@/state/collective/useCollective'
 import { isUUID } from '@/lib/isUUID'
 import { checkFolderHasComments } from '@/components/collective/feedback/functions/checkFolderHasComments'
+import { handlePathFolderClick } from '../functions/handlePathFolderClick'
 
 export default function Folder({ folder }: { folder: FolderAndSender }) {
   const {
     folders,
-    parent,
-    setParent,
+    path,
+    setPath,
     postbox,
     postboxSend,
     space,
@@ -55,15 +56,11 @@ export default function Folder({ folder }: { folder: FolderAndSender }) {
   const user = useUser()
   const supabase = createClientComponentClient()
   const [folderLoading, setFolderLoading] = useState(false)
+  const parent = path[path.length - 1].id
 
   function handleFolderClick(e: React.MouseEvent<HTMLDivElement>) {
     e.stopPropagation()
-
-    if (folder.parent === 'pb') {
-      setParent('u:' + folder.id)
-    } else {
-      setParent(folder.id)
-    }
+    handlePathFolderClick(path, setPath, folder)
   }
   const [comments, setComments] = useState<CommentAndUser[]>([])
 
@@ -72,7 +69,7 @@ export default function Folder({ folder }: { folder: FolderAndSender }) {
   }, [])
   return (
     <div
-      className="flex w-full cursor-pointer flex-col rounded-xl border-2 border-zinc-200 bg-zinc-900 px-2 py-4 transition-all hover:rounded-md hover:bg-zinc-800"
+      className="flex w-full cursor-pointer flex-col rounded-xl border border-zinc-700 px-2 py-4 transition-all hover:rounded-md hover:border-zinc-200"
       onClick={(e) => handleFolderClick(e)}
     >
       <div className="flex items-center gap-x-2">

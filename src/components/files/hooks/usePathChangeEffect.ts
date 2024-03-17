@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { getFolder } from '../functions/getFolder'
+import { getFolder } from '../functions/getFolders/getFolder'
 import { getUserFromId } from '../functions/getUserFromId'
 
 export function usePathChangeEffect(
