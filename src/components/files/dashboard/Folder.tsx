@@ -69,7 +69,7 @@ export default function Folder({ folder }: { folder: FolderAndSender }) {
   }, [])
   return (
     <div
-      className="flex w-full cursor-pointer flex-col rounded-xl border border-zinc-700 px-2 py-4 transition-all hover:rounded-md hover:border-zinc-200"
+      className="flex w-full cursor-pointer flex-col rounded-xl border border-zinc-700 bg-black px-2 py-4 transition-all hover:rounded-md hover:border-zinc-200"
       onClick={(e) => handleFolderClick(e)}
     >
       <div className="flex items-center gap-x-2">

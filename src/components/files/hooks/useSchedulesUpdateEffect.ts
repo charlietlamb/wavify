@@ -24,7 +24,7 @@ export function useSchedulesUpdateEffect(
             newPayload &&
             typeof newPayload === 'object' &&
             payload.eventType !== 'DELETE' &&
-            newPayload.id === space.id
+            newPayload.space === space.id
           ) {
             if (payload.eventType === 'INSERT') {
               setSchedules([...schedules, newPayload as Schedule])

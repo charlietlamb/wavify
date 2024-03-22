@@ -15,6 +15,8 @@ import {
 import Image from 'next/image'
 import { ModeToggle } from '../ui/theme-toggle'
 import { Button } from '../ui/button'
+import Wavify from '../wavify/Wavify'
+import { UserRound } from 'lucide-react'
 
 const collectiveMenuItems: {
   title: string
@@ -144,17 +146,11 @@ const resourcesMenuItems: {
 
 export default function Navbar() {
   return (
-    <div className="align-center flex min-h-[10vh] w-screen flex-row justify-between border-b-1 border-primary p-4 px-8">
+    <div className="align-center flex min-h-[10vh] w-screen flex-row justify-between border-b border-zinc-200 p-4 px-8">
       <div className="navbar-left flex flex-row items-center justify-center">
         <div className="navbar-heading-wrap">
           <Link href="/">
-            <Image
-              src="/w-logo.png"
-              alt="Wavify"
-              width={1024}
-              height={1024}
-              className="height-auto w-[2.5vw] min-w-[3rem]"
-            />
+            <Wavify className="min-h-8 min-w-8" />
           </Link>
         </div>
       </div>
@@ -263,9 +259,12 @@ export default function Navbar() {
         </NavigationMenuList>
       </NavigationMenu>
       <div className="account flex flex-row items-center justify-center gap-x-4">
-        <ModeToggle></ModeToggle>
+        {/* <ModeToggle></ModeToggle> */}
         <Link href="/account">
-          <Button>Create Your Account</Button>
+          <Button variant="zinc_outline" className="flex gap-x-2">
+            <UserRound />
+            Sign In
+          </Button>
         </Link>
       </div>
     </div>

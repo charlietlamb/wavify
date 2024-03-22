@@ -1,23 +1,18 @@
 import { cn } from '@/lib/utils'
 import ResizableDiv from '../../utils/ResizableDiv'
 import { UserAvatar } from '../../utils/UserAvatar'
-import isObject from '@/lib/isObject'
 import { useRouter } from 'next/navigation'
-import { FileArchive, FileIcon, FileImage, FileMusic } from 'lucide-react'
 import { v4 as uuid } from 'uuid'
 import downloadChatImage from '../actions/downloadFile'
 import { useUser } from '@/state/user/useUser'
-import {
-  imageExtensions,
-  musicExtensions,
-  zipExtensions,
-} from '../data/extensions'
+import { Button } from '@/components/ui/button'
 interface ChatItemProps {
   message: MessageData
 }
 
 export default function ChatFile({ message }: ChatItemProps) {
   const user = useUser()
+  const otherUser = message.users
   const files = message.fileData
 
   const router = useRouter()
@@ -25,7 +20,7 @@ export default function ChatFile({ message }: ChatItemProps) {
     if (user.id === message.author) {
       return
     }
-    router.push(`/user/${user.username}/chat`)
+    router.push(`/user/${message.author}`)
   }
   const isSender = user.id === message.author
 
@@ -50,7 +45,6 @@ export default function ChatFile({ message }: ChatItemProps) {
     !message.deleted && (
       <>
         {files.map((file: FileData) => {
-          const fileExtension = file.name.split('.').pop()?.toLowerCase() || ''
           return (
             <ResizableDiv
               key={uuid()}
@@ -59,41 +53,24 @@ export default function ChatFile({ message }: ChatItemProps) {
                 isSender && 'ml-auto border-zinc-700 hover:border-zinc-600'
               )}
             >
-              <div className={cn('group flex w-full items-center gap-x-2')}>
+              <div className={cn('group flex w-full items-center')}>
                 <div
                   onClick={onMemberClick}
                   className="cursor-pointer transition hover:drop-shadow-md"
                 >
-                  <UserAvatar src={'https://github.com/shadcn.png'} />
+                  <UserAvatar user={otherUser} />
                 </div>
-                <div className="flex w-full flex-col">
-                  <div>
-                    <div
-                      className={cn(
-                        'relative flex items-center rounded-md p-2',
-                        isSender && 'w-full'
-                      )}
-                    >
-                      {isObject(file) &&
-                      imageExtensions.includes(fileExtension) ? (
-                        <FileImage className={fileClasses} strokeWidth={1} />
-                      ) : musicExtensions.includes(fileExtension) ? (
-                        <FileMusic className={fileClasses} strokeWidth={1} />
-                      ) : zipExtensions.includes(fileExtension) ? (
-                        <FileArchive className={fileClasses} strokeWidth={1} />
-                      ) : (
-                        <FileIcon className={fileClasses} strokeWidth={1} />
-                      )}
-                      <button
-                        onClick={() => download(file.url, file.name)}
-                        className={cn(
-                          'ml-2 text-left text-sm text-zinc-200 hover:underline dark:text-zinc-200'
-                        )}
-                      >
-                        {file.name}
-                      </button>
-                    </div>
-                  </div>
+
+                <div className="overflow-y-auto">
+                  <Button
+                    onClick={() => download(file.url, file.name)}
+                    className={cn(
+                      'whitespace-normal text-left text-sm text-zinc-200 hover:underline dark:text-zinc-200'
+                    )}
+                    variant="link"
+                  >
+                    {file.name}
+                  </Button>
                 </div>
               </div>
             </ResizableDiv>

@@ -1,14 +1,14 @@
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useFilesContext } from '../../state/context'
+import { getFolderData } from './getFolderData'
 
-export async function getFoldersFeedbackUsers() {
+export async function getFoldersFeedbackUsers(path: Path[]) {
   const supabase = createClientComponentClient()
-  const { path } = useFilesContext()
   const userId = path[path.length - 1].id
   const spaceId = path[path.length - 2].id
   const { data, error } = await supabase
     .from('feedbacks')
-    .select('*,folders(*, users(username,profile_pic_url))')
+    .select('*,folders(*, users(*))')
     .eq('user', userId)
     .eq('space', spaceId)
     .not('folder', 'is', null)
@@ -17,8 +17,12 @@ export async function getFoldersFeedbackUsers() {
     (feedback: Feedback & { folders: FolderAndSender[] }) => feedback.folders
   )
   const toReturnFlat = folders.flat()
-  const toReturnMapped = toReturnFlat.map((folder) => {
-    return { ...folder, parent: spaceId }
-  })
+  const toReturnMapped = await Promise.all(
+    toReturnFlat.map(async (folder) => {
+      const { size, music } = await getFolderData(supabase, folder)
+      return { ...folder, parent: spaceId, size, music }
+    })
+  )
+
   return toReturnMapped as FolderAndSender[]
 }

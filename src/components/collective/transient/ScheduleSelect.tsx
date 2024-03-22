@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/select'
 import { useEffect, useState } from 'react'
 export default function ScheduleSelect() {
-  const { schedule, schedules, setSchedule, setParent } = useFilesContext()
+  const { schedule, schedules, setSchedule, setPath, path } = useFilesContext()
   const [scheduleId, setScheduleId] = useState<string>('')
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function ScheduleSelect() {
         (schedule) => schedule.id === scheduleId
       )
       if (newSchedule) {
-        setParent('t')
+        setPath([path[0]])
         setSchedule(newSchedule)
       }
     }
@@ -30,7 +30,7 @@ export default function ScheduleSelect() {
       onValueChange={(e) => setScheduleId(e)}
       value={schedule ? schedule.id : undefined}
     >
-      <SelectTrigger className="flex-grow">
+      <SelectTrigger className="flex-grow border-zinc-700 transition hover:border-zinc-200 focus:ring-0">
         <SelectValue placeholder="Schedule..." />
       </SelectTrigger>
       <SelectContent>

@@ -9,6 +9,7 @@ interface LibraryProps {
   initFiles: FileAndSender[]
   initFolders: FolderAndSender[]
   initSchedules: Schedule[]
+  initPath: Path
 }
 
 export default function Transient(props: LibraryProps) {

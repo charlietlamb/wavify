@@ -17,12 +17,20 @@ export default async function page() {
   const initSearchFiles = await getUserFiles(supabase, user)
   const initFiles: FileAndSender[] = await getUserTopFiles(supabase, user)
   const initFolders: FolderAndSender[] = await getUserTopFolders(supabase, user)
+  const initPath: Path = {
+    type: 'library/user',
+    id: user.id,
+    folders: true,
+    files: true,
+    name: user.username,
+  }
   return (
     <div className="flex w-full flex-col ">
       <FilesProvider
         initSearchFiles={initSearchFiles}
         initFiles={initFiles}
         initFolders={initFolders}
+        initPath={initPath}
       >
         <FilesDashboardHeader />
         <div className="flex flex-grow overflow-auto">

@@ -1,13 +1,12 @@
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useFilesContext } from '../../state/context'
 
-export async function getFilesLibrary() {
+export async function getFilesLibrary(path: Path[]) {
   const supabase = createClientComponentClient()
-  const { path } = useFilesContext()
-  const parent = path[path.length - 1]
+  const parent = path[path.length - 1].id
   const { data, error } = await supabase
     .from('files')
-    .select('*, users(username, profile_pic_url)')
+    .select('*, users(*)')
     .eq('system', true)
     .eq('folder', parent)
     .order('createdAt', { ascending: false })

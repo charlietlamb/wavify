@@ -18,21 +18,14 @@ interface ChatInputProps {
   type: 'conversation' | 'space'
   chat: Chat | null
   name: string
-  collective?: Collective
-  space?: Json
+  space?: Space
 }
 
 const formSchema = z.object({
   content: z.string().min(1),
 })
 
-export const ChatInput = ({
-  name,
-  type,
-  chat,
-  collective,
-  space,
-}: ChatInputProps) => {
+export const ChatInput = ({ name, type, chat, space }: ChatInputProps) => {
   if (!chat) return redirect(`/`)
   const user = useUser()
   const { onOpen } = useModal()
@@ -77,13 +70,13 @@ export const ChatInput = ({
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <div className="relative p-4 pb-6">
+                <div className="relative flex items-center p-2">
                   <button
                     type="button"
                     onClick={() =>
                       onOpen('messageFile', { messageFileType: type, chat })
                     }
-                    className="absolute left-8 top-7 flex h-[24px] w-[24px] items-center justify-center rounded-full bg-zinc-200 p-1 transition hover:bg-zinc-100"
+                    className="absolute left-8 top-5 flex h-[24px] w-[24px] items-center justify-center rounded-full bg-zinc-200 p-1 transition hover:bg-zinc-100"
                   >
                     <Plus className="text-zinc-700" />
                   </button>
@@ -100,7 +93,7 @@ export const ChatInput = ({
                     {...field}
                   />
                   {
-                    <div className="absolute right-8 top-7">
+                    <div className="absolute right-8 top-5">
                       <EmojiPicker
                         onChange={(emoji: string) =>
                           field.onChange(`${field.value} ${emoji}`)

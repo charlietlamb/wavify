@@ -1,9 +1,7 @@
 import { useEffect } from 'react'
-import { getFeedbackUserFolders } from '../functions/getFeedbackUserFolders'
-import { getUserFeedbackFolders } from '../functions/getUserFeedbackFolders'
-import { getUserFromId } from '@/components/files/functions/getUserFromId'
-import { getUserFeedbackFiles } from '../functions/getUserFeedbackFiles'
-import { getFeedbackUserFiles } from '../functions/getFeedbackUserFiles'
+import { getFoldersFeedbackUsers } from '@/components/files/functions/getFolders/getFoldersFeedbackUsers'
+import { getFilesFeedback } from '@/components/files/functions/getFiles/getFilesFeedback'
+import { getFoldersFeedback } from '@/components/files/functions/getFolders/getFoldersFeedback'
 
 export function useFeedbackChangeEffect(
   supabase: Supabase,
@@ -11,20 +9,20 @@ export function useFeedbackChangeEffect(
   setFeedbackFolders: React.Dispatch<React.SetStateAction<FolderAndSender[]>>,
   setFeedbackFiles: React.Dispatch<React.SetStateAction<FileAndSender[]>>,
   space: Space | undefined,
-  parent: string | null
+  path: Path[]
 ) {
   useEffect(() => {
+    const lastPathType = path[path.length - 1].type
     const updateFeedback = async () => {
-      if (space && feedback && parent?.includes('fd:')) {
-        const user = await getUserFromId(supabase, parent.split(':')[1])
-        setFeedbackFolders(await getUserFeedbackFolders(supabase, user, space))
-        setFeedbackFiles(await getUserFeedbackFiles(supabase, user, space))
-      } else if (space && feedback && parent === 'f') {
-        setFeedbackFolders(await getFeedbackUserFolders(supabase, space))
-        setFeedbackFiles(await getFeedbackUserFiles(supabase, space))
+      if (space && feedback && lastPathType === 'feedback/user') {
+        setFeedbackFolders(await getFoldersFeedbackUsers(path))
+        setFeedbackFiles(await getFilesFeedback(path))
+      } else if (space && feedback && lastPathType === 'feedback') {
+        setFeedbackFolders(await getFoldersFeedback(path))
+        setFeedbackFiles([])
       }
     }
 
     updateFeedback()
-  }, [supabase, parent, feedback, setFeedbackFolders, space])
+  }, [supabase, path, feedback, setFeedbackFolders, space])
 }

@@ -59,6 +59,7 @@ interface ModalData {
   transientFolders?: FolderAndSender[]
   setTransientFolders?: Dispatch<SetStateAction<FolderAndSender[]>>
   setSchedules?: Dispatch<SetStateAction<Schedule[]>>
+  setSchedule?: Dispatch<SetStateAction<Schedule | undefined>>
   heading?: string
   description?: string
   setComments?: Dispatch<SetStateAction<CommentAndUser[]>>

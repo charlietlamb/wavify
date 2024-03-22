@@ -20,15 +20,19 @@ export default function RolesMap() {
     <DragDropContext
       onDragEnd={(result) => handleDragEnd(result, roles, dispatch)}
     >
-      <Accordion type="single" collapsible className="max-w-full space-y-2">
+      <Accordion
+        type="single"
+        collapsible
+        className="max-w-full space-y-2 rounded border border-zinc-700"
+      >
         <Droppable droppableId={'roles'}>
           {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
               className={cn(
-                'max-h-full max-w-full overflow-clip rounded-md',
-                snapshot.isDraggingOver && 'bg-secondary/5'
+                'max-h-full max-w-full overflow-clip rounded-md'
+                // snapshot.isDraggingOver && 'bg-secondary/5'
               )}
             >
               {Array.isArray(roles) &&

@@ -11,7 +11,7 @@ export default function CollectiveToggle() {
   const chevronClassName = 'text-zinc-200'
   return (
     <button
-      className="absolute left-0 top-1/2 z-50 -translate-y-1/2 transform rounded-r-lg bg-zinc-600 py-2"
+      className="absolute left-0 top-1/2 z-50 -translate-y-1/2 transform rounded-r-lg bg-zinc-700 py-1"
       onClick={() => dispatch(setCollective(!collective))}
     >
       {collective ? (

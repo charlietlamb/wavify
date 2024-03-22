@@ -71,7 +71,7 @@ export const CollectiveSpace = ({ space, index }: CollectiveSpaceProps) => {
           </div>
           <p
             className={cn(
-              'line-clamp-1 text-left text-sm font-semibold text-zinc-500 transition group-hover:text-zinc-600 dark:text-zinc-400 dark:group-hover:text-zinc-300',
+              'line-clamp-1 text-left text-sm font-semibold  text-zinc-200 transition group-hover:text-zinc-600 dark:group-hover:text-zinc-200',
               params?.spaceId === space.id &&
                 'text-primary dark:text-zinc-200 dark:group-hover:text-white'
             )}

@@ -8,6 +8,7 @@ interface FeedbackProps {
   initSearchFiles: FileAndSender[]
   initFiles: FileAndSender[]
   initFolders: FolderAndSender[]
+  initPath: Path
 }
 
 export default function Feedback(props: FeedbackProps) {
@@ -18,7 +19,7 @@ export default function Feedback(props: FeedbackProps) {
         {
           <div className="flex flex-grow overflow-y-auto">
             <FilesSidebarWrap />
-            {<FilesDashboard /> }
+            {<FilesDashboard />}
           </div>
         }
         <div></div>

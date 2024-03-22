@@ -56,7 +56,7 @@ export default function File({ file }: { file: FileAndSender }) {
     checkFileHasComments(supabase, file, setComments)
   }, [])
   return (
-    <div className="flex w-full cursor-pointer flex-col rounded-xl border border-zinc-700 bg-zinc-950 px-2 py-4 transition-all hover:rounded-md hover:border-zinc-200">
+    <div className="flex w-full cursor-pointer flex-col rounded-xl border border-zinc-700 px-2 py-4 transition-all hover:rounded-md hover:border-zinc-200">
       <div className="flex items-center gap-x-2">
         {isObject(file) && playableExtensions.includes(fileExtension) ? (
           <FilePlayButton file={file} className={fileClasses} />

@@ -26,7 +26,7 @@ export async function getPostboxUsers(supabase: Supabase, space: Space) {
       if (!isObject(user)) return null
       const { data, error } = await supabase
         .from('postboxes')
-        .select('*,users(username,profile_pic_url)')
+        .select('*,users(*)')
         .eq('user', user.id)
       if (error) throw error
       let size = 0

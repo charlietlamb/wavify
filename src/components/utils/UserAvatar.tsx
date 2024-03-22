@@ -1,14 +1,19 @@
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
+import { Avatar, AvatarImage } from '@/components/ui/avatar'
+import { cn } from '@/lib/utils'
+import { useRouter } from 'next/navigation'
 
 interface UserAvatarProps {
-  src?: string;
-  className?: string;
+  user: User
+  className?: string
 }
-export const UserAvatar = ({ src, className }: UserAvatarProps) => {
+export const UserAvatar = ({ user, className }: UserAvatarProps) => {
+  const router = useRouter()
   return (
-    <Avatar className={cn("h-10 w-10", className)}>
-      <AvatarImage src={src} />
+    <Avatar
+      className={cn('h-10 w-10', className)}
+      onClick={() => router.push(`/user/${user.username}`)}
+    >
+      <AvatarImage src="https://github.com/shadcn.png" />
     </Avatar>
-  );
-};
+  )
+}

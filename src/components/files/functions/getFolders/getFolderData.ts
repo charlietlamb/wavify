@@ -2,35 +2,40 @@ import { musicExtensions } from '@/components/chat/data/extensions'
 
 export async function getFolderData(
   supabase: Supabase,
-  folder: FolderAndSender
+  folder: FolderAndSender,
+  folderOnly?: boolean
 ) {
   let size = 0
   let music = false
+  async function getFolderDataRecursively(
+    folder: FolderAndSender,
+    getFiles: boolean
+  ) {
+    if (getFiles) {
+      let files: FileAndSender[] = []
 
-  async function getFolderDataRecursively(folder: FolderAndSender) {
-    let files: FileAndSender[] = []
-
-    try {
-      const { data, error } = await supabase
-        .from('files')
-        .select('*,users(username,profile_pic_url)')
-        .eq('folder', folder.id)
-      if (error) throw error
-      files = data as FileAndSender[]
-      if (!music) {
-        music = files.some((file) =>
-          musicExtensions.includes(file.name.split('.').pop()!)
-        )
+      try {
+        const { data, error } = await supabase
+          .from('files')
+          .select('*,users(*)')
+          .eq('folder', folder.id)
+        if (error) throw error
+        files = data as FileAndSender[]
+        if (!music) {
+          music = files.some((file) =>
+            musicExtensions.includes(file.name.split('.').pop()!)
+          )
+        }
+      } catch (error) {
+        throw error
       }
-    } catch (error) {
-      throw error
+      size += files ? files.reduce((acc, file) => acc + file.size, 0) : 0
     }
-    size += files ? files.reduce((acc, file) => acc + file.size, 0) : 0
     let folders: FolderAndSender[] = []
     try {
       const { data, error } = await supabase
         .from('folders')
-        .select('*,users(username,profile_pic_url)')
+        .select('*,users(*)')
         .eq('parent', folder.id)
       if (error) throw error
       folders = data as FolderAndSender[]
@@ -40,9 +45,9 @@ export async function getFolderData(
 
     // Use Promise.all to wait for all the recursive calls to finish
     await Promise.all(
-      folders.map((folder1) => getFolderDataRecursively(folder1))
+      folders.map((folder1) => getFolderDataRecursively(folder1, true))
     )
   }
-  await getFolderDataRecursively(folder)
+  await getFolderDataRecursively(folder, !!!folderOnly)
   return { size, music }
 }

@@ -124,7 +124,11 @@ export default function NavMenu({ collectives }: MenuBarProps) {
       <MenubarMenu>
         <MenubarTrigger>Resources</MenubarTrigger>
         <MenubarContent>
-          <MenubarItem>Sidebar Options</MenubarItem>
+          <MenubarItem
+            onClick={() => router.push('/dashboard/resources/upload')}
+          >
+            Upload Resource
+          </MenubarItem>
           <MenubarRadioGroup value="closed">
             <MenubarRadioItem value="closed">Closed</MenubarRadioItem>
             <MenubarRadioItem value="users">Users</MenubarRadioItem>

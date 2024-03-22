@@ -54,42 +54,42 @@ export default function UploadFilesPreview({
             <Card
               key={index}
               className="mt-2 flex items-center rounded-lg border-2 bg-transparent transition-all hover:rounded-md hover:bg-white/5"
-              style={{ borderColor: color ? color : '#FFF' }}
+              style={{ borderColor: color ? color : '#E4E4E7' }}
             >
               <div className="flex w-full flex-row items-center justify-between">
                 <div className="flex items-center space-x-3 p-4">
-                  {isObject(file) &&
+                  {/* {isObject(file) &&
                   typeof fileExt === 'string' &&
                   imageExtensions.includes(fileExt) ? (
                     <FileImage
                       className={fileClasses}
                       strokeWidth={1}
-                      style={{ color: color ? color : '#FFFFFF' }}
+                      style={{ color: color ? color : '#E4E4E7' }}
                     />
                   ) : typeof fileExt === 'string' &&
                     musicExtensions.includes(fileExt) ? (
                     <FileMusic
                       className={fileClasses}
                       strokeWidth={1}
-                      style={{ color: color ? color : '#FFFFFF' }}
+                      style={{ color: color ? color : '#E4E4E7' }}
                     />
                   ) : typeof fileExt === 'string' &&
                     zipExtensions.includes(fileExt) ? (
                     <FileArchive
                       className={fileClasses}
                       strokeWidth={1}
-                      style={{ color: color ? color : '#FFFFFF' }}
+                      style={{ color: color ? color : '#E4E4E7' }}
                     />
                   ) : (
                     <FileIcon
                       className={fileClasses}
                       strokeWidth={1}
-                      style={{ color: color ? color : '#FFFFFF' }}
+                      style={{ color: color ? color : '#E4E4E7' }}
                     />
-                  )}{' '}
+                  )}{' '} */}
                   <div
                     className="font-medium"
-                    style={{ color: color ? color : '#FFFFFF' }}
+                    style={{ color: color ? color : '#E4E4E7' }}
                   >
                     <div className="max-w-[15vw] overflow-hidden overflow-ellipsis whitespace-nowrap text-lg">
                       {file.file.name}
@@ -103,13 +103,13 @@ export default function UploadFilesPreview({
                   <AnimatedCheckIcon
                     width={32}
                     height={32}
-                    color="hsl(var(--primary))"
+                    color="#E4E4E7"
                   ></AnimatedCheckIcon>
                   <ActionTooltip label="Delete">
                     <Trash2
                       onClick={(e) => onAction(e, file.id)}
                       className="h-8 w-8 flex-shrink-0 cursor-pointer"
-                      color={color ? color : '#FFFFFF'}
+                      color={color ? color : '#E4E4E7'}
                     />
                   </ActionTooltip>
                 </div>

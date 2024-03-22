@@ -4,9 +4,8 @@ import isObject from '@/lib/isObject'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useFilesContext } from '../../state/context'
 
-export async function getFoldersFeedbackQuick() {
+export async function getFoldersFeedbackQuick(path: Path[]) {
   const supabase = createClientComponentClient()
-  const { path } = useFilesContext()
   const spaceId = path[path.length - 1].id
   const { data, error } = await supabase
     .from('feedbacks')

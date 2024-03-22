@@ -8,22 +8,13 @@ interface LibraryProps {
   initSearchFiles: FileAndSender[]
   initFiles: FileAndSender[]
   initFolders: FolderAndSender[]
+  initPath: Path
 }
 
-export default function Library({
-  space,
-  initSearchFiles,
-  initFiles,
-  initFolders,
-}: LibraryProps) {
+export default function Library(props: LibraryProps) {
   return (
     <div className="flex w-full flex-col">
-      <FilesProvider
-        initSearchFiles={initSearchFiles}
-        initFiles={initFiles}
-        initFolders={initFolders}
-        space={space}
-      >
+      <FilesProvider {...props}>
         <FilesDashboardHeader />
         <div className="flex flex-grow overflow-y-auto">
           <FilesSidebarWrap />

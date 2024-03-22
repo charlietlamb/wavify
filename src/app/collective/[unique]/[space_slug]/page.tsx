@@ -9,7 +9,6 @@ import { getCollective } from './(functions)/getCollective'
 import Space from '@/components/collective/Space'
 import Library from '@/components/collective/library/Library'
 import { getLibrarySearchFiles } from '@/app/library/functions/getLibrarySearchFiles'
-import { getFolder } from '@/components/files/functions/getFolders/getFolder'
 import { getFilesFromParent } from '@/components/files/functions/getFilesFromParent'
 import { getFoldersFromParent } from '@/components/files/functions/getFolders/getFoldersFromParent'
 import { getPostboxSearchFiles } from '@/components/collective/postbox/functions/getPostboxSearchFiles'
@@ -21,11 +20,10 @@ import Transient from '@/components/collective/transient/Transient'
 import { getTransientFolders } from '@/components/collective/transient/functions/getTransientFolders'
 import { getTransientSchedule } from '@/components/collective/transient/functions/getTransientSchedule'
 import { getTransientSchedules } from '@/components/collective/transient/functions/getTransientSchedules'
-import { getFeedbackUserFolders } from '@/components/collective/feedback/functions/getFeedbackUserFolders'
-import { getFeedbackUserFiles } from '@/components/collective/feedback/functions/getFeedbackUserFiles'
 import Feedback from '@/components/collective/feedback/Feedback'
 import { getUserFeedbackFiles } from '@/components/collective/feedback/functions/getUserFeedbackFiles'
-import { getUserFeedbackFolders } from '@/components/collective/feedback/functions/getUserFeedbackFolders'
+import { getFoldersFeedback } from '@/components/files/functions/getFolders/getFoldersFeedback'
+import { getFoldersFeedbackUsers } from '@/components/files/functions/getFolders/getFoldersFeedbackUsers'
 
 interface spacePageParams {
   unique: string
@@ -62,13 +60,20 @@ export default async function page({ params }: spacePageProps) {
       supabase,
       space.folder
     )
-
+    const initPath: Path = {
+      type: 'library',
+      id: space.folder,
+      folders: true,
+      files: true,
+      name: space.slug,
+    }
     return (
       <Library
         space={space}
         initSearchFiles={initSearchFiles}
         initFiles={initFiles}
         initFolders={initFolders}
+        initPath={initPath}
       />
     )
   }
@@ -83,13 +88,20 @@ export default async function page({ params }: spacePageProps) {
     const initFolders: FolderAndSender[] = canReceive
       ? await getPostboxUsers(supabase, space)
       : await getPostboxTopFolders(supabase, space, user.id)
-
+    const initPath: Path = {
+      type: canReceive ? 'postbox' : 'postbox/user',
+      id: space.id,
+      folders: true,
+      files: true,
+      name: space.slug,
+    }
     return (
       <Postbox
         space={space}
         initSearchFiles={initSearchFiles}
         initFiles={initFiles}
         initFolders={initFolders}
+        initPath={initPath}
       />
     )
   }
@@ -111,6 +123,13 @@ export default async function page({ params }: spacePageProps) {
       schedule
     )
     const schedules: Schedule[] = await getTransientSchedules(supabase, space)
+    const initPath: Path = {
+      type: 'transient',
+      id: space.id,
+      folders: true,
+      files: true,
+      name: space.slug,
+    }
     return (
       <Transient
         space={space}
@@ -118,29 +137,37 @@ export default async function page({ params }: spacePageProps) {
         initFiles={initFiles}
         initFolders={initFolders}
         initSchedules={schedules}
+        initPath={initPath}
       />
     )
   }
 
   if (space.type === 'feedback') {
-    // const canGet = space.fGet.includes(colUser.roles.id)
-    // const canGive = space.fGive.includes(colUser.roles.id)
-    // if (!canGet && !canGive) return redirect(`/collective/${params.unique}`)
+    const canGet = space.fGet.includes(colUser.roles.id)
+    const canGive = space.fGive.includes(colUser.roles.id)
+    if (!canGet && !canGive) return redirect(`/collective/${params.unique}`)
 
-    // const initSearchFiles: FileAndSender[] = []
-    // const initFiles: FileAndSender[] = canGive
-    //   ? []
-    //   : await getUserFeedbackFiles(supabase, user, space)
-    // const initFolders: FolderAndSender[] = canGive
-    //   ? await getFeedbackUserFolders(supabase, space)
-    //   : await getUserFeedbackFolders(supabase, user, space)
-
+    const initPath: Path = {
+      type: canGive ? 'feedback' : 'feedback/user',
+      id: space.id,
+      folders: true,
+      files: !canGive,
+      name: space.slug,
+    }
+    const initSearchFiles: FileAndSender[] = []
+    const initFiles: FileAndSender[] = canGive
+      ? []
+      : await getUserFeedbackFiles(supabase, user, space)
+    const initFolders: FolderAndSender[] = canGive
+      ? await getFoldersFeedback([initPath])
+      : await getFoldersFeedbackUsers([initPath])
     return (
       <Feedback
         space={space}
-        initSearchFiles={[]}
-        initFiles={[]}
-        initFolders={[]}
+        initSearchFiles={initSearchFiles}
+        initFiles={initFiles}
+        initFolders={initFolders}
+        initPath={initPath}
       />
     )
   }

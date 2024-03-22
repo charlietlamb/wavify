@@ -85,7 +85,7 @@ export const ScheduleModal = () => {
   const [loading, setLoading] = useState(false)
   const [scheduleId, setScheduleId] = useState('')
   const supabase = createClientComponentClient()
-  const { space, schedule, schedules, setSchedules } = data
+  const { space, schedule, schedules, setSchedules, setSchedule } = data
   const [currentSchedule, setCurrentSchedule] = useState(schedule)
   const [open, setOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -294,6 +294,10 @@ export const ScheduleModal = () => {
                         setLoading
                       )
                       setOpen(!success)
+                      if (success && setSchedule) {
+                        setSchedule(success)
+                        onClose()
+                      }
                     }}
                     text="Create Schedule"
                     isLoading={loading}
@@ -347,7 +351,7 @@ export const ScheduleModal = () => {
                         </Button>
                         <ButtonLoader
                           disabled={isDeleteLoading}
-                          onClick={() =>
+                          onClick={() => {
                             deleteSchedule(
                               supabase,
                               currentSchedule,
@@ -356,7 +360,8 @@ export const ScheduleModal = () => {
                               setDeleteOpen,
                               setIsDeleteLoading
                             )
-                          }
+                            onClose()
+                          }}
                           isLoading={isDeleteLoading}
                           text="Confirm"
                         />

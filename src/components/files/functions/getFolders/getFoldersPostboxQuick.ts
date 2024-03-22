@@ -2,15 +2,14 @@ import isObject from '@/lib/isObject'
 import { useFilesContext } from '../../state/context'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
-export async function getFoldersPostboxQuick() {
+export async function getFoldersPostboxQuick(path: Path[]) {
   const supabase = createClientComponentClient()
-  const { path } = useFilesContext()
-
   const { data: space, error: spaceError } = await supabase
     .from('spaces')
     .select('*')
     .eq('id', path[path.length - 1].id)
     .single()
+  if (spaceError) throw spaceError
   const { data, error } = await supabase
     .from('postboxes')
     .select('*,users(*)')
@@ -34,7 +33,7 @@ export async function getFoldersPostboxQuick() {
       if (!isObject(user)) return null
       const { data, error } = await supabase
         .from('postboxes')
-        .select('*,users(username,profile_pic_url)')
+        .select('*,users(*)')
         .eq('user', user.id)
       if (error) throw error
       return {

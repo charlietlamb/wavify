@@ -8,6 +8,7 @@ interface PostboxProps {
   initSearchFiles: FileAndSender[]
   initFiles: FileAndSender[]
   initFolders: FolderAndSender[]
+  initPath: Path
 }
 
 export default function Postbox(props: PostboxProps) {

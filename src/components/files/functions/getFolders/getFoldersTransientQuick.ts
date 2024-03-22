@@ -2,9 +2,11 @@ import { getFolderData } from '@/components/files/functions/getFolders/getFolder
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useFilesContext } from '../../state/context'
 
-export async function getFoldersTransientQuick() {
+export async function getFoldersTransientQuick(
+  path: Path[],
+  schedule: Schedule | null | undefined
+) {
   const supabase = createClientComponentClient()
-  const { path, schedule } = useFilesContext()
   if (!schedule) return []
   const spaceId = path[path.length - 1].id
   const { data, error } = await supabase

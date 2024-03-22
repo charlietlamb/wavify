@@ -5,7 +5,7 @@ export async function getUserFeedbackFolders(
 ) {
   const { data, error } = await supabase
     .from('feedbacks')
-    .select('*,folders(*, users(username,profile_pic_url))')
+    .select('*,folders(*, users(*))')
     .eq('user', user.id)
     .eq('space', space.id)
     .not('folder', 'is', null)

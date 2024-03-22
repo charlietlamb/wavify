@@ -5,7 +5,7 @@ export interface FloatingState {
 }
 
 const initialState: FloatingState = {
-  open: true,
+  open: false,
 }
 
 const floatingSlice = createSlice({

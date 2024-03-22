@@ -28,18 +28,7 @@ export async function useFolderChangeEffect(
 ) {
   useEffect(() => {
     // const p = space && !parent ? space.folder : parent
-    async function updateFoldersSorting() {
-      // let folders = folderStore.current.filter((folder) => folder.parent === p)
-      const filteredFolders = folders.filter((folder) => {
-        if (filters.music) {
-          return folder.music
-        }
-        return true
-      })
-      const sortedFolders = sortFolders(filteredFolders, sorting)
-      setFolders(sortedFolders)
-    }
-    updateFoldersSorting()
+    setFolders(folderFilterSort(folderStore.current, filters, sorting))
   }, [filters.music, sorting])
 
   useEffect(() => {
@@ -48,8 +37,13 @@ export async function useFolderChangeEffect(
       const func = folderFunctionMap.get(type)
       const qFunc = folderFunctionMapQuick.get(type)
       if (func && qFunc) {
-        setFolders(folderFilterSort(await qFunc(), filters, sorting))
-        setFolders(folderFilterSort(await func(), filters, sorting))
+        setFolders(
+          folderFilterSort(await qFunc(path, schedule), filters, sorting)
+        )
+        setFolders(
+          folderFilterSort(await func(path, schedule), filters, sorting)
+        )
+        folderStore.current = await func(path, schedule)
       }
     }
     updateFolders()

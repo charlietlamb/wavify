@@ -41,13 +41,14 @@ export function ChatItem({ message }: ChatItemProps) {
   const colUser = collectiveState ? collectiveState.colUser : null
   const { onOpen } = useModal()
   if (!message) return null
+  const otherUser = message.users
   const files = message.fileData
   const router = useRouter()
   const onMemberClick = () => {
     if (user.id === message.author) {
       return
     }
-    router.push(`/user/${user.username}/chat`)
+    router.push(`/user/${message.author}/chat`)
   }
   const getFileExtension = (url: string | undefined): string => {
     if (typeof url === 'string') {
@@ -80,7 +81,7 @@ export function ChatItem({ message }: ChatItemProps) {
           onClick={onMemberClick}
           className="cursor-pointer transition hover:drop-shadow-md"
         >
-          <UserAvatar src={'https://github.com/shadcn.png'} />
+          <UserAvatar user={otherUser} />
         </div>
         <div className="flex w-full flex-col">
           <div className={cn('flex items-center gap-x-2')}>

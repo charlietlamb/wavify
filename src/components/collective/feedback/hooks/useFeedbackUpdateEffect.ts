@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect } from 'react'
-import { getFeedbackUserFolders } from '../functions/getFeedbackUserFolders'
-import { getFeedbackUserFiles } from '../functions/getFeedbackUserFiles'
+import { getFoldersFeedback } from '@/components/files/functions/getFolders/getFoldersFeedback'
+import { getFilesFeedback } from '@/components/files/functions/getFiles/getFilesFeedback'
 
 export function useFeedbackUpdateEffect(
   supabase: Supabase,
@@ -9,7 +9,8 @@ export function useFeedbackUpdateEffect(
   setFeedbackFiles: Dispatch<SetStateAction<FileAndSender[]>>,
   feedbackFolders: FolderAndSender[],
   setFeedbackFolders: Dispatch<SetStateAction<FolderAndSender[]>>,
-  space: Space | undefined
+  space: Space | undefined,
+  path: Path[]
 ) {
   useEffect(() => {
     if (!space) return
@@ -31,9 +32,8 @@ export function useFeedbackUpdateEffect(
             newPayload.space === space.id
           ) {
             if (newPayload.folder)
-              setFeedbackFolders(await getFeedbackUserFolders(supabase, space))
-            if (newPayload.file)
-              setFeedbackFiles(await getFeedbackUserFiles(supabase, space))
+              setFeedbackFolders(await getFoldersFeedback(path))
+            if (newPayload.file) setFeedbackFiles(await getFilesFeedback(path))
           } else if (
             payload.eventType === 'DELETE' &&
             (feedbackFolders.some((folder) => folder.id === payload.old.id) ||

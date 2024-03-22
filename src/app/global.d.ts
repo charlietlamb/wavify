@@ -57,6 +57,10 @@ declare global {
   type Schedule = DB['public']['Tables']['schedules']['Row']
   type Feedback = DB['public']['Tables']['feedbacks']['Row']
   type CommentType = DB['public']['Tables']['comments']['Row']
+  type Follower = DB['public']['Tables']['followers']['Row']
+  type Download = DB['public']['Tables']['downloads']['Row']
+  type Resource = DB['public']['Tables']['resources']['Row']
+  type Product = DB['public']['Tables']['products']['Row']
   type Json =
     | string
     | number
@@ -75,10 +79,7 @@ declare global {
     | 'store'
 
   type MessageAuthor = {
-    users: {
-      username: string
-      profile_pic_url: string
-    }
+    users: User
   }
 
   type MessageAndAuthor = Message & MessageAuthor
@@ -88,19 +89,13 @@ declare global {
     pages: (MessageData[] | null)[]
   }
   type FileSender = {
-    users: {
-      username: string
-      profile_pic_url: string
-    }
+    users: User
   }
 
   type FileAndSender = FileData & FileSender
 
   type FolderSender = {
-    users: {
-      username: string
-      profile_pic_url: string
-    }
+    users: User
     size: number
     music: boolean
   }
@@ -139,7 +134,7 @@ declare global {
   type CommentAndUser = CommentType & AndUser
 
   type Path = {
-    id: string
+    id: string | null
     type: string
     name: string
     files: boolean

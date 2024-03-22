@@ -47,7 +47,7 @@ export default function FilePlayButton({
 
   useEffect(() => {
     async function getUser() {
-      if (file && file.users.username) {
+      if (file && file.users && file.users.username) {
         setOtherUser(await getUserFromUsername(supabase, file.users.username))
       } else {
         setOtherUser(user)

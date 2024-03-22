@@ -27,7 +27,7 @@ export default function RoleEdit() {
 
   return (
     <AccordionContent>
-      <div className="flex-col space-y-2 border-t-2 border-primary px-4">
+      <div className="flex-col space-y-2 border-t border-zinc-700 px-4">
         <div className="mx-1 flex space-x-4 py-2">
           <Popover>
             <PopoverTrigger>
@@ -61,12 +61,14 @@ export default function RoleEdit() {
             <ButtonLoader
               isLoading={deleteLoading}
               text="Delete Role"
+              variant="zinc"
               onClick={() => onOpen('deleteRole', { role })}
             ></ButtonLoader>
           )}
           <ButtonLoader
             isLoading={loading}
             text="Update Role"
+            variant="zinc"
             onClick={() => updateRole(supabase, context, roles)}
           ></ButtonLoader>
         </div>

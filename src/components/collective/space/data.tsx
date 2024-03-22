@@ -21,28 +21,28 @@ export const iconMap = {
 }
 export const iconMapSidebar = {
   ['text']: (
-    <Hash className="h-5 w-5 flex-shrink-0 text-zinc-500 dark:text-zinc-400" />
+    <Hash className="h-5 w-5 flex-shrink-0 text-zinc-400 group-hover:text-zinc-200" />
   ),
   ['audio']: (
-    <Mic className="h-5 w-5 flex-shrink-0 text-zinc-500 dark:text-zinc-400" />
+    <Mic className="h-5 w-5 flex-shrink-0 text-zinc-400 group-hover:text-zinc-200" />
   ),
   ['video']: (
-    <Video className="h-5 w-5 flex-shrink-0 text-zinc-500 dark:text-zinc-400" />
+    <Video className="h-5 w-5 flex-shrink-0 text-zinc-400 group-hover:text-zinc-200" />
   ),
   ['library']: (
-    <LibraryBig className="h-5 w-5 flex-shrink-0 text-zinc-500 dark:text-zinc-400" />
+    <LibraryBig className="h-5 w-5 flex-shrink-0 text-zinc-400 group-hover:text-zinc-200" />
   ),
   ['postbox']: (
-    <Archive className="h-5 w-5 flex-shrink-0 text-zinc-500 dark:text-zinc-400" />
+    <Archive className="h-5 w-5 flex-shrink-0 text-zinc-400 group-hover:text-zinc-200" />
   ),
   ['transient']: (
-    <Hourglass className="h-5 w-5 flex-shrink-0 text-zinc-500 dark:text-zinc-400" />
+    <Hourglass className="h-5 w-5 flex-shrink-0 text-zinc-400 group-hover:text-zinc-200" />
   ),
   ['feedback']: (
-    <MessageCircleQuestion className="h-5 w-5 flex-shrink-0 text-zinc-500 dark:text-zinc-400" />
+    <MessageCircleQuestion className="h-5 w-5 flex-shrink-0 text-zinc-400 group-hover:text-zinc-200" />
   ),
   ['store']: (
-    <CircleDollarSign className="h-5 w-5 flex-shrink-0 text-zinc-500 dark:text-zinc-400" />
+    <CircleDollarSign className="h-5 w-5 flex-shrink-0 text-zinc-400 group-hover:text-zinc-200" />
   ),
 }
 

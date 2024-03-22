@@ -7,7 +7,7 @@ export async function getUserFolders(
 ) {
   const { data: postboxData, error: postboxError } = await supabase
     .from('postboxes')
-    .select('*,folders(*,users(username,profile_pic_url))')
+    .select('*,folders(*,users(*))')
     .eq('user', user.id)
     .not('folder', 'is', null)
   if (postboxError) throw postboxError
@@ -18,7 +18,7 @@ export async function getUserFolders(
   const folderIdsString = `(${folderIds.join(',')})`
   const { data, error } = await supabase
     .from('folders')
-    .select('*,users(username,profile_pic_url)')
+    .select('*,users(*)')
     .eq('user', user.id)
     .not('id', 'in', folderIdsString)
     .order('createdAt', { ascending: false })

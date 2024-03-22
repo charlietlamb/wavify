@@ -33,7 +33,7 @@ export const CollectiveMember = ({ colUserAndData }: CollectiveUserProps) => {
     >
       <div className=" flex w-full items-center gap-x-2  ">
         <UserAvatar
-          src="https://github.com/shadcn.png"
+          user={colUserAndData.users}
           className="h-8 w-8 md:h-8 md:w-8"
         />
         <p

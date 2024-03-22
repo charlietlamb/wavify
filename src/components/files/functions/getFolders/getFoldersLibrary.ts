@@ -2,10 +2,10 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { getFolderData } from './getFolderData'
 import { useFilesContext } from '../../state/context'
 
-export async function getFoldersLibrary() {
+export async function getFoldersLibrary(path: Path[]) {
   const supabase = createClientComponentClient()
-  const { path } = useFilesContext()
   const parent = path[path.length - 1].id
+  console.log(parent)
   let toReturn: FolderAndSender[] = []
   try {
     const { data, error } = await supabase
@@ -14,6 +14,7 @@ export async function getFoldersLibrary() {
       .eq('parent', parent)
       .order('createdAt', { ascending: false })
     if (error) throw error
+    console.log(data)
     toReturn = data
       ? ((await Promise.all(
           (data as FolderAndSender[]).map(async (folder) => {
@@ -24,6 +25,7 @@ export async function getFoldersLibrary() {
       : []
   } catch {
   } finally {
+    console.log(toReturn)
     return toReturn
   }
 }

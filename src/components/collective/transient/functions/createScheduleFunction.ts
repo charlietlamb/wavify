@@ -11,6 +11,10 @@ export async function createScheduleFunction(
   setError: Dispatch<SetStateAction<string | null>>,
   setLoading: Dispatch<SetStateAction<boolean>>
 ) {
+  if (!space) {
+    setError('Space undefined')
+    return false
+  }
   if (!name || (name && !name.length)) {
     setError('Set a schedule name')
     return false
@@ -51,8 +55,17 @@ export async function createScheduleFunction(
     }
   setError(null)
   setLoading(true)
-  if (space)
-    await createTransientSchedule(supabase, name, startDate, endDate, space)
+  const createdSchedule = await createTransientSchedule(
+    supabase,
+    name,
+    startDate,
+    endDate,
+    space
+  )
   setLoading(false)
-  return true
+  return {
+    ...createdSchedule,
+    start: createdSchedule.start.toISOString(),
+    end: createdSchedule.end.toISOString(),
+  } as Schedule
 }

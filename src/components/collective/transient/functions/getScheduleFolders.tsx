@@ -6,7 +6,7 @@ export async function getScheduleFolders(
 ) {
   const { data: transientData, error: transientError } = await supabase
     .from('transients')
-    .select('*,folders(*,users(username,profile_pic_url))')
+    .select('*,folders(*,users(*))')
     .eq('schedule', schedule.id)
     .eq('user', user.id)
     .not('folder', 'is', null)
@@ -19,7 +19,7 @@ export async function getScheduleFolders(
   const folderIdsString = `(${folderIds.join(',')})`
   const { data, error } = await supabase
     .from('folders')
-    .select('*,users(username,profile_pic_url)')
+    .select('*,users(*)')
     .eq('user', user.id)
     .not('id', 'in', folderIdsString)
     .order('createdAt', { ascending: false })

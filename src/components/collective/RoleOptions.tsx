@@ -1,4 +1,4 @@
-import isObject from "@/lib/isObject";
+import isObject from '@/lib/isObject'
 import {
   Award,
   MailSearch,
@@ -7,15 +7,15 @@ import {
   Send,
   Settings,
   UserCog,
-} from "lucide-react";
-import { useRoleContext } from "./roles/context";
-import { Checkbox } from "@nextui-org/react";
+} from 'lucide-react'
+import { useRoleContext } from './roles/context'
+import { Checkbox } from '@nextui-org/react'
 
 export default function RoleOptions() {
-  const { permissions, setPermissions } = useRoleContext();
-  if (!isObject(permissions)) return null;
+  const { permissions, setPermissions } = useRoleContext()
+  if (!isObject(permissions)) return null
   return (
-    <div className="grid items-start grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid grid-cols-2 items-start lg:grid-cols-3 xl:grid-cols-4">
       <Checkbox
         radius="sm"
         defaultSelected={!!permissions.canInvite}
@@ -112,5 +112,5 @@ export default function RoleOptions() {
         <span className="text-md">Can Manage Messages?</span>
       </Checkbox>
     </div>
-  );
+  )
 }

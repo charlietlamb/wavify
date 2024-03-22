@@ -13,7 +13,6 @@ export const getComments = async ({
   space: Space | undefined
   feedbackGive: boolean | undefined
 }) => {
-  console.log('GETTING COMMENTS')
   if (pageParam === undefined) throw new Error('No page param')
   const supabase = createClientComponentClient()
   const startIndex = (pageParam - 1) * 6

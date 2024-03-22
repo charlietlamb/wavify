@@ -5,7 +5,7 @@ export async function getUserFeedbackFiles(
 ) {
   const { data, error } = await supabase
     .from('feedbacks')
-    .select('*,files(*, users(username,profile_pic_url))')
+    .select('*,files(*, users(*))')
     .eq('user', user.id)
     .eq('space', space.id)
     .not('file', 'is', null)

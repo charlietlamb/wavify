@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid'
+
 export async function createTransientSchedule(
   supabase: Supabase,
   name: string,
@@ -5,7 +7,9 @@ export async function createTransientSchedule(
   end: Date,
   space: Space
 ) {
+  const id = uuidv4()
   const schedule = {
+    id,
     name,
     start,
     end,
@@ -13,4 +17,5 @@ export async function createTransientSchedule(
   }
   const { error } = await supabase.from('schedules').insert(schedule)
   if (error) throw error
+  return schedule
 }

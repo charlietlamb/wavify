@@ -50,15 +50,15 @@ export default function FeedbackGet() {
   return (
     <>
       <Button
-        variant={'outline'}
-        className="w-full justify-start text-left font-normal"
+        variant="zinc_outline"
+        className="w-full justify-start border-zinc-700 bg-black text-left font-normal"
         onClick={() => setOpen(true)}
       >
         <Search className="mr-2 h-4 w-4" />
         <p>Get Feedback On...</p>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Search all folders in library" />
+        <CommandInput placeholder="Search all your folders and files" />
         <CommandList>
           <CommandEmpty>No Results found</CommandEmpty>
           {folders.map(({ id, name }) => {

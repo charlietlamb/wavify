@@ -1,14 +1,13 @@
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useFilesContext } from '../../state/context'
 
-export async function getFilesFeedback() {
+export async function getFilesFeedback(path: Path[]) {
   const supabase = createClientComponentClient()
-  const { path } = useFilesContext()
   const userId = path[path.length - 1].id
   const spaceId = path[path.length - 2].id
   const { data, error } = await supabase
     .from('feedbacks')
-    .select('*,files(*, users(username,profile_pic_url))')
+    .select('*,files(*, users(*))')
     .eq('user', userId)
     .eq('space', spaceId)
     .not('file', 'is', null)

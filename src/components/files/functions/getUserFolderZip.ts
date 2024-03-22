@@ -21,7 +21,7 @@ export async function getUserFolderZip(
   ) {
     const { data, error } = await supabase
       .from('files')
-      .select('*,users(username,profile_pic_url)')
+      .select('*,users(*)')
       .eq('folder', folder.id)
     if (error) throw error
     const files = data as FileAndSender[]
@@ -33,7 +33,7 @@ export async function getUserFolderZip(
     }
     const { data: folderData, error: folderError } = await supabase
       .from('folders')
-      .select('*,users(username,profile_pic_url)')
+      .select('*,users(*)')
       .eq('parent', folder.id)
     if (folderError) throw folderError
     const folders = folderData as FolderAndSender[]
@@ -51,7 +51,7 @@ export async function getUserFolderZip(
   for (const folder of userFolderData) {
     const { data, error } = await supabase
       .from('folders')
-      .select('*,users(username,profile_pic_url)')
+      .select('*,users(*)')
       .eq('id', folder.folder)
       .single()
     if (error) throw error

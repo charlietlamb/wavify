@@ -41,11 +41,14 @@ export default function RoleItem({
             {...provided.draggableProps}
             className={cn(
               'max-h-full max-w-full flex-grow rounded-md',
-              snapshot.isDragging && 'bg-primary/5'
+              snapshot.isDragging && 'bg-zinc-950'
             )}
           >
             <AccordionItem
-              className="border-grey-400 border-b-2 pt-2"
+              className={cn(
+                'border-b border-zinc-700',
+                index === roles.length - 1 && 'border-b-0'
+              )}
               value={typeof role.id === 'string' ? role.id : ''}
             >
               <div className="px-4">

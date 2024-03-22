@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils'
 import { useEffect, useState } from 'react'
 import Countdown from 'react-countdown'
 import { useModal } from '../../../../hooks/use-modal-store'
+import TransientCountdown from './TransientCountdown'
 
 function isLessThanAnHourAway(date: Date) {
   const now = new Date()
@@ -17,36 +18,60 @@ function isInThePast(date: Date) {
 }
 
 export default function TransientLabel() {
-  const { space, transientPost, schedule } = useFilesContext()
+  const {
+    space,
+    transientPost,
+    schedule,
+    schedules,
+    setSchedules,
+    setSchedule,
+  } = useFilesContext()
   const { onOpen } = useModal()
-  const [date, setDate] = useState<Date | null>(null)
+  const [startDate, setStartDate] = useState<Date | null>(null)
+  const [endDate, setEndDate] = useState<Date | null>(null)
 
   useEffect(() => {
     if (schedule) {
-      setDate(new Date(schedule.end))
+      setStartDate(new Date(schedule.start))
+      setEndDate(new Date(schedule.end))
     }
   }, [schedule])
-  if (!date) return
+
+  if (!startDate || !endDate) return null
+
   return (
-    <>
-      {!isInThePast(date) ? (
-        <div
-          className={cn(
-            'flex w-48 items-center justify-start gap-x-2 rounded-md bg-zinc-200 p-2 font-medium text-background_content',
-            isLessThanAnHourAway(date) && 'text-red-500',
-            transientPost && 'cursor-pointer'
-          )}
-          onClick={() => {
-            if (!transientPost) return
-            onOpen('updateTimer', { space, schedule })
-          }}
-        >
-          <p>Expires:</p>
-          <Countdown date={date} className="font-semibold" />
-        </div>
-      ) : (
-        <span className="text-red-500">Expired</span>
+    <div
+      className={cn(
+        'text-md flex items-center justify-start rounded-md border border-zinc-700 p-2 font-medium text-zinc-200 hover:border-zinc-200',
+        transientPost && 'cursor-pointer',
+        (isInThePast(endDate) ||
+          (isLessThanAnHourAway(endDate) && !isInThePast(endDate))) &&
+          'text-red-500'
       )}
-    </>
+      onClick={() => {
+        if (!transientPost) return
+        onOpen('schedule', {
+          space,
+          schedule,
+          schedules,
+          setSchedules,
+          setSchedule,
+        })
+      }}
+    >
+      {isInThePast(endDate) ? (
+        'Expired'
+      ) : isInThePast(startDate) ? (
+        <>
+          <p className="mr-[6px]">Ends</p>{' '}
+          <TransientCountdown date={endDate} className="" />
+        </>
+      ) : (
+        <>
+          <p className="mr-[6px]">Starts</p>{' '}
+          <TransientCountdown date={startDate} className="" />
+        </>
+      )}
+    </div>
   )
 }

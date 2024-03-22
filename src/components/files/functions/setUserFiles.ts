@@ -7,7 +7,7 @@ export async function setUserFiles(
 ) {
   const { data, error } = await supabase
     .from('files')
-    .select('*,users(username,profile_pic_url)')
+    .select('*,users(*)')
     .eq('user', user.id)
   if (error) throw error
   setFiles(data as FileAndSender[])

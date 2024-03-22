@@ -91,10 +91,7 @@ export default function ChatSearch({
                 onSelect={() => onClick(url, name)}
                 className="m1 cursor-pointer hover:bg-background_content"
               >
-                <UserAvatar
-                  src="https://github.com/shadcn.png" //users.profile_pic_url
-                  className="mr-2"
-                ></UserAvatar>
+                <UserAvatar user={users} className="mr-2"></UserAvatar>
                 <span>{name}</span>
                 <span className="hidden">{id}</span>
               </CommandItem>

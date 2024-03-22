@@ -18,10 +18,7 @@ export default function Comment({
       )}
     >
       <div className="flex items-center">
-        <UserAvatar
-          src={comment.users?.profile_pic_url}
-          className="h-8 w-8 rounded-full"
-        />
+        <UserAvatar user={comment.users} className="h-8 w-8 rounded-full" />
         <div className="ml-2">
           <p
             className={cn(

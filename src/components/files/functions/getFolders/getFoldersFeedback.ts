@@ -4,9 +4,8 @@ import isObject from '@/lib/isObject'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useFilesContext } from '../../state/context'
 
-export async function getFoldersFeedback() {
+export async function getFoldersFeedback(path: Path[]) {
   const supabase = createClientComponentClient()
-  const { path } = useFilesContext()
   const spaceId = path[path.length - 1].id
   const { data, error } = await supabase
     .from('feedbacks')
@@ -37,7 +36,6 @@ export async function getFoldersFeedback() {
       if (error) throw error
       let size = 0
       let music = false
-      console.log(data)
       for (const folder of data) {
         if (folder.folder) {
           const newFolder = await getFolder(supabase, folder.folder)

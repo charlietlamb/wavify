@@ -4,15 +4,14 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { getFolder } from './getFolder'
 import { getFolderData } from './getFolderData'
 
-export async function getFoldersPostbox() {
+export async function getFoldersPostbox(path: Path[]) {
   const supabase = createClientComponentClient()
-  const { path } = useFilesContext()
-
   const { data: space, error: spaceError } = await supabase
     .from('spaces')
     .select('*')
     .eq('id', path[path.length - 1].id)
     .single()
+  if (spaceError) throw spaceError
   const { data, error } = await supabase
     .from('postboxes')
     .select('*,users(*)')
@@ -36,7 +35,7 @@ export async function getFoldersPostbox() {
       if (!isObject(user)) return null
       const { data, error } = await supabase
         .from('postboxes')
-        .select('*,users(username,profile_pic_url)')
+        .select('*,users(*)')
         .eq('user', user.id)
       if (error) throw error
       let size = 0

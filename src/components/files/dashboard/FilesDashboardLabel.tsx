@@ -11,29 +11,18 @@ import { useFilesContext } from '../state/context'
 
 export default function FilesDashboardLabel() {
   const { postbox, transient, feedback } = useFilesContext()
+  const iconClass = 'min-h-4 min-w-4'
   return (
-    <div className="flex items-end gap-x-2">
+    <div className="flex items-center gap-x-2">
       <div className="flex items-center">
         {postbox ? (
-          <>
-            <Archive className="h-8 w-8" strokeWidth={2} />
-            <p className="text-4xl font-bold">Postbox</p>
-          </>
+          <Archive className={iconClass} strokeWidth={2} />
         ) : transient ? (
-          <>
-            <Hourglass className="h-8 w-8" strokeWidth={2} />
-            <p className="text-4xl font-bold">Transient</p>
-          </>
+          <Hourglass className={iconClass} strokeWidth={2} />
         ) : feedback ? (
-          <>
-            <MessageCircleQuestion className="h-8 w-8" strokeWidth={2} />
-            <p className="text-4xl font-bold">Feedback</p>
-          </>
+          <MessageCircleQuestion className={iconClass} strokeWidth={2} />
         ) : (
-          <>
-            <LibraryBig className="h-8 w-8" strokeWidth={2} />
-            <p className="text-4xl font-bold">Library</p>
-          </>
+          <LibraryBig className={iconClass} strokeWidth={2} />
         )}
       </div>
 

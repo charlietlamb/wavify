@@ -13,8 +13,8 @@ export type Database = {
         Row: {
           accepted: boolean | null
           collective: string | null
-          created_at: string
-          edited_at: string | null
+          createdAt: string
+          editedAt: string | null
           id: string
           space: string | null
           type: string | null
@@ -24,8 +24,8 @@ export type Database = {
         Insert: {
           accepted?: boolean | null
           collective?: string | null
-          created_at?: string
-          edited_at?: string | null
+          createdAt?: string
+          editedAt?: string | null
           id?: string
           space?: string | null
           type?: string | null
@@ -35,8 +35,8 @@ export type Database = {
         Update: {
           accepted?: boolean | null
           collective?: string | null
-          created_at?: string
-          edited_at?: string | null
+          createdAt?: string
+          editedAt?: string | null
           id?: string
           space?: string | null
           type?: string | null
@@ -71,7 +71,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       collectives: {
@@ -150,7 +150,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       comments: {
@@ -212,7 +212,106 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
-          }
+          },
+        ]
+      }
+      downloads: {
+        Row: {
+          chat: string | null
+          collaborators: string[]
+          collective: string | null
+          created_at: string
+          file: string | null
+          folder: string | null
+          id: string
+          product: string | null
+          resource: string | null
+          space: string | null
+          user: string
+        }
+        Insert: {
+          chat?: string | null
+          collaborators?: string[]
+          collective?: string | null
+          created_at?: string
+          file?: string | null
+          folder?: string | null
+          id?: string
+          product?: string | null
+          resource?: string | null
+          space?: string | null
+          user: string
+        }
+        Update: {
+          chat?: string | null
+          collaborators?: string[]
+          collective?: string | null
+          created_at?: string
+          file?: string | null
+          folder?: string | null
+          id?: string
+          product?: string | null
+          resource?: string | null
+          space?: string | null
+          user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_downloads_chat_fkey"
+            columns: ["chat"]
+            isOneToOne: false
+            referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_downloads_collective_fkey"
+            columns: ["collective"]
+            isOneToOne: false
+            referencedRelation: "collectives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_downloads_file_fkey"
+            columns: ["file"]
+            isOneToOne: false
+            referencedRelation: "files"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_downloads_folder_fkey"
+            columns: ["folder"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_downloads_product_fkey"
+            columns: ["product"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_downloads_resource_fkey"
+            columns: ["resource"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_downloads_space_fkey"
+            columns: ["space"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_downloads_user_fkey"
+            columns: ["user"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       feedbacks: {
@@ -268,7 +367,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       files: {
@@ -352,7 +451,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       folders: {
@@ -391,7 +490,43 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
-          }
+          },
+        ]
+      }
+      followers: {
+        Row: {
+          created_at: string
+          follower: string
+          id: string
+          user: string
+        }
+        Insert: {
+          created_at?: string
+          follower: string
+          id?: string
+          user: string
+        }
+        Update: {
+          created_at?: string
+          follower?: string
+          id?: string
+          user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_followers_follower_fkey"
+            columns: ["follower"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_followers_user_fkey"
+            columns: ["user"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       messages: {
@@ -442,7 +577,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "chats"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       postboxes: {
@@ -498,7 +633,126 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
-          }
+          },
+        ]
+      }
+      products: {
+        Row: {
+          allowDownload: boolean
+          allowSave: boolean
+          collaborators: string[]
+          created_at: string
+          description: string
+          fileUrls: string[]
+          friendsOnly: boolean
+          id: string
+          imageUrl: string
+          mustFollow: boolean
+          name: string
+          price: number
+          user: string
+        }
+        Insert: {
+          allowDownload?: boolean
+          allowSave?: boolean
+          collaborators?: string[]
+          created_at?: string
+          description?: string
+          fileUrls?: string[]
+          friendsOnly?: boolean
+          id?: string
+          imageUrl?: string
+          mustFollow?: boolean
+          name?: string
+          price?: number
+          user: string
+        }
+        Update: {
+          allowDownload?: boolean
+          allowSave?: boolean
+          collaborators?: string[]
+          created_at?: string
+          description?: string
+          fileUrls?: string[]
+          friendsOnly?: boolean
+          id?: string
+          imageUrl?: string
+          mustFollow?: boolean
+          name?: string
+          price?: number
+          user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_products_user_fkey"
+            columns: ["user"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resources: {
+        Row: {
+          allowDownload: boolean
+          allowSave: boolean
+          collaborators: string[]
+          created_at: string
+          description: string
+          fileUrls: string[]
+          folder: string
+          friendsOnly: boolean
+          id: string
+          imageUrl: string
+          mustFollow: boolean
+          name: string
+          user: string
+        }
+        Insert: {
+          allowDownload?: boolean
+          allowSave?: boolean
+          collaborators?: string[]
+          created_at?: string
+          description?: string
+          fileUrls?: string[]
+          folder: string
+          friendsOnly?: boolean
+          id?: string
+          imageUrl?: string
+          mustFollow?: boolean
+          name?: string
+          user: string
+        }
+        Update: {
+          allowDownload?: boolean
+          allowSave?: boolean
+          collaborators?: string[]
+          created_at?: string
+          description?: string
+          fileUrls?: string[]
+          folder?: string
+          friendsOnly?: boolean
+          id?: string
+          imageUrl?: string
+          mustFollow?: boolean
+          name?: string
+          user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_resources_folder_fkey"
+            columns: ["folder"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_resources_user_fkey"
+            columns: ["user"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       roles: {
@@ -554,7 +808,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "collectives"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       schedules: {
@@ -586,7 +840,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "spaces"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       spaces: {
@@ -655,7 +909,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "collectives"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       transients: {
@@ -711,19 +965,19 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       users: {
         Row: {
           color: string
-          created_at: string
+          createdAt: string
           description: string | null
           display_name: string | null
           email: string
           featured: string | null
-          followers: string[] | null
-          following: string[] | null
+          followers: string[]
+          following: string[]
           id: string
           instagram: string
           profile_pic_url: string
@@ -736,13 +990,13 @@ export type Database = {
         }
         Insert: {
           color?: string
-          created_at?: string
+          createdAt?: string
           description?: string | null
           display_name?: string | null
           email: string
           featured?: string | null
-          followers?: string[] | null
-          following?: string[] | null
+          followers: string[]
+          following: string[]
           id: string
           instagram?: string
           profile_pic_url?: string
@@ -755,13 +1009,13 @@ export type Database = {
         }
         Update: {
           color?: string
-          created_at?: string
+          createdAt?: string
           description?: string | null
           display_name?: string | null
           email?: string
           featured?: string | null
-          followers?: string[] | null
-          following?: string[] | null
+          followers?: string[]
+          following?: string[]
           id?: string
           instagram?: string
           profile_pic_url?: string
@@ -779,7 +1033,7 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
     }
@@ -798,14 +1052,16 @@ export type Database = {
   }
 }
 
+type PublicSchema = Database[Extract<keyof Database, "public">]
+
 export type Tables<
   PublicTableNameOrOptions extends
-    | keyof (Database["public"]["Tables"] & Database["public"]["Views"])
+    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
         Database[PublicTableNameOrOptions["schema"]]["Views"])
-    : never = never
+    : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
       Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
@@ -813,67 +1069,67 @@ export type Tables<
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"] &
-      Database["public"]["Views"])
-  ? (Database["public"]["Tables"] &
-      Database["public"]["Views"])[PublicTableNameOrOptions] extends {
-      Row: infer R
-    }
-    ? R
+  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
+        PublicSchema["Views"])
+    ? (PublicSchema["Tables"] &
+        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
     : never
-  : never
 
 export type TablesInsert<
   PublicTableNameOrOptions extends
-    | keyof Database["public"]["Tables"]
+    | keyof PublicSchema["Tables"]
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : never = never
+    : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
-      Insert: infer I
-    }
-    ? I
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
     : never
-  : never
 
 export type TablesUpdate<
   PublicTableNameOrOptions extends
-    | keyof Database["public"]["Tables"]
+    | keyof PublicSchema["Tables"]
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : never = never
+    : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
-      Update: infer U
-    }
-    ? U
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
     : never
-  : never
 
 export type Enums<
   PublicEnumNameOrOptions extends
-    | keyof Database["public"]["Enums"]
+    | keyof PublicSchema["Enums"]
     | { schema: keyof Database },
   EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
-    : never = never
+    : never = never,
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof Database["public"]["Enums"]
-  ? Database["public"]["Enums"][PublicEnumNameOrOptions]
-  : never
+  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
+    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never

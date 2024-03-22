@@ -42,8 +42,8 @@ export const ChatHeader = ({
     <div className="text-md flex h-12 items-center border-b border-zinc-700 px-3 py-3 font-semibold">
       {type === 'space' ? <CollectiveToggle /> : null}
       {type === 'space' && iconMap[space?.type as keyof typeof iconMap]}
-      {type === 'conversation' && (
-        <UserAvatar src={imageUrl} className="mr-2 h-8 w-8 md:h-8 md:w-8" />
+      {type === 'conversation' && otherUser && (
+        <UserAvatar user={otherUser} className="mr-2 h-8 w-8 md:h-8 md:w-8" />
       )}
       <p className="text-md font-semibold text-black dark:text-white">
         {space && !Array.isArray(space) && typeof space === 'object' ? (

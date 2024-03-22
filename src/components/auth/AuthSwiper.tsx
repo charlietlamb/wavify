@@ -2,32 +2,32 @@
 
 const slidesData = [
   {
-    title: 'Development',
-    text: 'Lorem ipsum dolor sit /amet, consectetur adipiscing elit.',
+    title: 'Collaboration',
+    text: 'Easily collaborate with other producers through collectives.',
     image: 'https://source.unsplash.com/5kYKzH5Gwgk',
     rating: 5,
   },
   {
-    title: 'Branding',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    image: 'https://source.unsplash.com/rMdOHpO3h5E',
-    rating: 5,
-  },
-  {
-    title: 'Design',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    title: 'Revenue',
+    text: 'Start generating revenue selling your music, kits and expertise.',
     image: 'https://source.unsplash.com/EaZdLOxkcpI',
     rating: 5,
   },
   {
-    title: 'Seo',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    title: 'Expand',
+    text: 'Grow your own fan base and team with collectives.',
+    image: 'https://source.unsplash.com/rMdOHpO3h5E',
+    rating: 5,
+  },
+  {
+    title: 'Profile',
+    text: 'Raise your profile and reach the next generation of aspiring producers.',
     image: 'https://source.unsplash.com/wLJqFMTQfa0',
     rating: 5,
   },
   {
-    title: 'Management',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    title: 'Placements',
+    text: 'Connect with the worlds biggest producers and enjoy limitless placement opportunities.',
     image: 'https://source.unsplash.com/pwhGHarpllQ',
     rating: 5,
   },
@@ -38,6 +38,7 @@ import { Autoplay } from 'swiper/modules'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
+import Wavify from '../wavify/Wavify'
 
 const AuthSwiper = () => {
   return (
@@ -53,6 +54,11 @@ const AuthSwiper = () => {
           key={index}
           className="relative flex items-center justify-center"
         >
+          <Wavify className="absolute bottom-4 right-4 z-20 w-16" />
+          <div className="relative z-20 flex h-full flex-col justify-center text-center text-zinc-200">
+            <h2 className="text-2xl font-bold">{slide.title}</h2>
+            <p className="text-zinc-300">{slide.text}</p>
+          </div>
           <Image
             src={slide.image}
             alt={slide.title}
@@ -63,21 +69,14 @@ const AuthSwiper = () => {
               height: '100%',
               objectFit: 'cover',
               objectPosition: 'center',
+              filter: 'grayscale(100%)',
+              zIndex: '0',
             }}
             width={1720}
             height={1720}
           />
-          <div className="absolute inset-0 bg-black bg-opacity-50" />{' '}
+          <div className="absolute inset-0 z-10 bg-black bg-opacity-50" />{' '}
           {/* Overlay */}
-          <div className="relative z-10 text-center text-white">
-            <h2 className="text-2xl font-bold">{slide.title}</h2>
-            <p>{slide.text}</p>
-            <div>
-              {[...Array(slide.rating)].map((_, i) => (
-                <FontAwesomeIcon key={i} icon={faStar} className="text-white" />
-              ))}
-            </div>
-          </div>
         </SwiperSlide>
       ))}
     </Swiper>

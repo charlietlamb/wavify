@@ -7,7 +7,7 @@ export async function getPostboxTopFolders(
 ) {
   const { data, error } = await supabase
     .from('postboxes')
-    .select('*,folders(*,users(username,profile_pic_url))')
+    .select('*,folders(*,users(*))')
     .eq('space', space.id)
     .eq('user', userId)
     .not('folder', 'is', null)

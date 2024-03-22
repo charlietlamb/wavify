@@ -2,7 +2,7 @@ export async function getPostboxSearchFiles(supabase: Supabase, space: Space) {
   let returnFiles: FileAndSender[] = []
   const { data, error } = await supabase
     .from('postboxes')
-    .select('*,folders(*,users(username,profile_pic_url))')
+    .select('*,folders(*,users(*))')
     .eq('space', space.id)
     .not('folder', 'is', null)
   if (error) throw error
@@ -13,7 +13,7 @@ export async function getPostboxSearchFiles(supabase: Supabase, space: Space) {
       for (const folder of folders) {
         const { data, error } = await supabase
           .from('files')
-          .select('*,users(username,profile_pic_url)')
+          .select('*,users(*)')
           .eq('folder', folder.id)
         if (error) throw error
         const files = data as FileAndSender[]
@@ -26,7 +26,7 @@ export async function getPostboxSearchFiles(supabase: Supabase, space: Space) {
       for (const folder of folders) {
         const { data, error } = await supabase
           .from('folders')
-          .select('*,users(username,profile_pic_url)')
+          .select('*,users(*)')
           .eq('parent', folder.id)
         if (error) throw error
         getFolderDataRecursively(data as FolderAndSender[])

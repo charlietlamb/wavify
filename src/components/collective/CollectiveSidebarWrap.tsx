@@ -12,7 +12,7 @@ export default function CollectiveSidebarWrap() {
     <motion.div
       animate={{ width: collective ? '0px' : '15rem' }}
       className={cn(
-        'hidden h-full flex-col border-r-2 border-zinc-600 md:flex',
+        'hidden h-full flex-col border-r border-zinc-700 md:flex',
         collective && 'border-0'
       )}
     >
