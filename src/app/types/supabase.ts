@@ -706,6 +706,8 @@ export type Database = {
           imageUrl: string
           mustFollow: boolean
           name: string
+          previewUrl: string
+          size: number
           user: string
         }
         Insert: {
@@ -721,6 +723,8 @@ export type Database = {
           imageUrl?: string
           mustFollow?: boolean
           name?: string
+          previewUrl?: string
+          size?: number
           user: string
         }
         Update: {
@@ -736,6 +740,8 @@ export type Database = {
           imageUrl?: string
           mustFollow?: boolean
           name?: string
+          previewUrl?: string
+          size?: number
           user?: string
         }
         Relationships: [

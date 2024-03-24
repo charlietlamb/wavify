@@ -16,7 +16,7 @@ export default function ResourcesUploadImage() {
   return (
     <div
       className={cn(
-        'group relative flex h-[300px] w-[300px] cursor-pointer flex-col items-center justify-center gap-y-1 rounded-lg border-2 border-zinc-700 p-4 hover:border-zinc-200',
+        'group relative flex h-[300px] w-full cursor-pointer flex-col items-center justify-center gap-y-1 rounded-lg border-2 border-zinc-700 p-4 hover:border-zinc-200 lg:w-[300px]',
         !(file && src) && 'border-dashed p-0'
       )}
     >

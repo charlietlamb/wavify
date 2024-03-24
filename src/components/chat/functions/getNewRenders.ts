@@ -10,7 +10,7 @@ export async function getNewRenders(newArray: string[], supabase: Supabase) {
         .select(
           `
                                     *,
-                                    users ( username, profile_pic_url)
+                                    users(*)
                             `
         )
         .eq('id', isObject(message) ? message.id : '')

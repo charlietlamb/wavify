@@ -62,10 +62,10 @@ export default function ResourcesUploadFiles() {
   }
 
   return (
-    <div className="flex h-full w-[300px] min-w-[300px] flex-col gap-y-4 overflow-y-auto rounded-lg border border-zinc-700 p-4 hover:border-zinc-200">
+    <div className="flex h-full min-h-[300px] w-full  flex-col gap-y-4 overflow-y-auto rounded-lg border border-zinc-700 p-4 hover:border-zinc-200 lg:w-[300px] lg:min-w-[300px]">
       <div
         className={cn(
-          'group relative flex h-[200px] w-full cursor-pointer flex-col items-center justify-center gap-y-1 rounded-lg border-2 border-dashed border-zinc-700 p-4 hover:border-zinc-200'
+          'group relative flex h-[120px] w-full cursor-pointer flex-col items-center justify-center gap-y-1 rounded-lg border-2 border-dashed border-zinc-700 p-4 hover:border-zinc-200 lg:h-[200px]'
         )}
       >
         <p className="text-lg font-semibold">Upload Resource Files</p>

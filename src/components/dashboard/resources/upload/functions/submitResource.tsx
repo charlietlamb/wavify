@@ -11,7 +11,6 @@ export default async function submitResource(
   user: User,
   context: ResourceUploadContext
 ) {
-  console.log('0')
   if (!context.name) {
     context.setError('Name is required')
     toast('Upload Error', { icon: <Ban />, description: 'Name is required' })
@@ -42,18 +41,18 @@ export default async function submitResource(
     user: user.id,
     name: context.name,
   }
-  console.log('1')
   let previewUrl = ''
+  let size = 0
   const { error: folderError } = await supabase
     .from('folders')
     .insert(resourceFolder)
   if (folderError) throw folderError
   for (const file of context.files) {
-    console.log('2.21')
     var fileId = uuidv4()
     var ext = file.name.split('.').pop()
     var url = `${user.id}/${fileId}.${ext ? ext : ''}`
     fileUrls.push(url)
+    size += file.file.size / 1024 / 1024
     if (file.preview) previewUrl = url
     const base64File = await fileToBase64(file.file)
     if (!base64File) throw new Error('Error obtaining base64 data')
@@ -63,7 +62,6 @@ export default async function submitResource(
       url,
       file.name
     )
-    console.log('2.22')
     if (error) {
       throw new Error('Error uploading file to S3')
     } else {
@@ -82,12 +80,14 @@ export default async function submitResource(
       if (fileError) throw fileError
     }
   }
-  console.log('2')
   const resource = {
     user: user.id,
     name: context.name,
     description: context.description,
-    collaborators: context.collaborators.map((collab: User) => collab.id),
+    collaborators: [
+      ...user.id,
+      context.collaborators.map((collab: User) => collab.id),
+    ],
     friendsOnly: context.options.friendsOnly,
     mustFollow: context.options.mustFollow,
     allowSave: context.options.allowSave,
@@ -96,11 +96,11 @@ export default async function submitResource(
     folder: resourceFolder.id,
     imageUrl: context.imageUrl || user.profile_pic_url,
     previewUrl,
+    size,
   }
   const { error: resourceError } = await supabase
     .from('resources')
     .insert(resource)
   if (resourceError) throw resourceError
   context.setLoading(false)
-  console.log('3')
 }

@@ -24,7 +24,7 @@ export const getMessages = async ({
       .select(
         `
               *,
-              users ( username, profile_pic_url)
+              users (*)
           `
       )
       .eq('chat', chat.id)

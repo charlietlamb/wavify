@@ -5,7 +5,7 @@ export async function getFilesChat(path: Path[]) {
   const chatId = path[path.length - 1].id
   const { data, error } = await supabase
     .from('files')
-    .select('*,users ( username, profile_pic_url)')
+    .select('*,users(*)')
     .eq('chat', chatId)
     .order('createdAt', { ascending: false })
   if (error) throw error

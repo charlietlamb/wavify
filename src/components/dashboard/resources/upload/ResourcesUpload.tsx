@@ -10,6 +10,7 @@ import ResourcesUploadFiles, {
   FileUploadData,
 } from './files/ResourcesUploadFiles'
 import { ResourceUploadOptions } from './data/data'
+import ResourcesUploadSubmit from './ResourcesUploadSubmit'
 
 export default function ResourcesUpload() {
   const user = useUser()
@@ -50,10 +51,11 @@ export default function ResourcesUpload() {
         setHasPreview,
       }}
     >
-      <div className="flex h-full w-full gap-x-4">
+      <div className="flex h-full w-full flex-col gap-4 overflow-y-auto lg:flex-row lg:overflow-y-hidden">
         <ResourcesUploadFiles />
         <ResourcesUploadLeft />
         <ResourcesUploadRight />
+        <ResourcesUploadSubmit className="flex lg:hidden" />
       </div>
     </ResourceUploadContext.Provider>
   )

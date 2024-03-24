@@ -55,7 +55,7 @@ export function useMessageDeletedEffect(
                 .select(
                   `
                         *,
-                        users ( username, profile_pic_url)
+                        users(*)
                     `
                 )
                 .eq('id', isObject(newPayload) ? newPayload.id : '')

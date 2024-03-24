@@ -25,7 +25,7 @@ export const getComments = async ({
         .select(
           `
                       *,
-                      users ( username, profile_pic_url)
+                      users(*)
                   `
         )
         .eq('folder', folder.id)
@@ -37,7 +37,7 @@ export const getComments = async ({
         .select(
           `
                       *,
-                      users ( username, profile_pic_url)
+                      users(*)
                   `
         )
         .eq('folder', folder.id)
