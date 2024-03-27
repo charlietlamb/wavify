@@ -26,7 +26,7 @@ export function isMessageAuthor(value: unknown): value is MessageAuthor {
     value.users !== null &&
     'username' in value.users &&
     typeof value.users.username === 'string' &&
-    'profile_pic_url' in value.users &&
-    typeof value.users.profile_pic_url === 'string'
+    'imageUrl' in value.users &&
+    typeof value.users.imageUrl === 'string'
   )
 }

@@ -1,7 +1,7 @@
 export async function getUserTopFiles(supabase: Supabase, user: User) {
   const { data, error } = await supabase
     .from('files')
-    .select('*, user(username, profile_pic_url)')
+    .select('*, users(*)')
     .eq('user', user.id)
     .eq('system', true)
     .is('folder', null)

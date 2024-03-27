@@ -1,40 +1,47 @@
 import { v4 as uuidv4 } from 'uuid'
 import { toast } from 'sonner'
-import { ResourceUploadContext } from '../context/context'
+import { UploadContext } from '../context/context'
 import { Ban } from 'lucide-react'
-import { FileUploadData } from '../files/ResourcesUploadFiles'
 import { fileToBase64 } from '@/components/modals/functions/fileToBase64'
 import { uploadFileToS3 } from '@/components/modals/modal-actions/uploadFile'
 
 export default async function submitResource(
   supabase: Supabase,
   user: User,
-  context: ResourceUploadContext
+  context: UploadContext,
+  draft: boolean
 ) {
-  if (!context.name) {
+  if (!context.name && !draft) {
     context.setError('Name is required')
     toast('Upload Error', { icon: <Ban />, description: 'Name is required' })
-    return
+    return false
   }
-  if (!context.description) {
+  if (!context.description && !draft) {
     context.setError('Description is required')
     toast('Upload Error', {
       icon: <Ban />,
       description: 'Description is required',
     })
-    return
+    return false
   }
-  if (context.files.length === 0) {
-    context.setError('Files are required to upload resource.')
+  if (context.files.length === 0 && !draft) {
+    context.setError('Files are required to upload a resource.')
     toast('Upload Error', {
       icon: <Ban />,
       description: 'Files are required to upload resource.',
     })
-    return
+    return false
+  }
+  if (!context.type && !draft) {
+    context.setError('A type is required to upload a resource.')
+    toast('Upload Error', {
+      icon: <Ban />,
+      description: 'A type is required to upload a resource.',
+    })
+    return false
   }
   context.setLoading(true)
   context.setError('')
-  const fileUrls = []
   const resourceFolder = {
     id: uuidv4(),
     parent: null,
@@ -42,6 +49,8 @@ export default async function submitResource(
     name: context.name,
   }
   let previewUrl = ''
+  let previewId = ''
+  let fileIds = []
   let size = 0
   const { error: folderError } = await supabase
     .from('folders')
@@ -51,9 +60,12 @@ export default async function submitResource(
     var fileId = uuidv4()
     var ext = file.name.split('.').pop()
     var url = `${user.id}/${fileId}.${ext ? ext : ''}`
-    fileUrls.push(url)
+    fileIds.push(fileId)
     size += file.file.size / 1024 / 1024
-    if (file.preview) previewUrl = url
+    if (file.preview) {
+      previewUrl = url
+      previewId = fileId
+    }
     const base64File = await fileToBase64(file.file)
     if (!base64File) throw new Error('Error obtaining base64 data')
     const error = await uploadFileToS3(
@@ -80,27 +92,44 @@ export default async function submitResource(
       if (fileError) throw fileError
     }
   }
+  let id = context.id || uuidv4()
   const resource = {
+    id,
     user: user.id,
     name: context.name,
     description: context.description,
-    collaborators: [
-      ...user.id,
-      context.collaborators.map((collab: User) => collab.id),
-    ],
+    collaborators: Array.from(
+      new Set([
+        user.id,
+        ...context.collaborators.map((collab: User) => collab.id),
+      ])
+    ),
     friendsOnly: context.options.friendsOnly,
     mustFollow: context.options.mustFollow,
     allowSave: context.options.allowSave,
     allowDownload: context.options.allowDownload,
-    fileUrls: fileUrls,
+    fileIds,
     folder: resourceFolder.id,
-    imageUrl: context.imageUrl || user.profile_pic_url,
+    imageUrl: context.imageUrl || user.imageUrl,
+    tags: context.tags,
+    type: context.type,
     previewUrl,
+    previewId: previewId === '' ? null : previewId,
     size,
+    draft,
   }
-  const { error: resourceError } = await supabase
-    .from('resources')
-    .insert(resource)
-  if (resourceError) throw resourceError
+  if (context.id) {
+    const { error: resourceError } = await supabase
+      .from('resources')
+      .update(resource)
+      .eq('id', context.id)
+    if (resourceError) throw resourceError
+  } else {
+    const { error: resourceError } = await supabase
+      .from('resources')
+      .insert(resource)
+    if (resourceError) throw resourceError
+  }
   context.setLoading(false)
+  return id
 }

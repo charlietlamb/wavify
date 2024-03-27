@@ -59,7 +59,7 @@ export async function getFoldersPostbox(path: Path[]) {
         music,
         users: {
           username: user.username,
-          profile_pic_url: user.profile_pic_url,
+          imageUrl: user.imageUrl,
         },
       }
     })

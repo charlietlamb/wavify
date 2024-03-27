@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, createContext, useContext } from 'react'
 import { ResourceUploadOptions } from '../data/data'
 import { FileUploadData } from '../files/ResourcesUploadFiles'
 
-export interface ResourceUploadContext {
+export interface UploadContext {
   name: string
   setName: Dispatch<SetStateAction<string>>
   description: string
@@ -21,17 +21,27 @@ export interface ResourceUploadContext {
   setLoading: Dispatch<SetStateAction<boolean>>
   hasPreview: boolean
   setHasPreview: Dispatch<SetStateAction<boolean>>
+  tagCurrent: string
+  setTagCurrent: Dispatch<SetStateAction<string>>
+  tags: string[]
+  setTags: Dispatch<SetStateAction<string[]>>
+  manage: boolean | null
+  setManage: Dispatch<SetStateAction<boolean>> | null
+  id: string | null
+  setId: Dispatch<SetStateAction<string>> | null
+  resources: Resource[] | null
+  setResources: Dispatch<SetStateAction<Resource[]>> | null
+  type: string
+  setType: Dispatch<SetStateAction<string>>
 }
 
-export const ResourceUploadContext = createContext<
-  ResourceUploadContext | undefined
->(undefined)
+export const UploadContext = createContext<UploadContext | undefined>(undefined)
 
-export function useResourceUploadContext() {
-  const context = useContext(ResourceUploadContext)
+export function useUploadContext() {
+  const context = useContext(UploadContext)
   if (!context) {
     throw new Error(
-      'useResourceUploadContext must be used within a ResourceUploadProvider'
+      'useUploadContext must be used within a ResourceUploadProvider'
     )
   }
   return context

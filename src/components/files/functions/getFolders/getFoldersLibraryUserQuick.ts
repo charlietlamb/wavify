@@ -5,7 +5,7 @@ export async function getFoldersLibraryUserQuick(path: Path[]) {
   const userId = path[path.length - 1].id
   const { data, error } = await supabase
     .from('folders')
-    .select('*, user(username, profile_pic_url)')
+    .select('*, users(*)')
     .eq('user', userId)
     .is('parent', null)
     .order('createdAt', { ascending: false })

@@ -7,6 +7,7 @@ interface CollectiveReturn {
   colUsers: ColUserAndData[]
   roles: Role[]
   spaces: Space[]
+  saved: boolean
 }
 
 export function useCollective(): CollectiveReturn {
@@ -18,6 +19,7 @@ export function useCollective(): CollectiveReturn {
       colUsers: [] as ColUserAndData[],
       roles: [] as Role[],
       spaces: [] as Space[],
+      saved: false,
     }
   if (!collective.colUser) throw new Error('No colUser found')
   if (!collective.colUsers) throw new Error('No colUsers found')
@@ -29,6 +31,7 @@ export function useCollective(): CollectiveReturn {
     colUsers: collective.colUsers,
     roles: collective.roles,
     spaces: collective.spaces,
+    saved: collective.saved,
   }
   return collectiveToReturn
 }

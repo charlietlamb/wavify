@@ -44,7 +44,7 @@ export async function getFoldersPostboxQuick(path: Path[]) {
         createdAt: new Date().toISOString(),
         users: {
           username: user.username,
-          profile_pic_url: user.profile_pic_url,
+          imageUrl: user.imageUrl,
         },
         size: 0,
         music: false,

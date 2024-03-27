@@ -4,7 +4,7 @@ import getUser from '@/app/actions/getUser'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import CollectiveSidebar from '@/components/collective/CollectiveSidebar'
-import { getCollective } from './[space_slug]/(functions)/getCollective'
+import { getCollective } from './[space_slug]/functions/getCollective'
 import isObject from '@/lib/isObject'
 import { handleNewUser } from './(functions)/handleNewUser'
 import { collectiveHasUser } from './(functions)/collectiveHasUser'
@@ -17,6 +17,7 @@ import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { CollectiveProvider } from '@/components/providers/CollectiveProvider'
 import CollectiveToggle from '@/components/collective/CollectiveToggle'
 import CollectiveSidebarWrap from '@/components/collective/CollectiveSidebarWrap'
+import { userHasCollectiveSaved } from '@/components/collective/header/functions/userHasCollectiveSaved'
 
 export default async function CollectiveLayout({
   children,
@@ -60,6 +61,11 @@ export default async function CollectiveLayout({
     return redirect('/')
   }
   const spaces = await getAllSpaces(collective, supabase)
+  const collectiveSaved = await userHasCollectiveSaved(
+    supabase,
+    user,
+    collective
+  )
 
   return (
     <CollectiveProvider
@@ -68,6 +74,7 @@ export default async function CollectiveLayout({
       colUsers={colUsers}
       roles={roles}
       spaces={spaces}
+      saved={collectiveSaved}
     >
       <CollectiveSidebarWrap />
       <div className="relative flex w-full">

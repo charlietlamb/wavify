@@ -48,7 +48,7 @@ export default function SetupUser() {
             .from('users')
             .update({
               username,
-              profile_pic_url: uploadedImageUrl,
+              imageUrl: uploadedImageUrl,
               setup_complete: true,
             })
             .match({ id: user.id })

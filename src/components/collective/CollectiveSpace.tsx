@@ -1,6 +1,13 @@
 'use client'
 
-import { Edit, GripVertical, Trash } from 'lucide-react'
+import {
+  Bookmark,
+  BookmarkCheck,
+  BookmarkMinus,
+  Edit,
+  GripVertical,
+  Trash,
+} from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { ModalType, useModal } from '../../../hooks/use-modal-store'
@@ -10,6 +17,15 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useCollective } from '@/state/collective/useCollective'
 import { Draggable } from '@hello-pangea/dnd'
 import { useUtils } from '@/state/util/useUtils'
+import { useAppDispatch } from '@/state/hooks'
+import { useUser } from '@/state/user/useUser'
+import { useSpace } from '@/state/space/useSpace'
+import { setSaved } from '@/state/space/spaceSlice'
+import { toast } from 'sonner'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { unsaveSpace } from './functions/unsaveSpace'
+import { saveSpace } from './functions/saveSpace'
+import { userHasSavedSpace } from '@/app/collective/[unique]/[space_slug]/functions/userHasSavedSpace'
 
 interface CollectiveSpaceProps {
   space: Space
@@ -17,8 +33,11 @@ interface CollectiveSpaceProps {
 }
 
 export const CollectiveSpace = ({ space, index }: CollectiveSpaceProps) => {
+  const user = useUser()
+  const supabase = createClientComponentClient()
   const { collective, roles, colUser, spaces } = useCollective()
   const { onOpen } = useModal()
+  const [spaceSaved, setSpaceSaved] = useState(false)
   const params = useParams()
   const router = useRouter()
   const { spaceDrag, spaceDragType } = useUtils()
@@ -28,12 +47,16 @@ export const CollectiveSpace = ({ space, index }: CollectiveSpaceProps) => {
   const [rolesAndAllowed, setRolesAndAllowed] = useState<RoleAndAllowed[]>(
     roles.map((role) => ({ ...role, allowed: space.allowed.includes(role.id) }))
   )
-
   const rolesAndAllowedRef = useRef(rolesAndAllowed)
   useEffect(() => {
     rolesAndAllowedRef.current = rolesAndAllowed
   }, [rolesAndAllowed])
-
+  useEffect(() => {
+    async function getData() {
+      setSpaceSaved(await userHasSavedSpace(supabase, user, space))
+    }
+    getData()
+  }, [])
   const onAction = useCallback(
     (e: React.MouseEvent, action: ModalType) => {
       e.stopPropagation()
@@ -46,6 +69,24 @@ export const CollectiveSpace = ({ space, index }: CollectiveSpaceProps) => {
     },
     [onOpen, space, collective, spaces]
   )
+  async function handleSaveSpace(e: React.MouseEvent) {
+    e.stopPropagation()
+    if (spaceSaved) {
+      await unsaveSpace(supabase, user, space)
+      setSpaceSaved(false)
+      toast('Unsaved successful', {
+        description: 'This space has been removed from your saves',
+        icon: <BookmarkMinus />,
+      })
+    } else {
+      await saveSpace(supabase, user, space)
+      setSpaceSaved(true)
+      toast('Saved successful', {
+        description: 'This space has been added to your saves',
+        icon: <BookmarkCheck />,
+      })
+    }
+  }
   return (
     <Draggable draggableId={space.id} index={index}>
       {(provided, snapshot) => (
@@ -91,6 +132,12 @@ export const CollectiveSpace = ({ space, index }: CollectiveSpaceProps) => {
               <ActionTooltip label="Delete">
                 <Trash
                   onClick={(e) => onAction(e, 'deleteSpace')}
+                  className="hidden h-4 w-4 text-zinc-500 transition hover:text-zinc-600 group-hover:block dark:text-zinc-400 dark:hover:text-zinc-300"
+                />
+              </ActionTooltip>
+              <ActionTooltip label={spaceSaved ? 'Unsave' : 'Save'}>
+                <Bookmark
+                  onClick={(e) => handleSaveSpace(e)}
                   className="hidden h-4 w-4 text-zinc-500 transition hover:text-zinc-600 group-hover:block dark:text-zinc-400 dark:hover:text-zinc-300"
                 />
               </ActionTooltip>

@@ -1,8 +1,8 @@
-import { getCollective } from "@/app/collective/[unique]/[space_slug]/(functions)/getCollective";
-import isObject from "@/lib/isObject";
-import { useEffect } from "react";
-import { getCollectiveFromId } from "../functions/getCollectiveFromId";
-import { getUpdatedCollectives } from "../functions/getUpdatedCollectives";
+import { getCollective } from '@/app/collective/[unique]/[space_slug]/functions/getCollective'
+import isObject from '@/lib/isObject'
+import { useEffect } from 'react'
+import { getCollectiveFromId } from '../functions/getCollectiveFromId'
+import { getUpdatedCollectives } from '../functions/getUpdatedCollectives'
 
 export function useUserCollectivesUpdateEffect(
   supabase: Supabase,
@@ -13,29 +13,29 @@ export function useUserCollectivesUpdateEffect(
 ) {
   useEffect(() => {
     const channel = supabase
-      .channel("colUsersUpdated" + channelUnqiue)
+      .channel('colUsersUpdated' + channelUnqiue)
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "*",
-          schema: "public",
-          table: "users",
+          event: '*',
+          schema: 'public',
+          table: 'users',
         },
         async (payload) => {
-          const newPayload = payload.new as { id: string; [key: string]: any };
+          const newPayload = payload.new as { id: string; [key: string]: any }
           if (isObject(newPayload) && user.id === newPayload.id) {
             const newCollectives = await getUpdatedCollectives(
               supabase,
               newPayload
-            );
-            setCollectives(newCollectives);
+            )
+            setCollectives(newCollectives)
           }
         }
       )
-      .subscribe();
+      .subscribe()
 
     return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [supabase, user]);
+      supabase.removeChannel(channel)
+    }
+  }, [supabase, user])
 }

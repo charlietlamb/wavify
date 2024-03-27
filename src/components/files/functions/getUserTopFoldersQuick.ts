@@ -1,7 +1,7 @@
 export async function getUserTopFoldersQuick(supabase: Supabase, user: User) {
   const { data, error } = await supabase
     .from('folders')
-    .select('*, user(username, profile_pic_url)')
+    .select('*, users(*)')
     .eq('user', user.id)
     .is('parent', null)
     .order('createdAt', { ascending: false })

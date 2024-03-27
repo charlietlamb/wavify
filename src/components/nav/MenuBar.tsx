@@ -18,6 +18,7 @@ import {
 import { useModal } from '../../../hooks/use-modal-store'
 import { useRouter } from 'next/navigation'
 import { useUser } from '@/state/user/useUser'
+import { Bookmark, Gauge, LibraryBig, MessagesSquare } from 'lucide-react'
 
 interface MenuBarProps {
   collectives: Collective[]
@@ -27,18 +28,26 @@ export default function NavMenu({ collectives }: MenuBarProps) {
   const user = useUser()
   const { onOpen } = useModal()
   const router = useRouter()
+  const iconClassName = 'ml-auto text-zinc-400 text-sm w-5 h-5'
   return (
     <Menubar className="rounded-0 flex cursor-pointer items-center border-0 p-0 px-[0.5rem] text-lg">
       <MenubarMenu>
         <MenubarTrigger>{user.username}</MenubarTrigger>
         <MenubarContent>
-          <MenubarItem>
-            Create Collective <MenubarShortcut>⌘T</MenubarShortcut>
+          <MenubarItem
+            onClick={() => router.push('/dashboard/overview/general')}
+          >
+            Dashboard <Gauge className={iconClassName} />
           </MenubarItem>
-          <MenubarItem>
-            Your Collectives <MenubarShortcut>⌘N</MenubarShortcut>
+          <MenubarItem onClick={() => router.push('/library')}>
+            Library <LibraryBig className={iconClassName} />
           </MenubarItem>
-          <MenubarItem disabled>New Incognito Window</MenubarItem>
+          <MenubarItem onClick={() => router.push('/saved')}>
+            Saved <Bookmark className={iconClassName} />
+          </MenubarItem>
+          <MenubarItem onClick={() => router.push('/messages')}>
+            Messages <MessagesSquare className={iconClassName} />
+          </MenubarItem>
           <MenubarSeparator />
           <MenubarSub>
             <MenubarSubTrigger>Friends</MenubarSubTrigger>
@@ -124,6 +133,9 @@ export default function NavMenu({ collectives }: MenuBarProps) {
       <MenubarMenu>
         <MenubarTrigger>Resources</MenubarTrigger>
         <MenubarContent>
+          <MenubarItem onClick={() => router.push('/resources')}>
+            All Resources
+          </MenubarItem>
           <MenubarItem
             onClick={() => router.push('/dashboard/resources/upload')}
           >

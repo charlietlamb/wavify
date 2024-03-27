@@ -9,6 +9,111 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      actions: {
+        Row: {
+          action: string
+          chat: string | null
+          child: string
+          collective: string | null
+          createdAt: string
+          file: string | null
+          folder: string | null
+          id: string
+          parents: string[]
+          product: string | null
+          resource: string | null
+          space: string | null
+          users: string[]
+        }
+        Insert: {
+          action?: string
+          chat?: string | null
+          child: string
+          collective?: string | null
+          createdAt?: string
+          file?: string | null
+          folder?: string | null
+          id?: string
+          parents?: string[]
+          product?: string | null
+          resource?: string | null
+          space?: string | null
+          users?: string[]
+        }
+        Update: {
+          action?: string
+          chat?: string | null
+          child?: string
+          collective?: string | null
+          createdAt?: string
+          file?: string | null
+          folder?: string | null
+          id?: string
+          parents?: string[]
+          product?: string | null
+          resource?: string | null
+          space?: string | null
+          users?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_downloads_chat_fkey"
+            columns: ["chat"]
+            isOneToOne: false
+            referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_downloads_collective_fkey"
+            columns: ["collective"]
+            isOneToOne: false
+            referencedRelation: "collectives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_downloads_file_fkey"
+            columns: ["file"]
+            isOneToOne: false
+            referencedRelation: "files"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_downloads_folder_fkey"
+            columns: ["folder"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_downloads_product_fkey"
+            columns: ["product"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_downloads_resource_fkey"
+            columns: ["resource"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_downloads_space_fkey"
+            columns: ["space"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_downloads_user_fkey"
+            columns: ["child"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chats: {
         Row: {
           accepted: boolean | null
@@ -74,12 +179,56 @@ export type Database = {
           },
         ]
       }
+      collections: {
+        Row: {
+          collections: string[]
+          collectives: string[]
+          createdAt: string
+          id: string
+          members: string[]
+          name: string
+          products: string[]
+          resources: string[]
+          user: string
+        }
+        Insert: {
+          collections?: string[]
+          collectives?: string[]
+          createdAt?: string
+          id?: string
+          members?: string[]
+          name?: string
+          products?: string[]
+          resources?: string[]
+          user: string
+        }
+        Update: {
+          collections?: string[]
+          collectives?: string[]
+          createdAt?: string
+          id?: string
+          members?: string[]
+          name?: string
+          products?: string[]
+          resources?: string[]
+          user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_collections_user_fkey"
+            columns: ["user"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       collectives: {
         Row: {
-          banner_url: string | null
-          founder: string | null
+          bannerUrl: string | null
+          founder: string
           id: string
-          image_url: string | null
+          imageUrl: string | null
           inviteCode: string | null
           roles: string[]
           score: number | null
@@ -87,10 +236,10 @@ export type Database = {
           unique: string
         }
         Insert: {
-          banner_url?: string | null
-          founder?: string | null
+          bannerUrl?: string | null
+          founder: string
           id?: string
-          image_url?: string | null
+          imageUrl?: string | null
           inviteCode?: string | null
           roles?: string[]
           score?: number | null
@@ -98,10 +247,10 @@ export type Database = {
           unique: string
         }
         Update: {
-          banner_url?: string | null
-          founder?: string | null
+          bannerUrl?: string | null
+          founder?: string
           id?: string
-          image_url?: string | null
+          imageUrl?: string | null
           inviteCode?: string | null
           roles?: string[]
           score?: number | null
@@ -161,7 +310,8 @@ export type Database = {
           id: string
           lastEditedAt: string
           message: string
-          space: string
+          resource: string | null
+          space: string | null
           user: string
         }
         Insert: {
@@ -171,7 +321,8 @@ export type Database = {
           id?: string
           lastEditedAt?: string
           message?: string
-          space: string
+          resource?: string | null
+          space?: string | null
           user: string
         }
         Update: {
@@ -181,7 +332,8 @@ export type Database = {
           id?: string
           lastEditedAt?: string
           message?: string
-          space?: string
+          resource?: string | null
+          space?: string | null
           user?: string
         }
         Relationships: [
@@ -200,6 +352,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "public_comments_resource_fkey"
+            columns: ["resource"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "public_comments_space_fkey"
             columns: ["space"]
             isOneToOne: false
@@ -208,105 +367,6 @@ export type Database = {
           },
           {
             foreignKeyName: "public_comments_user_fkey"
-            columns: ["user"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      downloads: {
-        Row: {
-          chat: string | null
-          collaborators: string[]
-          collective: string | null
-          created_at: string
-          file: string | null
-          folder: string | null
-          id: string
-          product: string | null
-          resource: string | null
-          space: string | null
-          user: string
-        }
-        Insert: {
-          chat?: string | null
-          collaborators?: string[]
-          collective?: string | null
-          created_at?: string
-          file?: string | null
-          folder?: string | null
-          id?: string
-          product?: string | null
-          resource?: string | null
-          space?: string | null
-          user: string
-        }
-        Update: {
-          chat?: string | null
-          collaborators?: string[]
-          collective?: string | null
-          created_at?: string
-          file?: string | null
-          folder?: string | null
-          id?: string
-          product?: string | null
-          resource?: string | null
-          space?: string | null
-          user?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "public_downloads_chat_fkey"
-            columns: ["chat"]
-            isOneToOne: false
-            referencedRelation: "chats"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_downloads_collective_fkey"
-            columns: ["collective"]
-            isOneToOne: false
-            referencedRelation: "collectives"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_downloads_file_fkey"
-            columns: ["file"]
-            isOneToOne: false
-            referencedRelation: "files"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_downloads_folder_fkey"
-            columns: ["folder"]
-            isOneToOne: false
-            referencedRelation: "folders"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_downloads_product_fkey"
-            columns: ["product"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_downloads_resource_fkey"
-            columns: ["resource"]
-            isOneToOne: false
-            referencedRelation: "resources"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_downloads_space_fkey"
-            columns: ["space"]
-            isOneToOne: false
-            referencedRelation: "spaces"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_downloads_user_fkey"
             columns: ["user"]
             isOneToOne: false
             referencedRelation: "users"
@@ -540,6 +600,7 @@ export type Database = {
           editedAt: string | null
           files: boolean | null
           id: string
+          resource: string | null
         }
         Insert: {
           author: string
@@ -551,6 +612,7 @@ export type Database = {
           editedAt?: string | null
           files?: boolean | null
           id?: string
+          resource?: string | null
         }
         Update: {
           author?: string
@@ -562,6 +624,7 @@ export type Database = {
           editedAt?: string | null
           files?: boolean | null
           id?: string
+          resource?: string | null
         }
         Relationships: [
           {
@@ -576,6 +639,13 @@ export type Database = {
             columns: ["chat"]
             isOneToOne: false
             referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_messages_resource_fkey"
+            columns: ["resource"]
+            isOneToOne: false
+            referencedRelation: "resources"
             referencedColumns: ["id"]
           },
         ]
@@ -697,8 +767,12 @@ export type Database = {
           allowDownload: boolean
           allowSave: boolean
           collaborators: string[]
-          created_at: string
+          createdAt: string
           description: string
+          downloads: number
+          draft: boolean
+          featured: boolean
+          fileIds: string[]
           fileUrls: string[]
           folder: string
           friendsOnly: boolean
@@ -706,16 +780,23 @@ export type Database = {
           imageUrl: string
           mustFollow: boolean
           name: string
+          previewId: string | null
           previewUrl: string
           size: number
+          tags: string[]
+          type: string
           user: string
         }
         Insert: {
           allowDownload?: boolean
           allowSave?: boolean
           collaborators?: string[]
-          created_at?: string
+          createdAt?: string
           description?: string
+          downloads?: number
+          draft?: boolean
+          featured?: boolean
+          fileIds?: string[]
           fileUrls?: string[]
           folder: string
           friendsOnly?: boolean
@@ -723,16 +804,23 @@ export type Database = {
           imageUrl?: string
           mustFollow?: boolean
           name?: string
+          previewId?: string | null
           previewUrl?: string
           size?: number
+          tags?: string[]
+          type?: string
           user: string
         }
         Update: {
           allowDownload?: boolean
           allowSave?: boolean
           collaborators?: string[]
-          created_at?: string
+          createdAt?: string
           description?: string
+          downloads?: number
+          draft?: boolean
+          featured?: boolean
+          fileIds?: string[]
           fileUrls?: string[]
           folder?: string
           friendsOnly?: boolean
@@ -740,8 +828,11 @@ export type Database = {
           imageUrl?: string
           mustFollow?: boolean
           name?: string
+          previewId?: string | null
           previewUrl?: string
           size?: number
+          tags?: string[]
+          type?: string
           user?: string
         }
         Relationships: [
@@ -750,6 +841,13 @@ export type Database = {
             columns: ["folder"]
             isOneToOne: false
             referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_resources_previewId_fkey"
+            columns: ["previewId"]
+            isOneToOne: false
+            referencedRelation: "files"
             referencedColumns: ["id"]
           },
           {
@@ -813,6 +911,92 @@ export type Database = {
             columns: ["collective"]
             isOneToOne: false
             referencedRelation: "collectives"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saves: {
+        Row: {
+          collection: string | null
+          collective: string | null
+          createdAt: string
+          id: string
+          member: string | null
+          product: string | null
+          resource: string | null
+          space: string | null
+          user: string | null
+        }
+        Insert: {
+          collection?: string | null
+          collective?: string | null
+          createdAt?: string
+          id?: string
+          member?: string | null
+          product?: string | null
+          resource?: string | null
+          space?: string | null
+          user?: string | null
+        }
+        Update: {
+          collection?: string | null
+          collective?: string | null
+          createdAt?: string
+          id?: string
+          member?: string | null
+          product?: string | null
+          resource?: string | null
+          space?: string | null
+          user?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_saves_collections_fkey"
+            columns: ["collection"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_saves_collective_fkey"
+            columns: ["collective"]
+            isOneToOne: false
+            referencedRelation: "collectives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_saves_member_fkey"
+            columns: ["member"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_saves_product_fkey"
+            columns: ["product"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_saves_resource_fkey"
+            columns: ["resource"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_saves_space_fkey"
+            columns: ["space"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_saves_user_fkey"
+            columns: ["user"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -985,8 +1169,8 @@ export type Database = {
           followers: string[]
           following: string[]
           id: string
+          imageUrl: string
           instagram: string
-          profile_pic_url: string
           role: string | null
           score: number | null
           setup_complete: boolean
@@ -1004,8 +1188,8 @@ export type Database = {
           followers: string[]
           following: string[]
           id: string
+          imageUrl?: string
           instagram?: string
-          profile_pic_url?: string
           role?: string | null
           score?: number | null
           setup_complete?: boolean
@@ -1023,8 +1207,8 @@ export type Database = {
           followers?: string[]
           following?: string[]
           id?: string
+          imageUrl?: string
           instagram?: string
-          profile_pic_url?: string
           role?: string | null
           score?: number | null
           setup_complete?: boolean

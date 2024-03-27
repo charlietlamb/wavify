@@ -2,12 +2,11 @@ import { Input } from '@/components/ui/input'
 import { ActionTooltip } from '@/components/util/ActionTooltip'
 import { cn } from '@/lib/utils'
 import { Ban, Play, Upload, X } from 'lucide-react'
-import { useState } from 'react'
 import FileInfoDialog from './FileInfoDialog'
-import { useResourceUploadContext } from '../context/context'
-import { musicExtensions } from '@/components/chat/data/extensions'
+import { useUploadContext } from '../context/context'
 import { Checkbox } from '@nextui-org/react'
 import { toast } from 'sonner'
+import { musicExtensions } from '@/components/chat/data/extensions'
 
 export type FileUploadData = {
   file: File
@@ -16,7 +15,7 @@ export type FileUploadData = {
 }
 
 export default function ResourcesUploadFiles() {
-  const { files, setFiles } = useResourceUploadContext()
+  const { files, setFiles } = useUploadContext()
   function onSelectFile(event: React.ChangeEvent<HTMLInputElement>) {
     const fileList = event.target.files
     if (!fileList) return
@@ -41,7 +40,10 @@ export default function ResourcesUploadFiles() {
   }
 
   function handleCheckboxClick(file: FileUploadData) {
-    if (file.file.type.includes('audio')) {
+    if (
+      file.file.type.includes('audio') ||
+      musicExtensions.includes(file.file.name.split('.').pop() || '')
+    ) {
       const newFile = { ...file, preview: !file.preview }
       const newFiles = files.map((f) =>
         f.file === file.file ? newFile : { ...f, preview: false }
@@ -98,13 +100,16 @@ export default function ResourcesUploadFiles() {
                 handleNameChange(e, file, files, setFiles)
               }}
             />
-            {file.file.type.includes('audio') && (
-              <Checkbox
-                icon={<Play />}
-                isSelected={file.preview}
-                onValueChange={() => handleCheckboxClick(file)}
-              />
-            )}
+            {file.file.type.includes('audio') ||
+              (musicExtensions.includes(
+                file.file.name.split('.').pop() || ''
+              ) && (
+                <Checkbox
+                  icon={<Play />}
+                  isSelected={file.preview}
+                  onValueChange={() => handleCheckboxClick(file)}
+                />
+              ))}
             <button
               className="text-zinc-700 transition hover:text-zinc-200"
               onClick={() => setFiles(files.filter((_, i) => i !== index))}

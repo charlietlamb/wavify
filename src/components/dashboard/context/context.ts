@@ -1,13 +1,18 @@
-import { createContext, useContext } from 'react'
+import { Dispatch, SetStateAction, createContext, useContext } from 'react'
 
-interface DashboardContext {}
+interface DashboardContext {
+  startDate: Date
+  setStartDate: Dispatch<SetStateAction<Date>>
+  endDate: Date
+  setEndDate: Dispatch<SetStateAction<Date>>
+}
 
-export const FilesContext = createContext<DashboardContext | undefined>(
+export const DashboardContext = createContext<DashboardContext | undefined>(
   undefined
 )
 
 export function useDashboardContext() {
-  const context = useContext(FilesContext)
+  const context = useContext(DashboardContext)
   if (!context) {
     throw new Error(
       'useDashboardContext must be used within a DashboardProvider'

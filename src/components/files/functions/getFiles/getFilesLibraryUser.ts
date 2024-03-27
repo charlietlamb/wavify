@@ -5,7 +5,7 @@ export async function getFilesLibraryUser(path: Path[]) {
   const userId = path[path.length - 1].id
   const { data, error } = await supabase
     .from('files')
-    .select('*, user(username, profile_pic_url)')
+    .select('*, users(*)')
     .eq('user', userId)
     .is('folder', null)
     .is('space', null)

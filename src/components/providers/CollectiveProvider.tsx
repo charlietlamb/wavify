@@ -5,6 +5,7 @@ import {
   setColUsers,
   setCollective,
   setRoles,
+  setSaved,
   setSpaces,
 } from '@/state/collective/collectiveSlice'
 import { useColUserDispatchEffect } from '@/state/collective/hooks/useColUserDispatchEffect'
@@ -23,6 +24,7 @@ export function CollectiveProvider({
   colUsers,
   roles,
   spaces,
+  saved,
 }: {
   children: React.ReactNode
   collective: Collective
@@ -30,6 +32,7 @@ export function CollectiveProvider({
   colUsers: ColUserAndData[]
   roles: Role[]
   spaces: Space[]
+  saved: boolean
 }) {
   const store = useAppStore()
   const router = useRouter()
@@ -41,6 +44,7 @@ export function CollectiveProvider({
     store.dispatch(setColUsers(colUsers))
     store.dispatch(setSpaces(spaces))
     store.dispatch(setRoles(roles))
+    store.dispatch(setSaved(saved))
     initialized.current = true
   }
 

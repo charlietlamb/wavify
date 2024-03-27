@@ -1,6 +1,6 @@
 import getUser from '@/app/actions/getUser'
 import CollectiveRoles from '@/components/collective/CollectiveRoles'
-import { getCollective } from '../[space_slug]/(functions)/getCollective'
+import { getCollective } from '../[space_slug]/functions/getCollective'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'

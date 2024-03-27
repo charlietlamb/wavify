@@ -10,7 +10,7 @@ export default function UserProfileTop() {
       <div className="relative h-[150px] w-[150px] rounded-full border border-zinc-700 transition hover:border-zinc-200">
         <Image
           alt={`${otherUser.username}'s profile image`}
-          src={'https://github.com/shadcn.png'} //otherUser.profile_pic_url}
+          src={'https://github.com/shadcn.png'} //otherUser.imageUrl}
           layout="fill"
           objectFit="cover"
           objectPosition="center"

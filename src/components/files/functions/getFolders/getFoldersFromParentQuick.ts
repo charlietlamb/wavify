@@ -4,7 +4,7 @@ export async function getFoldersFromParentQuick(
 ) {
   const { data, error } = await supabase
     .from('folders')
-    .select('*, user(username, profile_pic_url)')
+    .select('*, users(*)')
     .eq('parent', parent)
     .order('createdAt', { ascending: false })
   if (error) throw error

@@ -178,7 +178,7 @@ export function ChatItem({ message }: ChatItemProps) {
                                 download(file.url, file.name)
                               }}
                               className={cn(
-                                'ml-2 text-left text-sm text-primary hover:underline dark:text-primary'
+                                'ml-2 text-left text-sm text-zinc-200 hover:underline dark:text-zinc-200'
                               )}
                             >
                               {file.name}

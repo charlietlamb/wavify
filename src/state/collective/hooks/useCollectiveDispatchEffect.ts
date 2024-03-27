@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { getCollective } from '@/app/collective/[unique]/[space_slug]/(functions)/getCollective'
+import { getCollective } from '@/app/collective/[unique]/[space_slug]/functions/getCollective'
 
 export function useCollectiveDispatchEffect(
   supabase: Supabase,

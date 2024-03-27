@@ -3,9 +3,9 @@ import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import getUser from '@/app/actions/getUser'
 import { getSearchFilesData } from '@/app/user/[user_id]/chat/(functions)/getSearchFilesData'
-import { getSpace } from './(functions)/getSpace'
-import { getChatSpace } from './(functions)/getChatSpace'
-import { getCollective } from './(functions)/getCollective'
+import { getSpace } from './functions/getSpace'
+import { getChatSpace } from './functions/getChatSpace'
+import { getCollective } from './functions/getCollective'
 import Space from '@/components/collective/Space'
 import Library from '@/components/collective/library/Library'
 import { getLibrarySearchFiles } from '@/app/library/functions/getLibrarySearchFiles'
@@ -24,6 +24,7 @@ import Feedback from '@/components/collective/feedback/Feedback'
 import { getUserFeedbackFiles } from '@/components/collective/feedback/functions/getUserFeedbackFiles'
 import { getFoldersFeedback } from '@/components/files/functions/getFolders/getFoldersFeedback'
 import { getFoldersFeedbackUsers } from '@/components/files/functions/getFolders/getFoldersFeedbackUsers'
+import { userHasSavedSpace } from './functions/userHasSavedSpace'
 
 interface spacePageParams {
   unique: string
@@ -43,6 +44,7 @@ export default async function page({ params }: spacePageProps) {
   const colUser = await getColUser(user, collective, supabase)
   const space: Space = await getSpace(collective, params.space_slug, supabase)
   if (!space || Array.isArray(space)) redirect(`/collective/${params.unique}`)
+  const saved = await userHasSavedSpace(supabase, user, space)
   let chat: Chat | null = null
   let searchFilesData
   if (space.type === 'text') {
@@ -161,6 +163,7 @@ export default async function page({ params }: spacePageProps) {
     const initFolders: FolderAndSender[] = canGive
       ? await getFoldersFeedback([initPath])
       : await getFoldersFeedbackUsers([initPath])
+
     return (
       <Feedback
         space={space}
@@ -172,5 +175,12 @@ export default async function page({ params }: spacePageProps) {
     )
   }
 
-  return <Space space={space} chat={chat} searchFilesData={searchFilesData} />
+  return (
+    <Space
+      space={space}
+      chat={chat}
+      searchFilesData={searchFilesData}
+      saved={saved}
+    />
+  )
 }

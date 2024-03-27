@@ -50,7 +50,7 @@ export async function getPostboxUsers(supabase: Supabase, space: Space) {
         music,
         users: {
           username: user.username,
-          profile_pic_url: user.profile_pic_url,
+          imageUrl: user.imageUrl,
         },
       }
     })

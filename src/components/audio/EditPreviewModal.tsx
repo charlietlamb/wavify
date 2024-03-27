@@ -183,7 +183,7 @@ export const EditPreviewModal = () => {
                     file,
                     progress,
                     audioFile,
-                    'https://github.com/shadcn.png', //user.profile_pic_url
+                    'https://github.com/shadcn.png',
                     timeRemaining,
                     audioFile.duration
                   )

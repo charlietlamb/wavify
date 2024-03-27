@@ -5,7 +5,7 @@ export async function getFoldersCollectivesQuick(path: Path[]) {
   const userId = path[path.length - 1].id
   const { data: user, error: userError } = await supabase
     .from('users')
-    .select('username,profile_pic_url')
+    .select()
     .eq('id', userId)
     .single()
   if (userError) throw userError

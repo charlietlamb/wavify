@@ -6,7 +6,7 @@ import {
   CommandList,
 } from '@/components/ui/command'
 
-import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+import { ActionTooltip } from '@/components/util/ActionTooltip'
 import { UserAvatar } from '@/components/utils/UserAvatar'
 import { PlusIcon } from 'lucide-react'
 import { useState } from 'react'
@@ -22,9 +22,11 @@ export default function AddCollaboratorDialog({
 
   return (
     <>
-      <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-zinc-700 transition hover:bg-zinc-500">
-        <PlusIcon onClick={() => setOpen(true)} className="text-zinc-200" />
-      </button>
+      <ActionTooltip label="Search friends">
+        <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-zinc-700 transition hover:bg-zinc-500">
+          <PlusIcon onClick={() => setOpen(true)} className="text-zinc-200" />
+        </button>
+      </ActionTooltip>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Search all folders in library" />
         <CommandList>

@@ -58,9 +58,11 @@ declare global {
   type Feedback = DB['public']['Tables']['feedbacks']['Row']
   type CommentType = DB['public']['Tables']['comments']['Row']
   type Follower = DB['public']['Tables']['followers']['Row']
-  type Download = DB['public']['Tables']['downloads']['Row']
+  type Action = DB['public']['Tables']['actions']['Row']
   type Resource = DB['public']['Tables']['resources']['Row']
   type Product = DB['public']['Tables']['products']['Row']
+  type Save = DB['public']['Tables']['saves']['Row']
+  type Collection = DB['public']['Tables']['collections']['Row']
   type Json =
     | string
     | number
@@ -139,5 +141,16 @@ declare global {
     name: string
     files: boolean
     folders: boolean
+  }
+
+  type ResourceAndUser = Resource & AndUser
+
+  type Item = {
+    id: string
+    user: User
+    name: string
+    text: string
+    href: string
+    imageUrl: string
   }
 }

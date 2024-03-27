@@ -6,6 +6,7 @@ export interface CollectiveState {
   roles: Role[] | null
   colUsers: ColUserAndData[] | null
   colUser: ColUserAndData | null
+  saved: boolean
 }
 
 const initialState: CollectiveState = {
@@ -14,6 +15,7 @@ const initialState: CollectiveState = {
   roles: null,
   colUsers: null,
   colUser: null,
+  saved: false,
 }
 
 const collectiveSlice = createSlice({
@@ -38,6 +40,9 @@ const collectiveSlice = createSlice({
     setColUser: (state, action) => {
       state.colUser = action.payload
     },
+    setSaved: (state, action) => {
+      state.saved = action.payload
+    },
   },
 })
 
@@ -48,6 +53,7 @@ export const {
   setRoles,
   setColUsers,
   setColUser,
+  setSaved,
 } = collectiveSlice.actions
 
 export default collectiveSlice.reducer

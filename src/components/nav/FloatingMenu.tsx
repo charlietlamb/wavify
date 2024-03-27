@@ -16,6 +16,9 @@ import { useRouter } from 'next/navigation'
 import ButtonLoader from '../utils/ButtonLoader'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
+export const menuButtonClassName: string =
+  'font-medium hover:bg-zinc-800 transition rounded-md text-zinc-200 text-small p-1 w-full flex justify-between items-center'
+
 export default function FloatingMenu({
   constraintsRef,
 }: {
@@ -33,8 +36,7 @@ export default function FloatingMenu({
     setOpen(floating.open)
   }, [floating])
   const [signOutLoading, setSignOutLoading] = useState(false)
-  const menuButtonClassName: string =
-    'font-medium hover:bg-zinc-800 transition rounded-md text-zinc-200 text-small p-1 w-full flex justify-between items-center'
+
   return (
     <AnimatePresence>
       <motion.div

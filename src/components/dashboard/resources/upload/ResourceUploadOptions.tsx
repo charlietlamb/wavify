@@ -1,11 +1,11 @@
 import { Checkbox } from '@nextui-org/react'
-import { useResourceUploadContext } from './context/context'
+import { useUploadContext } from './context/context'
 import { Bookmark, Download, UserPlus, UsersRound } from 'lucide-react'
 
 export default function ResourceUploadOptions() {
-  const { options, setOptions } = useResourceUploadContext()
+  const { options, setOptions } = useUploadContext()
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
       <Checkbox
         icon={<UsersRound />}
         checked={options.friendsOnly}

@@ -1,8 +1,5 @@
 @import 'swiper/css';
 
-* {
-}
-
 .custom-swiper-transition .swiper-wrapper {
   transition-timing-function: ease-in-out;
 }
@@ -31,6 +28,10 @@ main {
 .spinner circle {
   stroke-linecap: round;
   animation: spinnerDash 1.5s ease-in-out infinite;
+}
+
+.cont {
+  @apply gap-4 rounded-lg border border-zinc-700 p-4 transition hover:border-zinc-200;
 }
 
 @keyframes spinnerRotate {

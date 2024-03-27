@@ -1,25 +1,29 @@
 import { Dispatch, SetStateAction, createContext, useContext } from 'react'
-import { ResourceUploadOptions } from '../../upload/data/data'
-import { FileUploadData } from '../../upload/files/ResourcesUploadFiles'
 
-export interface ResourceManageContext {
-  manage: boolean
-  setManage: Dispatch<SetStateAction<boolean>>
-  id: string
-  setId: Dispatch<SetStateAction<string>>
-  resources: Resource[]
-  setResources: Dispatch<SetStateAction<Resource[]>>
+export interface ManageContext {
+  visibility: 'all' | 'public' | 'draft'
+  setVisibility: Dispatch<SetStateAction<'all' | 'public' | 'draft'>>
+  sorting:
+    | 'newest'
+    | 'oldest'
+    | 'popular'
+    | 'unpopular'
+    | 'largest'
+    | 'smallest'
+  setSorting: Dispatch<
+    SetStateAction<
+      'newest' | 'oldest' | 'popular' | 'unpopular' | 'largest' | 'smallest'
+    >
+  >
 }
 
-export const ResourceManageContext = createContext<
-  ResourceManageContext | undefined
->(undefined)
+export const ManageContext = createContext<ManageContext | undefined>(undefined)
 
-export function useResourceManageContext() {
-  const context = useContext(ResourceManageContext)
+export function useManageContext() {
+  const context = useContext(ManageContext)
   if (!context) {
     throw new Error(
-      'useResourceManageContext must be used within a ResourceManageProvider'
+      'useManageContext must be used within a ResourceManageProvider'
     )
   }
   return context

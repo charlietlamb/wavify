@@ -1,6 +1,9 @@
 'use client'
 import {
   Award,
+  Bookmark,
+  BookmarkCheck,
+  BookmarkMinus,
   Boxes,
   ChevronDown,
   LogOut,
@@ -21,19 +24,25 @@ import {
 import { useModal } from '../../../hooks/use-modal-store'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
-import { useHeaderChangeEffect } from './(header)/(hooks)/useHeaderChangeEffect'
+import { useHeaderChangeEffect } from './header/hooks/useHeaderChangeEffect'
 import { useUser } from '@/state/user/useUser'
 import { useCollective } from '@/state/collective/useCollective'
-import { useAppSelector } from '@/state/hooks'
+import { useAppDispatch, useAppSelector } from '@/state/hooks'
 import { RootState } from '@/state/store'
 import { cn } from '@/lib/utils'
+import { userHasCollectiveSaved } from './header/functions/userHasCollectiveSaved'
+import { unsaveCollective } from './header/functions/unsaveCollective'
+import { toast } from 'sonner'
+import { setSaved } from '@/state/collective/collectiveSlice'
+import { saveCollective } from './header/functions/saveCollective'
 
 export const CollectiveHeader = () => {
   const user = useUser()
-  const { collective, colUser } = useCollective()
+  const { collective, colUser, saved: collectiveSaved } = useCollective()
   const supabase = createClientComponentClient()
   const { onOpen } = useModal()
   const router = useRouter()
+  const dispatch = useAppDispatch()
   function redirectToRoles(collective: Collective) {
     router.push(`/collective/${collective.unique}/roles`)
   }
@@ -42,6 +51,24 @@ export const CollectiveHeader = () => {
   const { collective: collectiveToggle } = useAppSelector(
     (state: RootState) => state.sidebar
   )
+
+  async function handleCollectiveSave() {
+    if (collectiveSaved) {
+      await unsaveCollective(supabase, user, collective)
+      dispatch(setSaved(false))
+      toast('Unsaved successful', {
+        description: 'This collective has been removed from your saves',
+        icon: <BookmarkMinus />,
+      })
+    } else {
+      await saveCollective(supabase, user, collective)
+      dispatch(setSaved(true))
+      toast('Saved successful', {
+        description: 'This collective has been added to your saves',
+        icon: <BookmarkCheck />,
+      })
+    }
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none" asChild>
@@ -101,6 +128,13 @@ export const CollectiveHeader = () => {
             <PlusCircle className="ml-auto h-4 w-4" />
           </DropdownMenuItem>
         )}
+        <DropdownMenuItem
+          onClick={() => handleCollectiveSave()}
+          className="cursor-pointer px-3 py-2 text-sm"
+        >
+          {collectiveSaved ? 'Unsave Collective' : 'Save Collective'}
+          <Bookmark className="ml-auto h-4 w-4" />
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         {isFounder && (
           <DropdownMenuItem

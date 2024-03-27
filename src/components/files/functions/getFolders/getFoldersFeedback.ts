@@ -31,7 +31,7 @@ export async function getFoldersFeedback(path: Path[]) {
       if (!isObject(user)) return null
       const { data, error } = await supabase
         .from('feedbacks')
-        .select('*,users!public_feedbacks_user_fkey(username,profile_pic_url)')
+        .select('*,users!public_feedbacks_user_fkey(username,imageUrl)')
         .eq('user', user.id)
       if (error) throw error
       let size = 0
@@ -57,7 +57,7 @@ export async function getFoldersFeedback(path: Path[]) {
         music,
         users: {
           username: user.username,
-          profile_pic_url: user.profile_pic_url,
+          imageUrl: user.imageUrl,
         },
       }
     })

@@ -145,7 +145,7 @@ export default function FilePlayButton({
             file,
             progress,
             audioFile,
-            'https://github.com/shadcn.png', //user.profile_pic_url
+            'https://github.com/shadcn.png', //user.imageUrl
             timeRemaining,
             audioFile.duration
           )

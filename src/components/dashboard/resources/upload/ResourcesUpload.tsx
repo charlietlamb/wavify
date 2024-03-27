@@ -3,7 +3,7 @@
 import { useUser } from '@/state/user/useUser'
 import ResourcesUploadLeft from './ResourcesUploadLeft'
 import ResourcesUploadRight from './ResourcesUploadRight'
-import { ResourceUploadContext } from './context/context'
+import { UploadContext } from './context/context'
 import { useState } from 'react'
 import ResourcesUploadTitle from './ResourcesUploadTitle'
 import ResourcesUploadFiles, {
@@ -28,8 +28,11 @@ export default function ResourcesUpload() {
   const [error, setError] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [hasPreview, setHasPreview] = useState<boolean>(false)
+  const [tagCurrent, setTagCurrent] = useState<string>('')
+  const [tags, setTags] = useState<string[]>([])
+  const [type, setType] = useState<string>('')
   return (
-    <ResourceUploadContext.Provider
+    <UploadContext.Provider
       value={{
         name,
         setName,
@@ -49,6 +52,18 @@ export default function ResourcesUpload() {
         setLoading,
         hasPreview,
         setHasPreview,
+        tagCurrent,
+        setTagCurrent,
+        tags,
+        setTags,
+        type,
+        setType,
+        manage: null,
+        setManage: null,
+        id: null,
+        setId: null,
+        resources: null,
+        setResources: null,
       }}
     >
       <div className="flex h-full w-full flex-col gap-4 overflow-y-auto lg:flex-row lg:overflow-y-hidden">
@@ -57,6 +72,6 @@ export default function ResourcesUpload() {
         <ResourcesUploadRight />
         <ResourcesUploadSubmit className="flex lg:hidden" />
       </div>
-    </ResourceUploadContext.Provider>
+    </UploadContext.Provider>
   )
 }

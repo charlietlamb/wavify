@@ -5,6 +5,7 @@ type ResourceScrollProps = {
   bottomRef: React.RefObject<HTMLDivElement>
   shouldLoadMore: boolean
   loadMore: () => void
+  scrollBottom?: boolean
 }
 
 export const useResourceScroll = ({
@@ -12,6 +13,7 @@ export const useResourceScroll = ({
   bottomRef,
   shouldLoadMore,
   loadMore,
+  scrollBottom = false,
 }: ResourceScrollProps) => {
   const [hasInitialized, setHasInitialized] = useState(false)
 
@@ -49,7 +51,7 @@ export const useResourceScroll = ({
       return distanceFromBottom <= 100
     }
 
-    if (shouldAutoScroll()) {
+    if (shouldAutoScroll() && scrollBottom) {
       bottomRef &&
         bottomRef?.current?.scrollIntoView({
           behavior: 'smooth',

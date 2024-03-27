@@ -1,6 +1,6 @@
 'use client'
 
-import { setSpace } from '@/state/space/spaceSlice'
+import { setSaved, setSpace } from '@/state/space/spaceSlice'
 import { useCollective } from '@/state/collective/useCollective'
 import { useAppSelector, useAppStore } from '@/state/hooks'
 import { useRouter } from 'next/navigation'
@@ -16,14 +16,21 @@ interface SpaceProps {
   space: Space
   chat: Chat | null
   searchFilesData: (FileAndSender | null)[] | undefined
+  saved: boolean
 }
 
-export default function Space({ space, chat, searchFilesData }: SpaceProps) {
+export default function Space({
+  space,
+  chat,
+  searchFilesData,
+  saved,
+}: SpaceProps) {
   const { collective, colUser } = useCollective()
   const store = useAppStore()
   const initialized = useRef(false)
   if (!initialized.current) {
     store.dispatch(setSpace(space))
+    store.dispatch(setSaved(saved))
     initialized.current = true
   }
   const router = useRouter()
@@ -34,8 +41,8 @@ export default function Space({ space, chat, searchFilesData }: SpaceProps) {
       <ChatHeader
         type="space"
         imageUrl={
-          isObject(collective) && typeof collective.image_url === 'string'
-            ? collective.image_url
+          isObject(collective) && typeof collective.imageUrl === 'string'
+            ? collective.imageUrl
             : ''
         }
         space={space}
