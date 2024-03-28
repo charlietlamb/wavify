@@ -87,8 +87,8 @@ export default function ResourcesManageMap() {
             />
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex flex-grow flex-col">
-              <h2 className="text-lg font-semibold leading-none text-zinc-200">
+            <div className="flex w-full flex-grow flex-col overflow-hidden">
+              <h2 className="overflow-hidden overflow-ellipsis whitespace-nowrap text-lg font-semibold leading-none text-zinc-200">
                 {resource.name}
               </h2>
               <p className="text-zinc-400">
@@ -97,7 +97,7 @@ export default function ResourcesManageMap() {
             </div>
             <Popover>
               <PopoverTrigger>
-                <Button variant="zinc_outline">
+                <Button variant="zinc_outline" className="flex-shrink-0">
                   <FaEllipsis />
                 </Button>
               </PopoverTrigger>

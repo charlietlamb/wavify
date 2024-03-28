@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex max-h-full w-full flex-grow flex-col gap-y-4 overflow-y-hidden p-4">
+    <div className="flex flex-grow flex-col divide-y divide-zinc-700 overflow-hidden">
       <DashboardTop />
       {children}
     </div>

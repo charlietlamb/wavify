@@ -9,9 +9,9 @@ import { useResourceContext } from './context/resourceContext'
 export default function ResourcesSingleDetails() {
   const { resource } = useResourceContext()
   return (
-    <div className="flex min-h-full w-full flex-col gap-4 sm:w-[70%] lg:w-[75%]">
-      <div className="flex max-h-full w-full flex-grow flex-col gap-4 overflow-y-auto rounded-lg border border-zinc-700 p-4 transition hover:border-zinc-200">
-        <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center sm:gap-0">
+    <div className="order-first flex w-full flex-col sm:order-none sm:min-h-full sm:w-[70%] lg:w-[75%]">
+      <div className="flex w-full flex-grow flex-col sm:max-h-full sm:divide-y sm:divide-zinc-700">
+        <div className="flex flex-col justify-between gap-2 p-4 sm:flex-row sm:items-center sm:gap-0">
           <h1 className="flex-grow overflow-hidden overflow-ellipsis whitespace-nowrap text-4xl font-bold text-zinc-200">
             {resource.name}
           </h1>
@@ -22,31 +22,35 @@ export default function ResourcesSingleDetails() {
             <ResourceSingleButtons />
           </div>
         </div>
-        <ResourceSingleCollaborators />
-        <p className="text-md flex flex-grow flex-col gap-2 rounded-lg border border-zinc-700 p-2 leading-tight text-zinc-400 transition hover:border-zinc-200">
-          <span className="font-semibold text-zinc-200">Description:</span>
-          {resource.description}
-        </p>
-        <div className="flex gap-2">
-          {resource.tags &&
-            resource.tags.map((tag) => (
-              <span
-                key={tag}
-                className="cursor-pointer rounded-lg border-2 border-zinc-200 bg-zinc-300 px-2 py-1 text-sm font-medium text-zinc-950"
-              >
-                {tag}
-              </span>
-            ))}
+        <div className="flex flex-grow flex-col gap-4 p-4 pt-0 sm:overflow-y-auto sm:pt-4">
+          <ResourceSingleCollaborators />
+          <p className="text-md flex flex-grow flex-col divide-y divide-zinc-700 rounded-lg border border-zinc-700 leading-tight text-zinc-400 transition hover:border-zinc-200">
+            <span className="p-2 text-lg font-semibold text-zinc-200">
+              Description
+            </span>
+            <span className="p-2">{resource.description}</span>
+          </p>
+          <div className="flex gap-2">
+            {resource.tags &&
+              resource.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="cursor-pointer rounded-lg border-2 border-zinc-200 bg-zinc-300 px-2 py-1 text-sm font-medium text-zinc-950"
+                >
+                  {tag}
+                </span>
+              ))}
+          </div>
+          <ResourceSingleComments />
+          <ResourceSingleResources />
+          <ResourceSingleButtons bottom />
         </div>
-        <ResourceSingleComments />
-        <ResourceSingleResources />
-        <ResourceSingleButtons bottom />
+        {resource.previewId && (
+          <div className="flex max-h-full w-full flex-shrink-0 flex-col p-4">
+            <ResourceSinglePlayer />
+          </div>
+        )}
       </div>
-      {resource.previewId && (
-        <div className="flex max-h-full w-full flex-shrink-0 flex-col gap-4 rounded-lg border border-zinc-700 p-4 transition hover:border-zinc-200">
-          <ResourceSinglePlayer />
-        </div>
-      )}
     </div>
   )
 }

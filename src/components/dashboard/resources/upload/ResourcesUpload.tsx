@@ -66,11 +66,11 @@ export default function ResourcesUpload() {
         setResources: null,
       }}
     >
-      <div className="flex h-full w-full flex-col gap-4 overflow-y-auto lg:flex-row lg:overflow-y-hidden">
+      <div className="flex w-full flex-grow flex-col gap-4 p-4 lg:h-full lg:max-h-full lg:flex-row lg:items-center lg:gap-0 lg:divide-x lg:divide-zinc-700 lg:overflow-y-hidden lg:p-0">
         <ResourcesUploadFiles />
         <ResourcesUploadLeft />
         <ResourcesUploadRight />
-        <ResourcesUploadSubmit className="flex lg:hidden" />
+        <ResourcesUploadSubmit className="order-first flex lg:hidden" />
       </div>
     </UploadContext.Provider>
   )

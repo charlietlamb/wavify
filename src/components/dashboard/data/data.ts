@@ -3,6 +3,7 @@ export const views = [
   'collectives',
   'market',
   'resources',
+  'collections',
   'settings',
 ]
 
@@ -18,6 +19,7 @@ export const viewTitleMap = new Map([
   ['collectives', 'Collectives'],
   ['market', 'Market'],
   ['resources', 'Resources'],
+  ['collections', 'Collections'],
   ['settings', 'Settings'],
 ])
 
@@ -29,5 +31,6 @@ export const viewModeMap = new Map([
   ['collectives', ['general', 'analytics', 'reports', 'notifications']],
   ['market', ['general', 'analytics', 'reports', 'notifications']],
   ['resources', ['general', 'upload', 'manage']],
+  ['collections', ['general', 'create', 'manage']],
   ['settings', ['general', 'analytics', 'reports', 'notifications']],
 ])

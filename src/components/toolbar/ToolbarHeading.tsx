@@ -1,4 +1,4 @@
-export default function MapHeading({
+export default function ToolbarHeading({
   title,
   text,
   icon,

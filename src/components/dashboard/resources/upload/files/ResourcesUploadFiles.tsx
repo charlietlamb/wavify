@@ -64,7 +64,12 @@ export default function ResourcesUploadFiles() {
   }
 
   return (
-    <div className="flex h-full min-h-[300px] w-full  flex-col gap-y-4 overflow-y-auto rounded-lg border border-zinc-700 p-4 hover:border-zinc-200 lg:w-[300px] lg:min-w-[300px]">
+    <div
+      className={cn(
+        'min-h-auto flex h-auto w-full flex-col lg:h-full lg:min-h-full lg:w-[300px] lg:min-w-[300px] lg:overflow-y-auto lg:p-4',
+        !!files.length && 'gap-4'
+      )}
+    >
       <div
         className={cn(
           'group relative flex h-[120px] w-full cursor-pointer flex-col items-center justify-center gap-y-1 rounded-lg border-2 border-dashed border-zinc-700 p-4 hover:border-zinc-200 lg:h-[200px]'
@@ -80,7 +85,7 @@ export default function ResourcesUploadFiles() {
           multiple
         />
       </div>
-      <div className="flex flex-grow flex-col gap-y-4 overflow-y-auto">
+      <div className="flex h-fit flex-grow flex-col gap-y-4 lg:h-auto lg:overflow-y-auto">
         {files.map((file: FileUploadData, index: number) => (
           <div
             key={file.file.lastModified}

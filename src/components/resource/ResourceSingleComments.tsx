@@ -50,10 +50,10 @@ export default function ResourceSingleComments() {
     shouldLoadMore: hasNextPage && !isFetchingNextPage,
   })
   return (
-    <div className="flex flex-col gap-4 rounded-lg border border-zinc-700 p-2 transition hover:border-zinc-200">
-      <h3 className="text-lg font-bold">Comments</h3>
+    <div className="flex flex-col divide-y divide-zinc-700 rounded-lg border border-zinc-700 transition hover:border-zinc-200">
+      <h3 className="p-2 text-lg font-bold">Comments</h3>
       <div
-        className="flex max-h-[250px] flex-col items-center gap-2 overflow-y-auto"
+        className="flex max-h-[250px] flex-col items-center gap-2 overflow-y-auto p-2"
         ref={mainRef}
       >
         {comments.map((comment) => (
@@ -73,13 +73,26 @@ export default function ResourceSingleComments() {
         {isFetchingNextPage && <Spinner />}
         <div className="h-px" ref={bottomRef}></div>
       </div>
-      <div className="flex gap-4">
+      <div className="flex gap-4 p-2">
         <Input
           className="flex-grow border border-zinc-700 bg-transparent text-zinc-200 focus-visible:border-zinc-200 focus-visible:ring-0"
           placeholder="Comment"
           type="text"
           value={commentInput}
           onChange={(e) => setCommentInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleResourceCommentSend(
+                supabase,
+                resource,
+                user,
+                commentInput,
+                setCommentInput,
+                refetch,
+                mainRef
+              )
+            }
+          }}
         />
         <Button
           variant="zinc"
@@ -90,7 +103,8 @@ export default function ResourceSingleComments() {
               user,
               commentInput,
               setCommentInput,
-              refetch
+              refetch,
+              mainRef
             )
           }
         >

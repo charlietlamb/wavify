@@ -3,10 +3,11 @@ import { Dispatch } from '@reduxjs/toolkit'
 
 export function handleProgressClick(
   e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-  audioFile: HTMLAudioElement,
+  audioFile: HTMLAudioElement | undefined,
   progressRef: React.RefObject<HTMLDivElement>,
   dispatch: Dispatch<any>
 ) {
+  if (!audioFile) return
   dispatch(setMaster(false))
   if (!progressRef.current) return
   const rect = progressRef.current.getBoundingClientRect()

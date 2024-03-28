@@ -4,7 +4,8 @@ export async function handleResourceCommentSend(
   user: User,
   commentInput: string,
   setCommentInput: React.Dispatch<React.SetStateAction<string>>,
-  refetch: () => void
+  refetch: () => void,
+  divRef: React.RefObject<HTMLDivElement>
 ) {
   await supabase.from('comments').insert([
     {
@@ -14,5 +15,6 @@ export async function handleResourceCommentSend(
     },
   ])
   setCommentInput('')
+  if (divRef.current) divRef.current.scrollTop = 0
   refetch()
 }

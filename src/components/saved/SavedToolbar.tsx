@@ -2,7 +2,7 @@ import { Bookmark } from 'lucide-react'
 import SavedSorting from './SavedSorting'
 import SavedTypes from './SavedTypes'
 import { cn } from '@/lib/utils'
-import MapHeading from '../util/MapHeading'
+import ToolbarHeading from '../toolbar/ToolbarHeading'
 
 export default function SavedToolbar({ mobile = false }: { mobile?: boolean }) {
   return (
@@ -12,7 +12,7 @@ export default function SavedToolbar({ mobile = false }: { mobile?: boolean }) {
         mobile && 'flex w-full'
       )}
     >
-      <MapHeading
+      <ToolbarHeading
         title="Saved"
         text="Browse all saved items"
         icon={

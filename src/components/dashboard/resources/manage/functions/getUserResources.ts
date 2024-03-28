@@ -9,7 +9,7 @@ export const getUserResources = async ({
 }: {
   pageParam: number | undefined
   user: User
-  visibility: Visibility
+  visibility: Visibility | null
   sorting: Sorting
 }) => {
   if (pageParam === undefined) throw new Error('No page param')

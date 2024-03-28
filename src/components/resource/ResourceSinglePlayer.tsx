@@ -26,7 +26,7 @@ export default function ResourceSinglePlayer() {
   const audio: AudioState = useSelector((state: RootState) => state.audio)
   //const audioFile = new Audio(file.fileUrl); add s3 to get file
   const supabase = createClientComponentClient()
-  const [audioFile, setAudioFile] = useState(new Audio('/audio.mp3'))
+  const [audioFile, setAudioFile] = useState<HTMLAudioElement>()
   const [isPlaying, setIsPlaying] = useState(false)
   const [progress, setProgress] = useState(0)
   const [timeRemaining, setTimeRemaining] = useState(0)
@@ -37,6 +37,10 @@ export default function ResourceSinglePlayer() {
   const [isMouseDown, setIsMouseDown] = useState(false)
   const progressRef = useRef<HTMLDivElement | null>(null)
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (!audioFile) setAudioFile(new Audio('/audio.mp3'))
+  }, [])
 
   useEffect(() => {
     async function setData() {
@@ -61,7 +65,7 @@ export default function ResourceSinglePlayer() {
   }, [isDragging])
 
   useEffect(() => {
-    if (!file) return
+    if (!file || !audioFile) return
     if (audio.fileData && audio.fileData.id !== file.id) {
       audioFile.pause()
       setIsPlaying(false)
@@ -84,7 +88,7 @@ export default function ResourceSinglePlayer() {
   }, [audio, file])
 
   useEffect(() => {
-    if (!file) return
+    if (!file || !audioFile) return
     audioFile.addEventListener('loadedmetadata', () => {
       setTimeRemaining(audioFile.duration)
       if (audio.fileData && audio.fileData.id === file.id) {
@@ -94,7 +98,7 @@ export default function ResourceSinglePlayer() {
   }, [audioFile, file])
 
   useEffect(() => {
-    if (!file) return
+    if (!file || !audioFile) return
     audioFile.addEventListener('timeupdate', () => {
       setProgress((audioFile.currentTime / audioFile.duration) * 100)
       setTimeRemaining(audioFile.duration - audioFile.currentTime)
@@ -137,7 +141,7 @@ export default function ResourceSinglePlayer() {
             audioFile,
             'https://github.com/shadcn.png', //user.imageUrl
             timeRemaining,
-            audioFile.duration
+            audioFile ? audioFile.duration : undefined
           )
         }}
       >

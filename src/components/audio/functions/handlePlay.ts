@@ -19,11 +19,12 @@ export function handlePlay(
   artist: User,
   fileData: FileData,
   progress: number,
-  audioFile: HTMLAudioElement,
+  audioFile: HTMLAudioElement | undefined,
   imageSrc: string,
   timeRemaining: number,
-  duration: number
+  duration: number | undefined
 ) {
+  if (!audioFile || !duration) return
   setIsPlayingSingle(!isPlaying)
   dispatch(setIsPlaying(!isPlaying))
   if (!isPlaying) {

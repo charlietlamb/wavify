@@ -22,7 +22,7 @@ export default async function page({
   )
     return redirect('/dashboard/overview/general')
   return (
-    <div className="h-full w-full flex-grow overflow-y-auto md:overflow-y-hidden">
+    <div className="flex max-h-full w-full flex-grow flex-col overflow-y-auto lg:h-full lg:overflow-y-hidden">
       <DashboardProvider>
         {pageMap.get(`${params.view}/${params.mode}`)}
       </DashboardProvider>

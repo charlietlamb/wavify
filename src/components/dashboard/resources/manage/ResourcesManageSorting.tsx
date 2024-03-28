@@ -1,43 +1,21 @@
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { useManageContext } from './context/context'
+import { Button } from '@/components/ui/button'
 import { sortingValues } from './data/data'
+import { useManageContext } from './context/context'
 
-export default function ResourcesManageSorting() {
+export default function SavedSorting() {
   const { sorting, setSorting } = useManageContext()
   return (
-    <Select
-      value={sorting}
-      onValueChange={(value) => {
-        if (
-          value === 'newest' ||
-          value === 'oldest' ||
-          value === 'popular' ||
-          value === 'unpopular' ||
-          value === 'largest' ||
-          value === 'smallest'
-        )
-          setSorting(value)
-      }}
-    >
-      <SelectTrigger className="rounded-lg border border-zinc-700 bg-transparent ring-0 transition hover:border-zinc-200 focus:border-zinc-200 focus:ring-0">
-        <SelectValue placeholder="Select a type" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          {sortingValues.map((v) => (
-            <SelectItem value={v} key={v}>
-              {v.charAt(0).toUpperCase() + v.slice(1).toLowerCase()}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+    <div className="flex w-full flex-col gap-2 p-2">
+      <h2 className="font-lg font-semibold">Sorting</h2>
+      {sortingValues.map((sorting1) => (
+        <Button
+          key={sorting1}
+          variant={sorting1 === sorting ? 'zinc' : 'zinc_outline'}
+          onClick={() => setSorting(sorting1)}
+        >
+          {sorting1}
+        </Button>
+      ))}
+    </div>
   )
 }

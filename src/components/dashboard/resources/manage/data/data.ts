@@ -1,4 +1,4 @@
-export const visibilities = ['all', 'public', 'draft']
+export const visibilities = ['public', 'draft']
 export type Visibility = (typeof visibilities)[number]
 export const sortingValues = [
   'newest',

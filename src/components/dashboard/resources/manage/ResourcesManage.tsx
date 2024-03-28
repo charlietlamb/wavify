@@ -15,8 +15,12 @@ import { getUserResources } from './functions/getUserResources'
 import { useResourceScroll } from './hooks/useResourcesScroll'
 import Spinner from '@/components/utils/Spinner'
 import ResourcesManageMap from './ResourcesManageMap'
-import ResourcesManageToolbar from './ResourcesManageToolbar'
 import { ManageContext } from './context/context'
+import Toolbar from '@/components/toolbar/Toolbar'
+import { Bolt } from 'lucide-react'
+import ResourcesManageVisibility from './ResourcesManageVisibility'
+import ResourcesManageSorting from './ResourcesManageSorting'
+import { Sorting, Visibility } from './data/data'
 
 export default function ResourcesUpload() {
   const user = useUser()
@@ -39,12 +43,8 @@ export default function ResourcesUpload() {
   const [type, setType] = useState<string>('')
   const [manage, setManage] = useState<boolean>(true)
   const [id, setId] = useState<string>('')
-  const [visibility, setVisibility] = useState<'all' | 'public' | 'draft'>(
-    'all'
-  )
-  const [sorting, setSorting] = useState<
-    'newest' | 'oldest' | 'popular' | 'unpopular' | 'largest' | 'smallest'
-  >('newest')
+  const [visibility, setVisibility] = useState<Visibility | null>(null)
+  const [sorting, setSorting] = useState<Sorting>('newest')
   const [resources, setResources] = useState<Resource[]>([])
   const resourceRef = useRef<HTMLDivElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -117,10 +117,23 @@ export default function ResourcesUpload() {
         }}
       >
         {manage ? (
-          <div className="flex max-h-full flex-grow flex-col gap-4">
-            <ResourcesManageToolbar />
+          <div className="flex h-full max-h-full flex-grow divide-x divide-zinc-700">
+            <Toolbar
+              title="Resources"
+              text="Manage your resources"
+              icon={
+                <Bolt
+                  className="min-h-6 min-w-6 text-zinc-700"
+                  strokeWidth={2}
+                />
+              }
+              components={[
+                <ResourcesManageVisibility />,
+                <ResourcesManageSorting />,
+              ]}
+            />
             <div
-              className="flex h-full w-full flex-grow flex-col items-center gap-4 overflow-y-auto rounded-lg border border-zinc-700 p-4 transition hover:border-zinc-200"
+              className="flex max-h-full w-full flex-grow flex-col items-center gap-4 overflow-y-auto p-4 lg:w-[80%]"
               ref={resourceRef}
             >
               <ResourcesManageMap />
@@ -129,7 +142,7 @@ export default function ResourcesUpload() {
             </div>
           </div>
         ) : (
-          <div className="flex h-full w-full flex-col gap-4 overflow-y-auto lg:flex-row lg:overflow-y-hidden">
+          <div className="flex w-full flex-grow flex-col gap-4 p-4 lg:h-full lg:max-h-full lg:flex-row lg:items-center lg:gap-0 lg:divide-x lg:divide-zinc-700 lg:overflow-y-hidden lg:p-0">
             <ResourcesUploadFiles />
             <ResourcesUploadLeft />
             <ResourcesUploadRight />

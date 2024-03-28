@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 import ResourcesAllTypes from './ResourcesAllTypes'
-import MapHeading from '../util/MapHeading'
+import ToolbarHeading from '../toolbar/ToolbarHeading'
 import { Bolt } from 'lucide-react'
 import ResourcesAllSorting from './ResourcesAllSorting'
 
@@ -16,7 +16,7 @@ export default function ResourcesAllToolbar({
         mobile && 'flex w-full border-none'
       )}
     >
-      <MapHeading
+      <ToolbarHeading
         title="Resources"
         text="Browse all resources"
         icon={
