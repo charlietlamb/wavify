@@ -5,7 +5,7 @@ import { Bookmark, Download, UserPlus, UsersRound } from 'lucide-react'
 export default function ResourceUploadOptions() {
   const { options, setOptions } = useUploadContext()
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
+    <div className="grid grid-cols-1 md:grid-cols-2">
       <Checkbox
         icon={<UsersRound />}
         checked={options.friendsOnly}

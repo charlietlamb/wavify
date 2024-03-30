@@ -3,8 +3,8 @@ import { WavifyType } from '../data/wavifyTypes'
 import { SavedSorting } from '../data/savedSorting'
 
 interface SavedContext {
-  items: Item[]
-  setItems: Dispatch<SetStateAction<Item[]>>
+  items: ItemAndUser[]
+  setItems: Dispatch<SetStateAction<ItemAndUser[]>>
   type: WavifyType | null
   setType: Dispatch<SetStateAction<WavifyType | null>>
   sorting: SavedSorting

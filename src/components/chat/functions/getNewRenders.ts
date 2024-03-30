@@ -7,12 +7,7 @@ export async function getNewRenders(newArray: string[], supabase: Supabase) {
     newArray.map(async (message: Json) => {
       const { data, error } = await supabase
         .from('messages')
-        .select(
-          `
-                                    *,
-                                    users(*)
-                            `
-        )
+        .select('*,users:author(*)')
         .eq('id', isObject(message) ? message.id : '')
         .single()
       if (error) throw error

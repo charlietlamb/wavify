@@ -40,6 +40,21 @@ export default async function submitResource(
     })
     return false
   }
+  let imageUrl = user.imageUrl
+  if (context.image) {
+    const base64Image = await fileToBase64(context.image)
+    if (!base64Image) throw new Error('Error obtaining base64 data')
+    let url = `${user.id}/${uuidv4()}`
+    let name = context.image.name
+    const error = await uploadFileToS3(
+      base64Image,
+      context.image.type,
+      url,
+      name
+    )
+    if (error) throw new Error('Error uploading image to S3')
+    imageUrl = `${user.id}/${name}`
+  }
   context.setLoading(true)
   context.setError('')
   const resourceFolder = {
@@ -110,7 +125,7 @@ export default async function submitResource(
     allowDownload: context.options.allowDownload,
     fileIds,
     folder: resourceFolder.id,
-    imageUrl: context.imageUrl || user.imageUrl,
+    imageUrl,
     tags: context.tags,
     type: context.type,
     previewUrl,

@@ -5,6 +5,10 @@ export async function saveCollective(
 ) {
   const { error } = await supabase
     .from('saves')
-    .insert({ user: user.id, collective: collective.id })
+    .insert({
+      user: user.id,
+      collective: collective.id,
+      name: collective.unique,
+    })
   if (error) throw error
 }

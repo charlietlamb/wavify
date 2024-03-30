@@ -40,7 +40,12 @@ export default function ResourceSingleCollection() {
               <CommandItem
                 key={collection.id}
                 onSelect={async () => {
-                  await addResourceToCollection(supabase, resource, collection)
+                  await addResourceToCollection(
+                    supabase,
+                    resource,
+                    collection,
+                    user
+                  )
                   setCollections(
                     await getResourceCollections(supabase, resource, user)
                   )

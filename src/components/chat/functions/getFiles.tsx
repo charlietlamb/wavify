@@ -20,12 +20,7 @@ export const getFiles = async ({
   try {
     const response = await supabase
       .from('messages')
-      .select(
-        `
-            *,
-            users(*)
-        `
-      )
+      .select('*,users:author(*)')
       .eq('chat', chat.id)
       .not('files', 'is', false)
       .order('createdAt', { ascending: false })

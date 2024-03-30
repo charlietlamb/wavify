@@ -52,12 +52,7 @@ export function useMessageDeletedEffect(
               )
               const messageToDelete = await supabase
                 .from('messages')
-                .select(
-                  `
-                        *,
-                        users(*)
-                    `
-                )
+                .select('*,users:author(*)')
                 .eq('id', isObject(newPayload) ? newPayload.id : '')
                 .single()
               //need to change both so that code is maintainable and future changes to setRender are up to date

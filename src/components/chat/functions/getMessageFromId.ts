@@ -3,7 +3,7 @@ import { getMessageFiles } from './getMessageFiles'
 export async function getMessageFromId(supabase: Supabase, id: string) {
   const { data, error } = await supabase
     .from('messages')
-    .select('*, users(*)')
+    .select('*,users:author(*)')
     .eq('id', id)
   if (error) throw error
   const messageAndAuthor = data[0] as MessageAndAuthor

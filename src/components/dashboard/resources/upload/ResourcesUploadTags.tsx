@@ -14,6 +14,7 @@ export default function ResourcesUploadTags() {
       return setError('Tag already exists')
     }
     setTags([...tags, tagCurrent])
+    setTagCurrent('')
   }
   return (
     <div className="flex flex-col gap-4">

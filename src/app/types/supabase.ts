@@ -14,6 +14,7 @@ export type Database = {
           action: string
           chat: string | null
           child: string
+          collection: string | null
           collective: string | null
           createdAt: string
           file: string | null
@@ -29,6 +30,7 @@ export type Database = {
           action?: string
           chat?: string | null
           child: string
+          collection?: string | null
           collective?: string | null
           createdAt?: string
           file?: string | null
@@ -44,6 +46,7 @@ export type Database = {
           action?: string
           chat?: string | null
           child?: string
+          collection?: string | null
           collective?: string | null
           createdAt?: string
           file?: string | null
@@ -56,6 +59,13 @@ export type Database = {
           users?: string[]
         }
         Relationships: [
+          {
+            foreignKeyName: "public_actions_collection_fkey"
+            columns: ["collection"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "public_downloads_chat_fkey"
             columns: ["chat"]
@@ -181,36 +191,48 @@ export type Database = {
       }
       collections: {
         Row: {
-          collections: string[]
-          collectives: string[]
+          allowDownload: boolean
+          allowSave: boolean
+          collaborators: string[]
           createdAt: string
+          description: string
+          draft: boolean
+          friendsOnly: boolean
           id: string
-          members: string[]
+          imageUrl: string
+          mustFollow: boolean
           name: string
-          products: string[]
-          resources: string[]
+          tags: string[]
           user: string
         }
         Insert: {
-          collections?: string[]
-          collectives?: string[]
+          allowDownload?: boolean
+          allowSave?: boolean
+          collaborators?: string[]
           createdAt?: string
+          description?: string
+          draft?: boolean
+          friendsOnly?: boolean
           id?: string
-          members?: string[]
+          imageUrl?: string
+          mustFollow?: boolean
           name?: string
-          products?: string[]
-          resources?: string[]
+          tags?: string[]
           user: string
         }
         Update: {
-          collections?: string[]
-          collectives?: string[]
+          allowDownload?: boolean
+          allowSave?: boolean
+          collaborators?: string[]
           createdAt?: string
+          description?: string
+          draft?: boolean
+          friendsOnly?: boolean
           id?: string
-          members?: string[]
+          imageUrl?: string
+          mustFollow?: boolean
           name?: string
-          products?: string[]
-          resources?: string[]
+          tags?: string[]
           user?: string
         }
         Relationships: [
@@ -589,10 +611,76 @@ export type Database = {
           },
         ]
       }
+      items: {
+        Row: {
+          collection: string
+          createdAt: string
+          href: string
+          id: string
+          imageUrl: string
+          link: string
+          name: string
+          saved: string | null
+          text: string
+          type: string
+          user: string
+        }
+        Insert: {
+          collection: string
+          createdAt?: string
+          href?: string
+          id?: string
+          imageUrl?: string
+          link?: string
+          name?: string
+          saved?: string | null
+          text?: string
+          type?: string
+          user: string
+        }
+        Update: {
+          collection?: string
+          createdAt?: string
+          href?: string
+          id?: string
+          imageUrl?: string
+          link?: string
+          name?: string
+          saved?: string | null
+          text?: string
+          type?: string
+          user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_items_collection_fkey"
+            columns: ["collection"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_items_saved_fkey"
+            columns: ["saved"]
+            isOneToOne: false
+            referencedRelation: "saves"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_items_user_fkey"
+            columns: ["user"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           author: string
           chat: string
+          collection: string | null
+          collective: string | null
           content: string | null
           createdAt: string | null
           deleted: boolean | null
@@ -600,11 +688,15 @@ export type Database = {
           editedAt: string | null
           files: boolean | null
           id: string
+          member: string | null
+          product: string | null
           resource: string | null
         }
         Insert: {
           author: string
           chat: string
+          collection?: string | null
+          collective?: string | null
           content?: string | null
           createdAt?: string | null
           deleted?: boolean | null
@@ -612,11 +704,15 @@ export type Database = {
           editedAt?: string | null
           files?: boolean | null
           id?: string
+          member?: string | null
+          product?: string | null
           resource?: string | null
         }
         Update: {
           author?: string
           chat?: string
+          collection?: string | null
+          collective?: string | null
           content?: string | null
           createdAt?: string | null
           deleted?: boolean | null
@@ -624,6 +720,8 @@ export type Database = {
           editedAt?: string | null
           files?: boolean | null
           id?: string
+          member?: string | null
+          product?: string | null
           resource?: string | null
         }
         Relationships: [
@@ -639,6 +737,34 @@ export type Database = {
             columns: ["chat"]
             isOneToOne: false
             referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_messages_collections_fkey"
+            columns: ["collection"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_messages_collective_fkey"
+            columns: ["collective"]
+            isOneToOne: false
+            referencedRelation: "collectives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_messages_member_fkey"
+            columns: ["member"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_messages_product_fkey"
+            columns: ["product"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
           {
@@ -922,6 +1048,7 @@ export type Database = {
           createdAt: string
           id: string
           member: string | null
+          name: string
           product: string | null
           resource: string | null
           space: string | null
@@ -933,6 +1060,7 @@ export type Database = {
           createdAt?: string
           id?: string
           member?: string | null
+          name?: string
           product?: string | null
           resource?: string | null
           space?: string | null
@@ -944,6 +1072,7 @@ export type Database = {
           createdAt?: string
           id?: string
           member?: string | null
+          name?: string
           product?: string | null
           resource?: string | null
           space?: string | null

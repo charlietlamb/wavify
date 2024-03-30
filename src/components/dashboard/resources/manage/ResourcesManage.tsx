@@ -33,7 +33,6 @@ export default function ResourcesUpload() {
     allowSave: true,
     allowDownload: true,
   })
-  const [imageUrl, setImageUrl] = useState<string>('')
   const [files, setFiles] = useState<FileUploadData[]>([])
   const [error, setError] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
@@ -41,6 +40,7 @@ export default function ResourcesUpload() {
   const [tagCurrent, setTagCurrent] = useState<string>('')
   const [tags, setTags] = useState<string[]>([])
   const [type, setType] = useState<string>('')
+  const [image, setImage] = useState<File | null>(null)
   const [manage, setManage] = useState<boolean>(true)
   const [id, setId] = useState<string>('')
   const [visibility, setVisibility] = useState<Visibility | null>(null)
@@ -48,6 +48,7 @@ export default function ResourcesUpload() {
   const [resources, setResources] = useState<Resource[]>([])
   const resourceRef = useRef<HTMLDivElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+
   const {
     data: resourcePages,
     fetchNextPage,
@@ -94,8 +95,6 @@ export default function ResourcesUpload() {
           setOptions,
           error,
           setError,
-          imageUrl,
-          setImageUrl,
           files,
           setFiles,
           loading,
@@ -108,6 +107,8 @@ export default function ResourcesUpload() {
           setTags,
           type,
           setType,
+          image,
+          setImage,
           manage,
           setManage,
           id,
@@ -144,7 +145,6 @@ export default function ResourcesUpload() {
         ) : (
           <div className="flex w-full flex-grow flex-col gap-4 p-4 lg:h-full lg:max-h-full lg:flex-row lg:items-center lg:gap-0 lg:divide-x lg:divide-zinc-700 lg:overflow-y-hidden lg:p-0">
             <ResourcesUploadFiles />
-            <ResourcesUploadLeft />
             <ResourcesUploadRight />
             <ResourcesUploadSubmit className="flex lg:hidden" />
           </div>

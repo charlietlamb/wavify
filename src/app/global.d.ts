@@ -63,6 +63,7 @@ declare global {
   type Product = DB['public']['Tables']['products']['Row']
   type Save = DB['public']['Tables']['saves']['Row']
   type Collection = DB['public']['Tables']['collections']['Row']
+  type Item = DB['public']['Tables']['items']['Row']
   type Json =
     | string
     | number
@@ -145,12 +146,5 @@ declare global {
 
   type ResourceAndUser = Resource & AndUser
 
-  type Item = {
-    id: string
-    user: User
-    name: string
-    text: string
-    href: string
-    imageUrl: string
-  }
+  type ItemAndUser = Item & AndUser
 }

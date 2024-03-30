@@ -35,7 +35,7 @@ export default function SavedMap() {
   })
   useEffect(() => {
     if (status === 'success')
-      setItems((itemsPages?.pages?.flat() as Item[]) || [])
+      setItems((itemsPages?.pages?.flat() as ItemAndUser[]) || [])
   }, [itemsPages])
   useEffect(() => {
     refetch()
@@ -63,7 +63,7 @@ export default function SavedMap() {
               key={item.id}
               onClick={() => router.push(item.href)}
               imageUrl={item.imageUrl}
-              user={item.user}
+              user={item.users}
               name={item.name}
               text={item.text}
             />

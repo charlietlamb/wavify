@@ -43,7 +43,7 @@ export default function ResourceSingleButtons({
     } else {
       const { error } = await supabase
         .from('saves')
-        .insert({ user: user.id, resource: resource.id })
+        .insert({ user: user.id, resource: resource.id, name: resource.name })
       if (error) throw error
       let description = 'You have previously saved this resource.'
       if (!(await getResourceActionSaved(supabase, user, resource))) {

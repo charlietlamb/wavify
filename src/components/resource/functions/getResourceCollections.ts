@@ -8,5 +8,14 @@ export async function getResourceCollections(
     .select()
     .eq('user', user.id)
   if (error) throw error
-  return data.filter((col: Collection) => !col.resources.includes(resource.id))
+  return await Promise.all(
+    data.filter(async (col: Collection) => {
+      const { data, error } = await supabase
+        .from('items')
+        .select()
+        .eq('collection', col.id)
+      if (error) throw error
+      return !data.some((item: Item) => item.link === resource.id)
+    })
+  )
 }

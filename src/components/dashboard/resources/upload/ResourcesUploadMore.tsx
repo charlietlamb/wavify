@@ -7,7 +7,7 @@ import ResourcesMoreDraft from './more/ResourcesMoreDraft'
 export default function ResourcesUploadMore() {
   const [open, setOpen] = useState<boolean>(false)
   return (
-    <div className="flex flex-grow flex-col lg:p-4">
+    <div className="flex flex-grow flex-col">
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger
           className="flex w-full flex-grow cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-zinc-700 py-4 transition hover:border-zinc-200"

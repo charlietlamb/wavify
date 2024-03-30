@@ -8,7 +8,7 @@ import SavedMap from './SavedMap'
 import { SavedSorting } from './data/savedSorting'
 
 export default function Saved() {
-  const [items, setItems] = useState<Item[]>([])
+  const [items, setItems] = useState<ItemAndUser[]>([])
   const [type, setType] = useState<WavifyType | null>(null)
   const [sorting, setSorting] = useState<SavedSorting>('newest')
   const [query, setQuery] = useState('')

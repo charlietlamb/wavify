@@ -32,7 +32,7 @@ export type ModalType =
   | 'leaveComment'
   | 'comments'
 
-interface ModalData {
+export interface ModalData {
   collective?: Collective
   colUsers?: ColUserAndData[]
   user?: User

@@ -2,26 +2,27 @@ import { cn } from '@/lib/utils'
 import { Upload } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
+import { useUploadContext } from './context/context'
 
 export default function ResourcesUploadImage() {
-  const [file, setFile] = useState<File | null>(null)
+  const { image, setImage } = useUploadContext()
   const [src, setSrc] = useState<string | null>(null)
   function onSelectFile(event: React.ChangeEvent<HTMLInputElement>) {
     const file1 = event.target.files?.[0]
     if (file1) {
-      setFile(file1)
+      setImage(file1)
       setSrc(URL.createObjectURL(file1))
     }
   }
   return (
-    <div className="h-[200px] lg:h-[300px] lg:w-[300px] lg:p-4">
+    <div className="h-[200px] sm:h-[300px] sm:w-[300px]">
       <div
         className={cn(
           'group relative flex h-full w-full cursor-pointer flex-col items-center justify-center gap-y-1 rounded-lg border-2 border-zinc-700 hover:border-zinc-200',
-          !(file && src) && 'border-dashed p-0'
+          !(image && src) && 'border-dashed p-0'
         )}
       >
-        {file && src ? (
+        {image && src ? (
           <>
             <Image
               src={src}

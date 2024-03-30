@@ -13,8 +13,6 @@ export interface UploadContext {
   setOptions: Dispatch<SetStateAction<ResourceUploadOptions>>
   error: string
   setError: Dispatch<SetStateAction<string>>
-  imageUrl: string
-  setImageUrl: Dispatch<SetStateAction<string>>
   files: FileUploadData[]
   setFiles: Dispatch<SetStateAction<FileUploadData[]>>
   loading: boolean
@@ -25,6 +23,8 @@ export interface UploadContext {
   setTagCurrent: Dispatch<SetStateAction<string>>
   tags: string[]
   setTags: Dispatch<SetStateAction<string[]>>
+  image: File | null
+  setImage: Dispatch<SetStateAction<File | null>>
   manage: boolean | null
   setManage: Dispatch<SetStateAction<boolean>> | null
   id: string | null

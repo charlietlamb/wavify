@@ -64,6 +64,7 @@ export default function ResourceSingleSend() {
                         target as Space,
                         user
                       )
+                      setOpen(false)
                     }}
                     className="flex cursor-pointer gap-1 hover:bg-background_content"
                   >
@@ -83,6 +84,7 @@ export default function ResourceSingleSend() {
                         target as User,
                         user
                       )
+                      setOpen(false)
                     }}
                     className="flex cursor-pointer gap-1 hover:bg-background_content"
                   >

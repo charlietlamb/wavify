@@ -21,12 +21,7 @@ export const getMessages = async ({
   try {
     const response = await supabase
       .from('messages')
-      .select(
-        `
-              *,
-              users (*)
-          `
-      )
+      .select('*,users:author(*)')
       .eq('chat', chat.id)
       .order('createdAt', { ascending: false })
       .range(startIndex, endIndex)

@@ -14,24 +14,26 @@ export const getSavedItems = async ({
   type,
   sorting,
   searchQuery,
+  selectedIds = '',
+  collection = null,
 }: {
   pageParam: number | undefined
   user: User
   type: WavifyType | null
   sorting: Sorting
   searchQuery: string
+  selectedIds?: string
+  collection?: string | null
 }) => {
   if (pageParam === undefined) throw new Error('No page param')
   const supabase = createClientComponentClient()
   const startIndex = (pageParam - 1) * 16
   const endIndex = startIndex + 16
   let query = supabase.from('saves').select().eq('user', user.id)
-  if (type) {
-    query = query.not(type, 'is', null)
-  }
-  if (searchQuery !== '') {
-    query = query.ilike('name', `%${searchQuery}%`)
-  }
+  if (collection) query = query.eq('collection', collection)
+  if (type) query = query.not(type, 'is', null)
+  if (searchQuery !== '') query = query.ilike('name', `%${searchQuery}%`)
+  if (!!selectedIds.length) query = query.not('id', 'in', selectedIds)
 
   if (sorting === 'newest') {
     query = query.order('createdAt', { ascending: false })
@@ -62,9 +64,11 @@ export const getSavedItems = async ({
         name: collective.unique,
         text: 'Collective',
         href: `/collective/${collective.unique}`,
-        user: colUser,
+        user: colUser.id,
         imageUrl: collective.imageUrl,
-      } as Item)
+        saved: initItem.id,
+        users: colUser,
+      } as ItemAndUser)
     } else if (initItem.space) {
       const space = await getSpaceFromId(supabase, initItem.space)
       const collective = await getCollectiveFromId(supabase, space.collective)
@@ -76,9 +80,11 @@ export const getSavedItems = async ({
         name: `${collective.unique}/${space.slug}`,
         text: 'Space',
         href: `/collective/${collective?.unique}/${space.slug}`,
-        user: spaceUser,
+        user: spaceUser.id,
         imageUrl: collective.imageUrl,
-      } as Item)
+        saved: initItem.id,
+        users: spaceUser,
+      } as ItemAndUser)
     } else if (initItem.product) {
       const product = await getProductFromId(supabase, initItem.product)
       const prodUser = await getUserFromId(supabase, product.user)
@@ -87,9 +93,11 @@ export const getSavedItems = async ({
         name: product.name,
         text: 'Product',
         href: `/product/${product.id}`,
-        user: prodUser,
+        user: prodUser.id,
         imageUrl: product.imageUrl,
-      } as Item)
+        saved: initItem.id,
+        users: prodUser,
+      } as ItemAndUser)
     } else if (initItem.resource) {
       const resource = await getResourceFromId(supabase, initItem.resource)
       const resUser = await getUserFromId(supabase, resource.user)
@@ -98,9 +106,11 @@ export const getSavedItems = async ({
         name: resource.name,
         text: 'Resource',
         href: `/resource/${resource.id}`,
-        user: resUser,
+        user: resUser.id,
         imageUrl: resource.imageUrl,
-      } as Item)
+        saved: initItem.id,
+        users: resUser,
+      } as ItemAndUser)
     } else if (initItem.collection) {
       const collection = await getCollectionFromId(
         supabase,
@@ -112,9 +122,11 @@ export const getSavedItems = async ({
         name: collection.name,
         text: 'Collection',
         href: `/collection/${collection.id}`,
-        user: colUser,
+        user: colUser.id,
         imageUrl: collection.imageUrl,
-      } as Item)
+        users: colUser,
+        saved: initItem.id,
+      } as ItemAndUser)
     } else if (initItem.member) {
       const memUser = await getUserFromId(supabase, initItem.members.id)
       toReturn.push({
@@ -122,10 +134,12 @@ export const getSavedItems = async ({
         name: memUser.username,
         text: 'Member',
         href: `/user/${memUser.username}`,
-        user: memUser,
+        user: memUser.id,
         imageUrl: memUser.imageUrl,
-      } as Item)
+        saved: initItem.id,
+        users: memUser,
+      } as ItemAndUser)
     }
   }
-  return toReturn as Item[]
+  return toReturn as ItemAndUser[]
 }
