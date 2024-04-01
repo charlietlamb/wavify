@@ -156,4 +156,10 @@ declare global {
   type CollectiveAndUser = Collective & AndUser
 
   type ActionAndUser = Action & AndUser
+
+  type EllipsisData = {
+    name: string
+    icon: React.ReactNode
+    onClick: () => void
+  }
 }

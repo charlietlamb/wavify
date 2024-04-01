@@ -47,7 +47,7 @@ export default function OAuth() {
     setOAuthError('')
   }
   return (
-    <div className="grid grid-cols-3 gap-x-4">
+    <div className="grid w-full grid-cols-3 gap-4">
       <ButtonLoaderIcon
         onClick={signInWithDiscord}
         className="flex w-full flex-row items-center justify-center"

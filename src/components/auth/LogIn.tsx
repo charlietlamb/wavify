@@ -6,6 +6,7 @@ import SeparatorText from '../util/SeparatorText'
 import OAuth from './OAuth'
 import Link from 'next/link'
 import ButtonLoader from '../utils/ButtonLoader'
+import Underline1 from '../decoration/underlines/Underline1'
 
 export default function LogIn() {
   const [email, setEmail] = useState('')
@@ -29,9 +30,14 @@ export default function LogIn() {
   //     })
   //   }
   return (
-    <div className="flex flex-col items-center gap-y-2">
-      <h2 className="text-2xl font-bold text-zinc-200">Log In</h2>
-      <p className="text-zinc-700">
+    <div className="flex flex-col items-center gap-y-2 px-8">
+      <div className="relative">
+        <h2 className="relative z-10 text-4xl font-bold text-zinc-200 sm:text-6xl">
+          Log In
+        </h2>
+        <Underline1 className="absolute bottom-0 w-full" />
+      </div>
+      <p className="text-center text-zinc-400 sm:text-lg">
         Enter your email and a password to log in.
       </p>
       <Input
@@ -57,7 +63,7 @@ export default function LogIn() {
       {!!error && <p className="text-red-500">{error}</p>}
       <SeparatorText text="OR CONTINUE WITH" />
       <OAuth />
-      <div className="flex-inline text-zinc-700">
+      <div className="flex-inline sm:text-md text-center text-sm text-zinc-400">
         By clicking continue, you agree to our{' '}
         <Link href="terms-of-service">Terms Of Service</Link> and{' '}
         <Link href="privacy-policy">Privacy Policy</Link>

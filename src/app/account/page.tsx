@@ -15,7 +15,7 @@ export default async function page() {
     redirect('/dashboard')
   }
   return (
-    <div className="flex flex-grow divide-x divide-zinc-200">
+    <div className="flex flex-grow divide-zinc-700 lg:divide-x">
       <AuthSwiper />
       <Account />
     </div>

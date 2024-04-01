@@ -23,12 +23,12 @@ import { Bookmark, Gauge, LibraryBig, MessagesSquare } from 'lucide-react'
 interface MenuBarProps {
   collectives: Collective[]
 }
+export const iconClassName = 'ml-auto text-zinc-400 text-sm w-5 h-5'
 
 export default function NavMenu({ collectives }: MenuBarProps) {
   const user = useUser()
   const { onOpen } = useModal()
   const router = useRouter()
-  const iconClassName = 'ml-auto text-zinc-400 text-sm w-5 h-5'
   return (
     <Menubar className="rounded-0 flex cursor-pointer items-center border-0 p-0 px-[0.5rem] text-lg">
       <MenubarMenu>

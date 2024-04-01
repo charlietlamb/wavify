@@ -24,6 +24,8 @@ const buttonVariants = cva(
           'border border-zinc-700 text-zinc-200 hover:border-zinc-200 transition',
         zinc_link:
           'text-zinc-400 hover:text-zinc-200 underline-offset-4 hover:underline',
+        zinc_icon:
+          'text-zinc-900 hover:text-zinc-700 underline-offset-4 hover:underline',
       },
       size: {
         default: 'h-10 px-4 py-2',

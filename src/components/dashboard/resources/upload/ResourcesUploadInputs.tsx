@@ -40,7 +40,7 @@ export default function ResourcesUploadInputs() {
       </div>
       <Label className="pt-2 text-zinc-200 sm:pt-0">Tags</Label>
       <ResourcesUploadTags />
-      <div className="flex gap-4 sm:pt-2">
+      <div className="flex flex-col gap-4 sm:flex-row sm:pt-2">
         <div className="flex flex-grow flex-col gap-2">
           <Label className="text-zinc-200">Collaborators</Label>
           <ResourceUploadCollaborators />

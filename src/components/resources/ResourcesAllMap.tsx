@@ -5,8 +5,8 @@ import { getResources } from './functions/getResources'
 import { useEffect, useRef } from 'react'
 import { useResourceScroll } from '../dashboard/resources/manage/hooks/useResourcesScroll'
 import { useRouter } from 'next/navigation'
-import WavifyCard from '../util/WavifyCard'
-import WavifyCardSkeletons from '../util/WavifyCardSkeletons'
+import WavifyCard from '../wavify/WavifyCard'
+import WavifyCardSkeletons from '../wavify/WavifyCardSkeletons'
 
 export default function ResourcesAllMap() {
   const { resources, type, sorting, setResources, query } =

@@ -8,8 +8,8 @@ import { useResourceScroll } from '@/components/dashboard/resources/manage/hooks
 import { getUsersQuery } from './functions/getUsersQuery'
 import UsersToggle from './UsersToggle'
 import Search from '@/components/toolbar/Search'
-import WavifyCard from '@/components/util/WavifyCard'
-import WavifyCardSkeletons from '@/components/util/WavifyCardSkeletons'
+import WavifyCard from '@/components/wavify/WavifyCard'
+import WavifyCardSkeletons from '@/components/wavify/WavifyCardSkeletons'
 import NothingFound from '@/components/collection/NothingFound'
 
 export default function UsersContent() {

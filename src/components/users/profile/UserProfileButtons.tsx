@@ -52,7 +52,7 @@ export default function UserProfileButtons() {
         </Button>
       </ActionTooltip>
       <ActionTooltip label="More Options">
-        <Button variant="zinc_outline">
+        <Button variant="zinc_outline" onClick={() => supabase.auth.signOut()}>
           <FaEllipsis />
         </Button>
       </ActionTooltip>

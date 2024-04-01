@@ -32,7 +32,7 @@ export default function ResourcesGeneral() {
         setSaves,
       }}
     >
-      <div className="flex h-full flex-grow flex-col gap-y-4">
+      <div className="flex h-full flex-grow flex-col gap-y-4 p-4">
         <ResourcesGeneralBentoTop />
         {/* <GeneralBentoBottom /> */}
       </div>
