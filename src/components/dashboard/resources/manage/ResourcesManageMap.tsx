@@ -44,7 +44,6 @@ export default function ResourcesManageMap() {
       allowSave: resource.allowSave,
       allowDownload: resource.allowDownload,
     })
-    uploadContext.setImageUrl(resource.imageUrl)
     uploadContext.setTags(resource.tags)
     uploadContext.setType(resource.type)
     const fileData = await Promise.all(

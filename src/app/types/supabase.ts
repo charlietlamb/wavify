@@ -131,6 +131,7 @@ export type Database = {
           createdAt: string
           editedAt: string | null
           id: string
+          lastSent: string
           space: string | null
           type: string | null
           user1: string | null
@@ -142,6 +143,7 @@ export type Database = {
           createdAt?: string
           editedAt?: string | null
           id?: string
+          lastSent?: string
           space?: string | null
           type?: string | null
           user1?: string | null
@@ -153,6 +155,7 @@ export type Database = {
           createdAt?: string
           editedAt?: string | null
           id?: string
+          lastSent?: string
           space?: string | null
           type?: string | null
           user1?: string | null
@@ -248,6 +251,7 @@ export type Database = {
       collectives: {
         Row: {
           bannerUrl: string | null
+          createdAt: string
           founder: string
           id: string
           imageUrl: string | null
@@ -259,6 +263,7 @@ export type Database = {
         }
         Insert: {
           bannerUrl?: string | null
+          createdAt?: string
           founder: string
           id?: string
           imageUrl?: string | null
@@ -270,6 +275,7 @@ export type Database = {
         }
         Update: {
           bannerUrl?: string | null
+          createdAt?: string
           founder?: string
           id?: string
           imageUrl?: string | null

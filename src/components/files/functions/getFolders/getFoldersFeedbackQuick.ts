@@ -42,10 +42,7 @@ export async function getFoldersFeedbackQuick(path: Path[]) {
         createdAt: new Date().toISOString(),
         size: 0,
         music: false,
-        users: {
-          username: user.username,
-          imageUrl: user.imageUrl,
-        },
+        users: user,
       }
     })
   )

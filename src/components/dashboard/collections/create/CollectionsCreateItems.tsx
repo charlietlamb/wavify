@@ -52,11 +52,6 @@ export default function CollectionsCreateItems() {
   }, [isFetchingNextPage])
   useEffect(() => {
     if (status === 'success') {
-      console.log(
-        itemPages?.pages
-          ?.flat()
-          .filter((item): item is ItemAndUser => item !== undefined) || []
-      )
       setItems(
         itemPages?.pages
           ?.flat()
@@ -84,7 +79,7 @@ export default function CollectionsCreateItems() {
       </h3>
       <div className="flex flex-col gap-4 p-2">
         {!!items.length ? (
-          items.map((item: Item) => (
+          items.map((item: ItemAndUser) => (
             <CollectionsCreateItem key={item.id} item={item} />
           ))
         ) : (

@@ -2,7 +2,7 @@ import Image from 'next/image'
 import { useCollectionsCreateContext } from './context/collectionsCreateContext'
 import { cn } from '@/lib/utils'
 
-export default function CollectionsCreateItem({ item }: { item: Item }) {
+export default function CollectionsCreateItem({ item }: { item: ItemAndUser }) {
   const { selected, setSelected, items, setItems } =
     useCollectionsCreateContext()
   const selectedItem = selected.some((item1) => item.id === item1.id)

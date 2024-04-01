@@ -20,7 +20,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { format } from 'date-fns'
+import { format, set } from 'date-fns'
 import { Calendar } from '@/components/ui/calendar'
 import { Calendar as CalendarIcon } from 'lucide-react'
 import { DateTimePicker } from './timePicker/DateTimePicker'
@@ -31,12 +31,20 @@ export const UpdateTimerModal = () => {
   const isModalOpen = isOpen && type === 'updateTimer'
   const [isLoading, setIsLoading] = useState(false)
   const [date, setDate] = useState<Date>()
+  const [error, setError] = useState<string | null>(null)
   const supabase = createClientComponentClient()
   const { space, schedule } = data
   const onClick = async () => {
     if (date && space) {
       setIsLoading(true)
-      await updateTransientTimer(supabase, date, space)
+      await updateTransientTimer(
+        supabase,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        setError
+      )
       setIsLoading(false)
       onClose()
     }

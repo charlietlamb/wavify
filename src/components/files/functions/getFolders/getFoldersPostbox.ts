@@ -57,10 +57,7 @@ export async function getFoldersPostbox(path: Path[]) {
         createdAt: new Date().toISOString(),
         size,
         music,
-        users: {
-          username: user.username,
-          imageUrl: user.imageUrl,
-        },
+        users: user,
       }
     })
   )

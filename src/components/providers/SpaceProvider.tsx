@@ -1,8 +1,8 @@
 'use client'
 
-import { setSpace } from '@/state/collective/collectiveSlice'
 import { useCollective } from '@/state/collective/useCollective'
 import { useAppSelector, useAppStore } from '@/state/hooks'
+import { setSpace } from '@/state/space/spaceSlice'
 import { useRouter } from 'next/navigation'
 import { useRef } from 'react'
 
@@ -18,7 +18,7 @@ export function SpaceProvider({
   const { colUser } = useCollective()
   const store = useAppStore()
   const initialized = useRef(false)
-  const storeSpace = useAppSelector((state) => state.collective.space)
+  const storeSpace = useAppSelector((state) => state.space.space)
   if (!initialized.current) {
     store.dispatch(setSpace(space))
     initialized.current = true

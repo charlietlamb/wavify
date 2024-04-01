@@ -50,7 +50,13 @@ export const ChatInput = ({ name, type, chat, space }: ChatInputProps) => {
         chat: chat?.id,
         files: false,
       }
-      await supabase.from('messages').insert(newMessage)
+      const { error } = await supabase.from('messages').insert(newMessage)
+      if (error) throw error
+      const { error: chatError } = await supabase
+        .from('chats')
+        .update({ lastSent: new Date().toISOString() })
+        .eq('id', chat.id)
+      if (chatError) throw chatError
       form.reset()
       router.refresh()
     } catch (error) {

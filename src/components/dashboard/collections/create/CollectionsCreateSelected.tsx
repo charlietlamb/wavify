@@ -8,7 +8,7 @@ export default function CollectionsCreateSelected() {
       <h3 className="p-2 font-semibold">Selected</h3>
       <div className="flex flex-col gap-4 p-2">
         {!!selected.length &&
-          selected.map((item: Item) => (
+          selected.map((item: ItemAndUser) => (
             <CollectionsCreateItem key={item.id} item={item} />
           ))}
       </div>

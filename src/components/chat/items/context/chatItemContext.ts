@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction, createContext, useContext } from 'react'
 interface ChatItemContext {
   user: User
   message: MessageData
-  role: Role
+  role: Role | null
   isSender: boolean
   canDeleteAny: boolean
   files: FileData[] | null

@@ -7,7 +7,7 @@ export default async function page() {
     return redirect('/account')
   } else if (!user.setup_complete) {
     return redirect('/setup')
-  } else {
-    return redirect('/dashboard/overview/general')
   }
+
+  return redirect('/dashboard/overview/general')
 }

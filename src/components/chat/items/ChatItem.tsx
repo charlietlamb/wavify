@@ -27,13 +27,13 @@ export function ChatItem({ message }: ChatItemProps) {
   }
   const collective = collectiveState ? collectiveState.collective : null
   const colUser = collectiveState ? collectiveState.colUser : null
-  if (!message || !colUser) return null
+  if (!message) return null
   const otherUser = message.users
   const files = message.fileData
   const router = useRouter()
 
   var canDeleteAny = false
-  const role = colUser.roles
+  const role = colUser ? colUser.roles : null
   if (collective && isObject(role) && role.canMessages) {
     canDeleteAny = true
   }
@@ -71,7 +71,7 @@ export function ChatItem({ message }: ChatItemProps) {
             onClick={() => onMemberClick(user, message, router)}
             className="cursor-pointer transition hover:drop-shadow-md"
           >
-            <UserAvatar user={otherUser} />
+            <UserAvatar user={otherUser} noTooltip />
           </div>
           <div className="flex w-full flex-col">
             <ChatFileUserInfo />

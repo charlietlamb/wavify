@@ -14,6 +14,7 @@ export default async function page() {
   const user = await getUser()
   const supabase = createServerComponentClient({ cookies })
   if (!user) return redirect('/account')
+  if (!user.setup_complete) return redirect('/setup')
   const initSearchFiles = await getUserFiles(supabase, user)
   const initFiles: FileAndSender[] = await getUserTopFiles(supabase, user)
   const initFolders: FolderAndSender[] = await getUserTopFolders(supabase, user)

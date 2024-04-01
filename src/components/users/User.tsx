@@ -37,7 +37,7 @@ export default function User({
         setIsFollowing,
       }}
     >
-      <div className="flex w-full gap-4 p-4">
+      <div className="flex w-full divide-x divide-zinc-700">
         <UserProfile />
         <UserContent />
       </div>

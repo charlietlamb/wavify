@@ -6,6 +6,7 @@ import { v4 as uuid } from 'uuid'
 import downloadChatImage from '../actions/downloadFile'
 import { useUser } from '@/state/user/useUser'
 import { Button } from '@/components/ui/button'
+import { download } from '../functions/download'
 interface ChatItemProps {
   message: MessageData
 }
@@ -24,27 +25,11 @@ export default function ChatFile({ message }: ChatItemProps) {
   }
   const isSender = user.id === message.author
 
-  const fileClasses =
-    'w-10 h-10 fill-transparent stroke-primary min-w-10 text-zinc-200'
-
-  async function download(fileUrl: string, fileName: string) {
-    const url = await downloadChatImage(fileUrl)
-    const response = await fetch(url)
-    const blob = await response.blob()
-    const blobUrl = URL.createObjectURL(blob)
-
-    const link = document.createElement('a')
-    link.href = blobUrl
-    link.download = fileName
-    link.click()
-
-    URL.revokeObjectURL(url)
-  }
   if (!Array.isArray(files)) return null
   return (
-    !message.deleted && (
-      <>
-        {files.map((file: FileData) => {
+    <>
+      {!message.deleted &&
+        files.map((file: FileData) => {
           return (
             <ResizableDiv
               key={uuid()}
@@ -76,7 +61,6 @@ export default function ChatFile({ message }: ChatItemProps) {
             </ResizableDiv>
           )
         })}
-      </>
-    )
+    </>
   )
 }

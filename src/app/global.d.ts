@@ -147,4 +147,13 @@ declare global {
   type ResourceAndUser = Resource & AndUser
 
   type ItemAndUser = Item & AndUser
+
+  type ChatAndUser = Chat & AndUser
+
+  type ChatAndUsers = Chat & { user1: User; user2: User }
+
+  type CollectionAndUser = Collection & AndUser
+  type CollectiveAndUser = Collective & AndUser
+
+  type ActionAndUser = Action & AndUser
 }

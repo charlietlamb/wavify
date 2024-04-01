@@ -48,10 +48,7 @@ export async function getPostboxUsers(supabase: Supabase, space: Space) {
         createdAt: new Date().toISOString(),
         size,
         music,
-        users: {
-          username: user.username,
-          imageUrl: user.imageUrl,
-        },
+        users: user,
       }
     })
   )

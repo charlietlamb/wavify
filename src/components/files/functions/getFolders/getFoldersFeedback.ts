@@ -55,10 +55,7 @@ export async function getFoldersFeedback(path: Path[]) {
         createdAt: new Date().toISOString(),
         size,
         music,
-        users: {
-          username: user.username,
-          imageUrl: user.imageUrl,
-        },
+        users: user,
       }
     })
   )

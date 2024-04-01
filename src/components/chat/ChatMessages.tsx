@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useChatScroll } from '../../../hooks/use-chat-scroll'
 import ChatFilesWrap from './files/ChatFilesWrap'
@@ -37,13 +37,10 @@ export function ChatMessages({
   name,
   chat,
   type,
-  fileTab,
+  fileTab = false,
   searchData,
 }: ChatMessagesProps) {
-  if (chat === null) {
-    throw new Error('No chat found')
-  }
-  if (fileTab === undefined) fileTab = false
+  if (chat === null) throw new Error('No chat found')
   const chatRef = useRef<HTMLDivElement>(null)
   const filesRef = useRef<HTMLDivElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -85,6 +82,7 @@ export function ChatMessages({
     hasNextPage,
     isFetchingNextPage,
     status,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ['messages'],
     queryFn: ({ pageParam = 1 }) =>
@@ -109,6 +107,7 @@ export function ChatMessages({
     hasNextPage: hasNextPageFiles,
     isFetchingNextPage: isFetchingNextPageFiles,
     status: statusFiles,
+    refetch: refetchFiles,
   } = useInfiniteQuery({
     queryKey: ['files'],
     queryFn: ({ pageParam = 1 }) =>

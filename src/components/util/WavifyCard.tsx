@@ -34,7 +34,9 @@ export default function WavifyCard({
           <h2 className="max-w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-lg font-semibold leading-none text-zinc-200">
             {name}
           </h2>
-          <p className="text-zinc-400">{text}</p>
+          <p className="overflow-hidden overflow-ellipsis whitespace-nowrap text-zinc-400">
+            {text}
+          </p>
         </div>
       </div>
     </div>
