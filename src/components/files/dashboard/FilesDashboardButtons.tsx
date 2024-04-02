@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { useFilesContext } from '../state/context'
 import { useModal } from '../../../../hooks/use-modal-store'
+import { FolderUpIcon, Upload } from 'lucide-react'
 
 export default function FilesDashboardButtons() {
   const { folders, path, space, files } = useFilesContext()
@@ -10,12 +11,13 @@ export default function FilesDashboardButtons() {
   const initParent = path[path.length - 1].id
   const parent = space && !initParent ? space.folder : initParent
   return (
-    <div className="flex gap-x-2">
+    <div className="flex gap-2">
       <Button
         onClick={() => onOpen('upload', { parent, space, files })}
-        variant="zinc_outline"
+        variant="zinc_icon_dark"
+        size="icon"
       >
-        Upload Files
+        <Upload />
       </Button>
       <Button
         onClick={() =>
@@ -25,9 +27,10 @@ export default function FilesDashboardButtons() {
             space,
           })
         }
-        variant="zinc_outline"
+        variant="zinc_icon_dark"
+        size="icon"
       >
-        New Folder
+        <FolderUpIcon />
       </Button>
     </div>
   )

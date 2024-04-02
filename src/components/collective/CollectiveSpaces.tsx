@@ -40,7 +40,7 @@ export default function CollectiveSpaces() {
       {spaceTypes.map(
         (spaceType: string, typeIndex: number) =>
           filteredSpaces.some((space) => space.type === spaceType) && (
-            <div className="mb-2" key={spaceType}>
+            <div className="divide-y divide-zinc-700" key={spaceType}>
               <CollectiveSection
                 sectionType="spaces"
                 spaceType={spaceType as SpaceType}

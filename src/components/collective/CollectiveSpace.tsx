@@ -93,7 +93,7 @@ export const CollectiveSpace = ({ space, index }: CollectiveSpaceProps) => {
         <button
           onClick={onClick}
           className={cn(
-            'group mb-1 flex w-full items-center gap-x-2 rounded-md px-2 py-2 transition hover:bg-zinc-700/10 dark:hover:bg-zinc-700/50',
+            'group flex w-full items-center gap-x-2 p-2 transition hover:bg-zinc-700/10 dark:hover:bg-zinc-700/50',
             params?.spaceId === space.id && 'bg-zinc-700/20 dark:bg-zinc-700'
           )}
           ref={provided.innerRef}

@@ -54,7 +54,7 @@ export default function CollectiveSearch({
       <button
         onClick={() => setOpen(true)}
         className={cn(
-          'group flex items-center gap-x-2 rounded-md border border-zinc-700 px-2 py-2 transition hover:border-zinc-200',
+          'group flex items-center gap-x-2 p-2',
           collective && 'hidden'
         )}
       >

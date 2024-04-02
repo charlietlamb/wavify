@@ -7,7 +7,7 @@ import { useCollective } from '@/state/collective/useCollective'
 export default function CollectiveMemberMap() {
   const { colUsers } = useCollective()
   return (
-    <div className="mb-2">
+    <div className="divide-y divide-zinc-700">
       <CollectiveSection sectionType="users" label="Members" />
       <div className="space-y-[2px]">
         {colUsers.map((colUser1) => {

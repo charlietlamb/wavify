@@ -11,16 +11,16 @@ export default function CollectiveSidebar() {
   return (
     <div
       className={cn(
-        'flex h-full flex-grow flex-col bg-background_content py-1 text-primary'
+        'flex h-full flex-grow flex-col bg-background_content text-primary'
       )}
     >
-      <div className="flex gap-x-1 p-2">
+      <div className="flex divide-x divide-zinc-700">
         <CollectiveHeader />
         <CollectiveSearchWrap small={true} />
       </div>
       <Separator className="rounded-md bg-zinc-200 dark:bg-zinc-700" />
-      <div className="flex flex-grow flex-col overflow-auto px-3">
-        <div className="flex h-full flex-grow flex-col overflow-y-auto">
+      <div className="flex flex-grow flex-col overflow-auto">
+        <div className="flex h-full flex-grow flex-col divide-y divide-zinc-700 overflow-y-auto">
           <CollectiveSpaces />
           <CollectiveMemberMap />
         </div>

@@ -6,15 +6,15 @@ export default function ChatFilesWrap() {
   const context = useFilesContext()
   const { chat, searchData, filesRef } = context
   return (
-    <div className="flex w-full flex-grow flex-col items-center px-4">
+    <div className="flex w-full flex-grow flex-col items-center divide-y divide-zinc-700">
       <ChatSearch
-        className="my-2 w-full"
+        className="w-full p-2"
         chat={chat}
         searchData={searchData ? searchData : [null]}
       ></ChatSearch>
 
       <div
-        className="h-auto w-full flex-grow overflow-y-auto rounded-md"
+        className="h-auto w-full flex-grow overflow-y-auto p-2"
         ref={filesRef}
       >
         <ChatFilesContainer />

@@ -61,25 +61,26 @@ export default function ChatSearch({
   }
   return (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        className={cn(
-          'group flex w-full items-center gap-x-2 rounded-md border border-zinc-700 bg-transparent px-2 py-2 transition hover:border-zinc-200',
-          className
-        )}
-      >
-        <Search className="min-h-4 min-w-4 text-zinc-500 dark:text-zinc-400" />
-        <p className="text-sm font-semibold text-zinc-500 transition group-hover:text-zinc-600 dark:text-zinc-400 dark:group-hover:text-zinc-300">
-          Search
-        </p>
-        <kbd className="pointer-events-none ml-auto inline-flex h-5 select-none items-center rounded border bg-transparent px-1.5 font-mono text-[10px] font-medium text-zinc-200">
-          <div className="flex">
-            <span className="text-xs">⌘</span>
-            <ArrowBigUp strokeWidth={1.5} className="mt-[1px] h-3 w-auto" />
-          </div>
-          F
-        </kbd>
-      </button>
+      <div className={className}>
+        <button
+          onClick={() => setOpen(true)}
+          className={cn(
+            'group flex w-full items-center gap-x-2 rounded-md border border-zinc-700 bg-transparent px-2 py-2 transition hover:border-zinc-200'
+          )}
+        >
+          <Search className="min-h-4 min-w-4 text-zinc-500 dark:text-zinc-400" />
+          <p className="text-sm font-semibold text-zinc-500 transition group-hover:text-zinc-600 dark:text-zinc-400 dark:group-hover:text-zinc-300">
+            Search
+          </p>
+          <kbd className="pointer-events-none ml-auto inline-flex h-5 select-none items-center rounded border bg-transparent px-1.5 font-mono text-[10px] font-medium text-zinc-200">
+            <div className="flex">
+              <span className="text-xs">⌘</span>
+              <ArrowBigUp strokeWidth={1.5} className="mt-[1px] h-3 w-auto" />
+            </div>
+            F
+          </kbd>
+        </button>
+      </div>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Search all files" />
         <CommandList className="bg-zinc-950">
