@@ -16,7 +16,7 @@ export default function FilesFiles() {
   const { files, folders, view, postbox, transient } = useFilesContext()
   const supabase = createClientComponentClient()
   return (
-    <div className="flex flex-grow flex-col overflow-y-auto">
+    <div className="flex flex-grow  flex-col overflow-y-auto">
       {files.length + folders.length > 0 ? (
         <DragDropContext
           onDragEnd={(result) =>
@@ -29,9 +29,9 @@ export default function FilesFiles() {
                 ref={provided.innerRef}
                 {...provided.droppableProps}
                 className={cn(
-                  'grid grid-cols-1 items-start gap-4 overflow-visible sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5',
+                  'grid  grid-cols-1 items-start overflow-visible sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6',
                   view === 'column' &&
-                    'sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1'
+                    'sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 2xl:grid-cols-1'
                 )}
                 style={{
                   transform: 'none',
@@ -45,10 +45,13 @@ export default function FilesFiles() {
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                         className={cn(
-                          'w-full',
+                          'h-full w-full border-0',
                           snapshot.isDraggingOver && 'animate-pulse'
                         )}
-                        style={{ transform: 'none', overflow: 'visible' }}
+                        style={{
+                          transform: 'none',
+                          overflow: 'visible',
+                        }}
                       >
                         <Draggable draggableId={folder.id} index={index}>
                           {(provided, snapshot) => (
@@ -56,7 +59,7 @@ export default function FilesFiles() {
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
-                              className="h-auto w-full"
+                              className="h-full w-full border-0"
                               style={
                                 snapshot.isDragging
                                   ? {
@@ -76,8 +79,9 @@ export default function FilesFiles() {
                                   exit={{ opacity: 0 }}
                                   transition={{ duration: 0.6 }}
                                   key={folder.id}
+                                  className="h-full"
                                 >
-                                  <Folder folder={folder} />
+                                  <Folder folder={folder} index={index} />
                                 </motion.div>
                               </AnimatePresence>
                             </div>
@@ -100,7 +104,7 @@ export default function FilesFiles() {
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
-                          className="h-auto w-full"
+                          className="h-full w-full border-0"
                           style={
                             snapshot.isDragging
                               ? {
@@ -120,8 +124,9 @@ export default function FilesFiles() {
                               exit={{ opacity: 0 }}
                               transition={{ duration: 0.6 }}
                               key={file.id}
+                              className="h-full"
                             >
-                              <File file={file} />
+                              <File file={file} index={index} />
                             </motion.div>
                           </AnimatePresence>
                         </div>

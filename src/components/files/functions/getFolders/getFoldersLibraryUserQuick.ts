@@ -8,6 +8,7 @@ export async function getFoldersLibraryUserQuick(path: Path[]) {
     .select('*, users(*)')
     .eq('user', userId)
     .is('parent', null)
+    .eq('system', true)
     .order('createdAt', { ascending: false })
   if (error) throw error
   return data as FolderAndSender[]

@@ -1,5 +1,5 @@
-import { resourceTypes } from '../dashboard/resources/upload/data/data'
-import { Button } from '../ui/button'
+import { resourceTypes } from '../../dashboard/resources/upload/data/data'
+import { Button } from '../../ui/button'
 import { useResourcesContext } from './context/resourcesContext'
 
 export default function ResourcesAllTypes() {

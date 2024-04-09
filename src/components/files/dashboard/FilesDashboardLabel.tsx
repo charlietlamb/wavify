@@ -13,7 +13,7 @@ export default function FilesDashboardLabel() {
   const { postbox, transient, feedback } = useFilesContext()
   const iconClass = 'min-h-4 min-w-4'
   return (
-    <div className="flex items-center gap-x-2">
+    <div className="flex flex-grow items-center gap-x-2 py-2">
       <div className="flex items-center">
         {postbox ? (
           <Archive className={iconClass} strokeWidth={2} />

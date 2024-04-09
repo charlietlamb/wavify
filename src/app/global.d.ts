@@ -64,6 +64,7 @@ declare global {
   type Save = DB['public']['Tables']['saves']['Row']
   type Collection = DB['public']['Tables']['collections']['Row']
   type Item = DB['public']['Tables']['items']['Row']
+  type Package = DB['public']['Tables']['packages']['Row']
   type Json =
     | string
     | number
@@ -162,4 +163,6 @@ declare global {
     icon: React.ReactNode
     onClick: () => void
   }
+
+  type PackageData = Package & { users: User; roles: Role; spaces: Space[] }
 }

@@ -7,6 +7,7 @@ import { getFileFromId } from '../dashboard/resources/manage/functions/getFileFr
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import Spinner from '../utils/Spinner'
 import WavifyCardEllipsis from './WavifyCardEllipsis'
+import { cn } from '@/lib/utils'
 
 export default function WavifyCard({
   onClick,
@@ -17,6 +18,9 @@ export default function WavifyCard({
   loading,
   preview = null,
   ellipsisComponent,
+  className = '',
+  smallBottom = false,
+  noEllipsis = false,
 }: {
   onClick: () => void
   imageUrl: string
@@ -26,6 +30,9 @@ export default function WavifyCard({
   loading: boolean
   preview?: string | null
   ellipsisComponent: React.ReactNode
+  className?: string
+  smallBottom?: boolean
+  noEllipsis?: boolean
 }) {
   const [file, setFile] = useState<FileAndSender | null>(null)
   const supabase = createClientComponentClient()
@@ -38,7 +45,13 @@ export default function WavifyCard({
     setFileFunction()
   })
   return (
-    <div className="flex h-fit cursor-pointer flex-col gap-2" onClick={onClick}>
+    <div
+      className={cn(
+        'flex h-fit flex-shrink-0 cursor-pointer flex-col gap-2',
+        className
+      )}
+      onClick={onClick}
+    >
       <div className="relative aspect-square w-full">
         <Image
           src="https://github.com/shadcn.png"
@@ -50,7 +63,9 @@ export default function WavifyCard({
         {!loading ? (
           <div className="absolute inset-0 flex h-full w-full items-center justify-center bg-black/50 opacity-0 transition hover:opacity-100">
             {preview && file && <WavifyPreviewButton file={file} />}
-            <WavifyCardEllipsis ellipsisComponent={ellipsisComponent} />
+            {!noEllipsis && (
+              <WavifyCardEllipsis ellipsisComponent={ellipsisComponent} />
+            )}
           </div>
         ) : (
           <div className="absolute inset-0 flex h-full w-full items-center justify-center bg-black/50">
@@ -58,17 +73,29 @@ export default function WavifyCard({
           </div>
         )}
       </div>
-      <div className="flex max-w-full items-center gap-2 overflow-hidden">
-        <UserAvatar user={user} />
-        <div className="flex max-w-full flex-col overflow-hidden overflow-ellipsis">
-          <h2 className="max-w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-lg font-semibold leading-none text-zinc-200">
-            {name}
-          </h2>
-          <p className="overflow-hidden overflow-ellipsis whitespace-nowrap text-zinc-400">
-            {text}
-          </p>
+      {
+        <div className="flex max-w-full items-center gap-2 overflow-hidden">
+          <UserAvatar user={user} className={smallBottom ? 'h-8 w-8' : ''} />
+          <div className="flex max-w-full flex-col overflow-hidden overflow-ellipsis">
+            <h2
+              className={cn(
+                'max-w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-lg font-semibold leading-none text-zinc-200',
+                smallBottom && 'text-md leading-none'
+              )}
+            >
+              {name}
+            </h2>
+            <p
+              className={cn(
+                'overflow-hidden overflow-ellipsis whitespace-nowrap text-zinc-400',
+                smallBottom && 'text-sm leading-none'
+              )}
+            >
+              {text}
+            </p>
+          </div>
         </div>
-      </div>
+      }
     </div>
   )
 }

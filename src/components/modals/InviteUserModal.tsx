@@ -37,7 +37,7 @@ export const InviteUserModal = () => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>
-      <DialogContent className="overflow-hidden px-6 py-8 ">
+      <DialogContent className="overflow-hidden px-6 py-4 ">
         <DialogHeader>
           <DialogTitle className="text-left text-2xl font-bold ">
             Invite a friend

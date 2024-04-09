@@ -27,7 +27,6 @@ export async function useFolderChangeEffect(
   path: Path[]
 ) {
   useEffect(() => {
-    // const p = space && !parent ? space.folder : parent
     setFolders(folderFilterSort(folderStore.current, filters, sorting))
   }, [filters.music, sorting])
 
@@ -48,7 +47,6 @@ export async function useFolderChangeEffect(
     }
     updateFolders()
   }, [
-    parent,
     user,
     supabase,
     folders,

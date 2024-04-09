@@ -37,7 +37,7 @@ export default function TransientPost({
     <>
       <Button
         variant="zinc_outline"
-        className="w-full justify-start bg-black text-left font-normal"
+        className="w-full justify-start rounded-none border-0 bg-black text-left font-normal"
         onClick={() => setOpen(true)}
       >
         <Search className="mr-2 h-4 w-4" />

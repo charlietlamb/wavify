@@ -211,7 +211,7 @@ export const CreateSpaceModal = () => {
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
       <DialogContent className="overflow-hidden p-0">
-        <DialogHeader className="px-6 pt-8">
+        <DialogHeader className="px-6 pt-4">
           <DialogTitle className="text-left text-2xl font-bold">
             Create Space
           </DialogTitle>

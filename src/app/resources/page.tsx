@@ -1,8 +1,5 @@
-import ResourcesAll from '@/components/resources/ResourcesAll'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import Resources from '@/components/resources/main/Resources'
 
 export default async function page() {
-  const supabase = createServerComponentClient({ cookies })
-  return <ResourcesAll />
+  return <Resources />
 }

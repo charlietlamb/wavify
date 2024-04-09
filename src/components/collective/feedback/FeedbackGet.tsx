@@ -51,7 +51,7 @@ export default function FeedbackGet() {
     <>
       <Button
         variant="zinc_outline"
-        className="w-full justify-start border-zinc-700 bg-black text-left font-normal"
+        className="w-full justify-start border-0 bg-black text-left font-normal"
         onClick={() => setOpen(true)}
       >
         <Search className="mr-2 h-4 w-4" />

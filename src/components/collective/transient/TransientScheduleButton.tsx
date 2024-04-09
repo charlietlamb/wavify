@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { useModal } from '../../../../hooks/use-modal-store'
 import { useFilesContext } from '@/components/files/state/context'
+import { Settings } from 'lucide-react'
 
 export default function TransientScheduleButton() {
   const { onOpen } = useModal()
@@ -18,8 +19,9 @@ export default function TransientScheduleButton() {
         })
       }
       variant="zinc_outline"
+      className="w-full justify-start rounded-none border-0 bg-black text-left font-normal"
     >
-      Edit Schedule
+      <Settings />
     </Button>
   )
 }

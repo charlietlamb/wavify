@@ -1,5 +1,5 @@
-import { sortingValues } from '../dashboard/resources/manage/data/data'
-import { Button } from '../ui/button'
+import { sortingValues } from '../../dashboard/resources/manage/data/data'
+import { Button } from '../../ui/button'
 import { useResourcesContext } from './context/resourcesContext'
 
 export default function ResourcesAllSorting() {

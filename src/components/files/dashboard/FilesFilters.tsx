@@ -10,8 +10,8 @@ import ScheduleSelect from '@/components/collective/transient/ScheduleSelect'
 export default function FilesFilters() {
   const { filterByMusic, setFilterByMusic, transientPost } = useFilesContext()
   return (
-    <div className="flex w-full items-center justify-between">
-      <div className="flex w-full gap-x-2 text-zinc-200">
+    <div className="flex w-full items-center justify-between divide-x divide-zinc-700">
+      <div className="flex divide-x divide-zinc-700 text-zinc-200">
         <FilesSorting />
         <FilesFilter
           text="Filter By Music"
@@ -21,7 +21,7 @@ export default function FilesFilters() {
         />
         {transientPost && <ScheduleSelect />}
       </div>
-      <div className="ml-2 flex">
+      <div className="flex flex-grow justify-end">
         <FilesView />
       </div>
     </div>

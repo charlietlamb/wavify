@@ -7,11 +7,16 @@ import CollectiveMemberMap from './CollectiveMemberMap'
 import CollectiveSearchWrap from './CollectiveSearchWrap'
 import CollectiveSpaces from './CollectiveSpaces'
 
-export default function CollectiveSidebar() {
+export default function CollectiveSidebar({
+  mobile = false,
+}: {
+  mobile?: boolean
+}) {
   return (
     <div
       className={cn(
-        'flex h-full flex-grow flex-col bg-background_content text-primary'
+        'hidden h-full flex-grow flex-col bg-background_content text-primary md:flex',
+        mobile && 'flex'
       )}
     >
       <div className="flex divide-x divide-zinc-700">

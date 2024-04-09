@@ -4,8 +4,8 @@ import { useState } from 'react'
 import ResourcesAllToolbar from './ResourcesAllToolbar'
 import { ResourcesContext } from './context/resourcesContext'
 import ResourcesAllContent from './ResourcesAllContent'
-import { ResourceType } from '../dashboard/resources/upload/data/data'
-import { Sorting } from '../dashboard/resources/manage/data/data'
+import { ResourceType } from '../../dashboard/resources/upload/data/data'
+import { Sorting } from '../../dashboard/resources/manage/data/data'
 
 export default function ResourcesAll() {
   const [resources, setResources] = useState<ResourceAndUser[]>([])

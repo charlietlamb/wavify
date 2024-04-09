@@ -40,10 +40,31 @@ import FilePlayButton from './FilePlayButton'
 import { isUUID } from '@/lib/isUUID'
 import { useEffect, useState } from 'react'
 import { checkFileHasComments } from '@/components/collective/feedback/functions/checkFileHasComments'
+import { cn } from '@/lib/utils'
+import { useWindowSize } from 'react-use'
+import { getColNum } from '../functions/getColNum'
+import { getBottomBorder } from '../functions/getBottomBorder'
+import { getRightBorder } from '../functions/getRightBorder'
+import { getBorderClassName } from '../functions/getBorderClassName'
 
-export default function File({ file }: { file: FileAndSender }) {
-  const { space, files, path, postbox, transient, feedback, feedbackGive } =
-    useFilesContext()
+export default function File({
+  file,
+  index,
+}: {
+  file: FileAndSender
+  index: number
+}) {
+  const {
+    space,
+    files,
+    folders,
+    path,
+    postbox,
+    transient,
+    feedback,
+    feedbackGive,
+    view,
+  } = useFilesContext()
   const parent = path[path.length - 1].id
   const user = useUser()
   const fileExtension = file.name.split('.').pop()!
@@ -51,12 +72,31 @@ export default function File({ file }: { file: FileAndSender }) {
   const supabase = createClientComponentClient()
   const fileClasses = 'min-w-6 min-h-6'
   const [comments, setComments] = useState<CommentAndUser[]>([])
-
+  const grid = view === 'grid'
+  const size = useWindowSize()
+  const colNum = getColNum(size.width)
+  const borderClassName = getBorderClassName(
+    folders.length,
+    files.length,
+    colNum,
+    index,
+    true
+  )
+  const bottomBorder =
+    grid && getBottomBorder(folders.length, files.length, colNum, index, true)
+  const rightBorder =
+    grid && getRightBorder(folders.length, files.length, colNum, index)
   useEffect(() => {
     checkFileHasComments(supabase, file, setComments)
   }, [])
   return (
-    <div className="flex w-full cursor-pointer flex-col rounded-xl border border-zinc-700 px-2 py-4 transition-all hover:rounded-md hover:border-zinc-200">
+    <div
+      className={cn(
+        'flex h-full w-full border-collapse cursor-pointer flex-col border-zinc-700 bg-zinc-900 px-2 py-4',
+        borderClassName,
+        !grid && 'py-1'
+      )}
+    >
       <div className="flex items-center gap-x-2">
         {isObject(file) && playableExtensions.includes(fileExtension) ? (
           <FilePlayButton file={file} className={fileClasses} />
@@ -82,7 +122,9 @@ export default function File({ file }: { file: FileAndSender }) {
               preview={true}
             />
           )}
-          <p className="text-md">{getFileSizeString(file.size)}</p>
+          <p className="text-md bg-gradient-to-r from-amber-400 to-amber-300 bg-clip-text text-transparent">
+            {getFileSizeString(file.size)}
+          </p>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -2,7 +2,7 @@
 
 import { ChatVideoButton } from './ChatVideoButton'
 import { UserAvatar } from '../utils/UserAvatar'
-import { CollectiveToggle } from '../util/CollectiveToggle'
+import { CollectiveToggleMobile } from '../util/CollectiveToggleMobile'
 import isObject from '@/lib/isObject'
 import { iconMap } from '../collective/space/data'
 import { ChatState } from '@/state/chat/chatSlice'
@@ -40,7 +40,7 @@ export const ChatHeader = ({
   const dispatch = useDispatch()
   return (
     <div className="text-md flex h-11 items-center border-b border-zinc-700 p-2 font-semibold">
-      {type === 'space' ? <CollectiveToggle /> : null}
+      {type === 'space' ? <CollectiveToggleMobile /> : null}
       {type === 'space' && iconMap[space?.type as keyof typeof iconMap]}
       {type === 'conversation' && otherUser && (
         <UserAvatar user={otherUser} className="mr-2 h-8 w-8 md:h-8 md:w-8" />

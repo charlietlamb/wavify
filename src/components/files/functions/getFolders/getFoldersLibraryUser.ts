@@ -8,6 +8,7 @@ export async function getFoldersLibraryUser(path: Path[]) {
     .from('folders')
     .select('*, users(*)')
     .eq('user', userId)
+    .eq('system', true)
     .is('parent', null)
     .order('createdAt', { ascending: false })
   const toReturn = data

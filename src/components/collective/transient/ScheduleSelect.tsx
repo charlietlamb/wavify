@@ -30,7 +30,7 @@ export default function ScheduleSelect() {
       onValueChange={(e) => setScheduleId(e)}
       value={schedule ? schedule.id : undefined}
     >
-      <SelectTrigger className="flex-grow border-zinc-700 transition hover:border-zinc-200 focus:ring-0">
+      <SelectTrigger className="flex h-full min-h-10 w-full flex-grow items-center justify-between rounded-none border-0 bg-transparent px-3 py-2 text-sm outline-none ring-offset-0 ring-offset-background placeholder:text-muted-foreground focus:border-t focus:outline-none focus:ring-0 focus:ring-offset-2 disabled:cursor-not-allowed disabled:border-0 disabled:border-zinc-700 disabled:opacity-50 [&>span]:line-clamp-1">
         <SelectValue placeholder="Schedule..." />
       </SelectTrigger>
       <SelectContent>

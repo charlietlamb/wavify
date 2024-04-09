@@ -4,14 +4,8 @@ import {
   PopoverContent,
 } from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
-import { FaEllipsis } from 'react-icons/fa6'
 import { useState } from 'react'
-import {
-  MenubarContent,
-  MenubarItem,
-  MenubarShortcut,
-} from '@/components/ui/menubar'
-import { MenubarSeparator } from '@radix-ui/react-menubar'
+import { MoreHorizontal } from 'lucide-react'
 
 export default function WavifyCardEllipsis({
   ellipsisComponent,
@@ -30,7 +24,7 @@ export default function WavifyCardEllipsis({
           }}
           className="absolute bottom-2 right-2 text-zinc-500 hover:text-zinc-200"
         >
-          <FaEllipsis />
+          <MoreHorizontal />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0">{ellipsisComponent}</PopoverContent>

@@ -18,5 +18,5 @@ export function usePostboxChangeEffect(
     }
 
     updatePostbox()
-  }, [supabase, parent, postbox, setPostboxFolders, path])
+  }, [supabase, postbox, setPostboxFolders, path])
 }

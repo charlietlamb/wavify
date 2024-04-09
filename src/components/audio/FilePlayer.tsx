@@ -13,6 +13,7 @@ import {
   setProgress as setProgressAction,
 } from '@/state/audio/audioSlice'
 import { handleExternalProgressClick } from './functions/handleExternalProgressClick'
+import getFileUrlS3 from '../files/functions/getFileUrlS3'
 interface FilePlayerProps {
   file: FileData
   otherUser: User
@@ -21,7 +22,7 @@ interface FilePlayerProps {
 export default function FilePlayer({ file, otherUser }: FilePlayerProps) {
   const audio: AudioState = useSelector((state: RootState) => state.audio)
   //const audioFile = new Audio(file.fileUrl); add s3 to get file
-  const [audioFile, setAudioFile] = useState(new Audio('/audio.mp3'))
+  const [audioFile, setAudioFile] = useState<HTMLAudioElement>()
   const [isPlaying, setIsPlaying] = useState(false)
   const [progress, setProgress] = useState(0)
   const [timeRemaining, setTimeRemaining] = useState(0)
@@ -30,6 +31,13 @@ export default function FilePlayer({ file, otherUser }: FilePlayerProps) {
   const [isMouseDown, setIsMouseDown] = useState(false)
   const progressRef = useRef<HTMLDivElement | null>(null)
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    async function getData() {
+      if (!audioFile) setAudioFile(new Audio(await getFileUrlS3(file.url)))
+    }
+    getData()
+  }, [])
 
   useEffect(() => {
     while (isDragging) {
@@ -44,6 +52,7 @@ export default function FilePlayer({ file, otherUser }: FilePlayerProps) {
   }, [isDragging])
 
   useEffect(() => {
+    if (!audioFile) return
     if (audio.fileData && audio.fileData.id !== file.id) {
       audioFile.pause()
       setIsPlaying(false)
@@ -66,6 +75,7 @@ export default function FilePlayer({ file, otherUser }: FilePlayerProps) {
   }, [audio])
 
   useEffect(() => {
+    if (!audioFile) return
     audioFile.addEventListener('loadedmetadata', () => {
       setTimeRemaining(audioFile.duration)
       if (audio.fileData && audio.fileData.id === file.id) {
@@ -75,6 +85,7 @@ export default function FilePlayer({ file, otherUser }: FilePlayerProps) {
   }, [audioFile])
 
   useEffect(() => {
+    if (!audioFile) return
     audioFile.addEventListener('timeupdate', () => {
       setProgress((audioFile.currentTime / audioFile.duration) * 100)
       setTimeRemaining(audioFile.duration - audioFile.currentTime)
@@ -114,19 +125,20 @@ export default function FilePlayer({ file, otherUser }: FilePlayerProps) {
       <div className="flex w-full items-center gap-x-2">
         <button
           onClick={() => {
-            handlePlay(
-              audio,
-              dispatch,
-              isPlaying,
-              setIsPlaying,
-              otherUser,
-              file,
-              progress,
-              audioFile,
-              'https://github.com/shadcn.png', //user.imageUrl
-              timeRemaining,
-              audioFile.duration
-            )
+            audioFile &&
+              handlePlay(
+                audio,
+                dispatch,
+                isPlaying,
+                setIsPlaying,
+                otherUser,
+                file,
+                progress,
+                audioFile,
+                'https://github.com/shadcn.png', //user.imageUrl
+                timeRemaining,
+                audioFile.duration
+              )
           }}
         >
           {!isPlaying ? <Play fill="#FFF"></Play> : <Pause fill="#FFF"></Pause>}

@@ -28,7 +28,7 @@ export default function PostboxSend() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="group flex w-full items-center gap-x-2 rounded-md border border-zinc-700 bg-black px-2 py-2 transition hover:border-zinc-200"
+        className="group flex w-full items-center gap-x-2 bg-black px-2 py-2 transition hover:border-zinc-200"
       >
         <Search className="h-4 w-4 text-zinc-200" />
         <p className="text-sm font-semibold text-zinc-200 transition ">

@@ -12,7 +12,7 @@ export default function FilesDashboard() {
   const { space, postboxSend, transientPost, schedule, feedbackGet } =
     useFilesContext()
   return (
-    <div className="relative flex w-full flex-col gap-y-4 p-4">
+    <div className="relative flex w-full flex-col divide-y divide-zinc-700">
       {!space && <FilesToggle />}
       {postboxSend && <PostboxSend />}
       {transientPost && space && schedule && (

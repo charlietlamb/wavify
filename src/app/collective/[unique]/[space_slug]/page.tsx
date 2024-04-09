@@ -25,6 +25,9 @@ import { getUserFeedbackFiles } from '@/components/collective/feedback/functions
 import { getFoldersFeedback } from '@/components/files/functions/getFolders/getFoldersFeedback'
 import { getFoldersFeedbackUsers } from '@/components/files/functions/getFolders/getFoldersFeedbackUsers'
 import { userHasSavedSpace } from './functions/userHasSavedSpace'
+import Store from '@/components/collective/store/Store'
+import { getStorePackages } from '@/components/collective/store/functions/getStorePackages'
+import { getRoles } from '../roles/(functions)/getRoles'
 
 interface spacePageParams {
   unique: string
@@ -173,6 +176,10 @@ export default async function page({ params }: spacePageProps) {
         initPath={initPath}
       />
     )
+  }
+  if (space.type === 'store') {
+    const roles = await getRoles(collective, supabase)
+    return <Store space={space} roles={roles} />
   }
 
   return (

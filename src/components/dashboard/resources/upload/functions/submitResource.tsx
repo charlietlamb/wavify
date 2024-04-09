@@ -4,6 +4,8 @@ import { UploadContext } from '../context/context'
 import { Ban } from 'lucide-react'
 import { fileToBase64 } from '@/components/modals/functions/fileToBase64'
 import { uploadFileToS3 } from '@/components/modals/modal-actions/uploadFile'
+import { getResourceFromId } from '@/components/saved/functions/getResourceFromId'
+import { getFolderFromId } from './getFolderFromId'
 
 export default async function submitResource(
   supabase: Supabase,
@@ -57,20 +59,27 @@ export default async function submitResource(
   }
   context.setLoading(true)
   context.setError('')
-  const resourceFolder = {
-    id: uuidv4(),
-    parent: null,
-    user: user.id,
-    name: context.name,
+  let resourceFolder
+  if (typeof context.id !== 'string') {
+    resourceFolder = {
+      id: uuidv4(),
+      parent: null,
+      user: user.id,
+      name: context.name,
+      system: false,
+    }
+    const { error: folderError } = await supabase
+      .from('folders')
+      .insert(resourceFolder)
+    if (folderError) throw folderError
+  } else {
+    const resource = await getResourceFromId(supabase, context.id)
+    resourceFolder = await getFolderFromId(supabase, resource.folder)
   }
   let previewUrl = ''
   let previewId = ''
   let fileIds = []
   let size = 0
-  const { error: folderError } = await supabase
-    .from('folders')
-    .insert(resourceFolder)
-  if (folderError) throw folderError
   for (const file of context.files) {
     var fileId = uuidv4()
     var ext = file.name.split('.').pop()

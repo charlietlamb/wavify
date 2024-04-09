@@ -34,9 +34,22 @@ import { useCollective } from '@/state/collective/useCollective'
 import { isUUID } from '@/lib/isUUID'
 import { checkFolderHasComments } from '@/components/collective/feedback/functions/checkFolderHasComments'
 import { handlePathFolderClick } from '../functions/handlePathFolderClick'
+import { cn } from '@/lib/utils'
+import { useWindowSize } from 'react-use'
+import { getColNum } from '../functions/getColNum'
+import { getBottomBorder } from '../functions/getBottomBorder'
+import { getRightBorder } from '../functions/getRightBorder'
+import { getBorderClassName } from '../functions/getBorderClassName'
 
-export default function Folder({ folder }: { folder: FolderAndSender }) {
+export default function Folder({
+  folder,
+  index,
+}: {
+  folder: FolderAndSender
+  index: number
+}) {
   const {
+    files,
     folders,
     path,
     setPath,
@@ -49,6 +62,7 @@ export default function Folder({ folder }: { folder: FolderAndSender }) {
     setTransientFolders,
     feedback,
     feedbackGive,
+    view,
   } = useFilesContext()
   const { colUser } = useCollective()
   const canReceive = space?.pbReceive.includes(colUser.roles.id)
@@ -57,7 +71,20 @@ export default function Folder({ folder }: { folder: FolderAndSender }) {
   const supabase = createClientComponentClient()
   const [folderLoading, setFolderLoading] = useState(false)
   const parent = path[path.length - 1].id
-
+  const grid = view === 'grid'
+  const size = useWindowSize()
+  const colNum = getColNum(size.width)
+  const borderClassName = getBorderClassName(
+    folders.length,
+    files.length,
+    colNum,
+    index,
+    false
+  )
+  const bottomBorder =
+    grid && getBottomBorder(folders.length, files.length, colNum, index, false)
+  const rightBorder =
+    grid && getRightBorder(folders.length, files.length, colNum, index)
   function handleFolderClick(e: React.MouseEvent<HTMLDivElement>) {
     e.stopPropagation()
     handlePathFolderClick(path, setPath, folder)
@@ -69,7 +96,11 @@ export default function Folder({ folder }: { folder: FolderAndSender }) {
   }, [])
   return (
     <div
-      className="flex w-full cursor-pointer flex-col rounded-xl border border-zinc-700 bg-black px-2 py-4 transition-all hover:rounded-md hover:border-zinc-200"
+      className={cn(
+        'flex h-full w-full border-collapse cursor-pointer flex-col border-zinc-700 bg-zinc-950 px-2 py-4',
+        borderClassName,
+        !grid && 'py-1'
+      )}
       onClick={(e) => handleFolderClick(e)}
     >
       <div className="flex items-center gap-x-2">
@@ -79,7 +110,7 @@ export default function Folder({ folder }: { folder: FolderAndSender }) {
         </p>
       </div>
       <div className="flex items-end justify-between">
-        <p className="text-md">
+        <p className="text-md bg-gradient-to-r from-amber-400 to-amber-500 bg-clip-text text-transparent">
           {folder.size !== undefined
             ? getFileSizeString(folder.size)
             : 'calculating size...'}

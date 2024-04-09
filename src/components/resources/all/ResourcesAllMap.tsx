@@ -1,12 +1,12 @@
 import { useResourcesContext } from './context/resourcesContext'
-import { getFileSizeString } from '../files/functions/getFileSizeString'
+import { getFileSizeString } from '../../files/functions/getFileSizeString'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { getResources } from './functions/getResources'
 import { useEffect, useRef } from 'react'
-import { useResourceScroll } from '../dashboard/resources/manage/hooks/useResourcesScroll'
+import { useResourceScroll } from '../../dashboard/resources/manage/hooks/useResourcesScroll'
 import { useRouter } from 'next/navigation'
-import WavifyCard from '../wavify/WavifyCard'
-import WavifyCardSkeletons from '../wavify/WavifyCardSkeletons'
+import WavifyCard from '../../wavify/WavifyCard'
+import WavifyCardSkeletons from '../../wavify/WavifyCardSkeletons'
 
 export default function ResourcesAllMap() {
   const { resources, type, sorting, setResources, query } =
@@ -45,7 +45,7 @@ export default function ResourcesAllMap() {
   })
   return (
     <div
-      className="grid flex-grow grid-cols-1 gap-4 overflow-y-auto p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+      className="grid grid-cols-2 gap-4 overflow-y-auto p-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
       ref={mainRef}
     >
       {!!resources.length ? (
@@ -57,6 +57,9 @@ export default function ResourcesAllMap() {
             user={resource.users}
             name={resource.name}
             text={getFileSizeString(resource.size)}
+            preview={resource.previewUrl || null}
+            ellipsisComponent={<></>}
+            loading={false}
           />
         ))
       ) : (

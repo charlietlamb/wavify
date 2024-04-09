@@ -16,8 +16,8 @@ export default function FilesFilter({
   return (
     <Button
       className={cn(
-        'flex gap-x-1 bg-black hover:bg-black hover:text-zinc-200',
-        on && 'border-zinc-200  bg-black '
+        'flex gap-x-1 rounded-none border-0 bg-black hover:bg-zinc-800 hover:text-zinc-200',
+        on && 'border-zinc-200 bg-zinc-800 hover:bg-zinc-700 '
       )}
       onClick={() => setOn((prev) => !prev)}
       variant="zinc_outline"

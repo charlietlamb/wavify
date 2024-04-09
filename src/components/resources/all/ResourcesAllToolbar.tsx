@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 import ResourcesAllTypes from './ResourcesAllTypes'
-import ToolbarHeading from '../toolbar/ToolbarHeading'
+import ToolbarHeading from '../../toolbar/ToolbarHeading'
 import { Bolt } from 'lucide-react'
 import ResourcesAllSorting from './ResourcesAllSorting'
 

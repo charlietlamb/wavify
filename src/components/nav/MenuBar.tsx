@@ -18,7 +18,14 @@ import {
 import { useModal } from '../../../hooks/use-modal-store'
 import { useRouter } from 'next/navigation'
 import { useUser } from '@/state/user/useUser'
-import { Bookmark, Gauge, LibraryBig, MessagesSquare } from 'lucide-react'
+import {
+  Bookmark,
+  Gauge,
+  LibraryBig,
+  MessagesSquare,
+  UserRoundX,
+} from 'lucide-react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 interface MenuBarProps {
   collectives: Collective[]
@@ -29,6 +36,7 @@ export default function NavMenu({ collectives }: MenuBarProps) {
   const user = useUser()
   const { onOpen } = useModal()
   const router = useRouter()
+  const supabase = createClientComponentClient()
   return (
     <Menubar className="rounded-0 flex cursor-pointer items-center border-0 p-0 px-[0.5rem] text-lg">
       <MenubarMenu>
@@ -49,26 +57,12 @@ export default function NavMenu({ collectives }: MenuBarProps) {
             Messages <MessagesSquare className={iconClassName} />
           </MenubarItem>
           <MenubarSeparator />
-          <MenubarSub>
-            <MenubarSubTrigger>Friends</MenubarSubTrigger>
-            <MenubarSubContent>
-              <MenubarItem>Email link</MenubarItem>
-              <MenubarItem>Messages</MenubarItem>
-              <MenubarItem>Notes</MenubarItem>
-            </MenubarSubContent>
-          </MenubarSub>
-          <MenubarSeparator />
-          <MenubarSub>
-            <MenubarSubTrigger>Favorites</MenubarSubTrigger>
-            <MenubarSubContent>
-              <MenubarItem>Email link</MenubarItem>
-              <MenubarItem>Messages</MenubarItem>
-              <MenubarItem>Notes</MenubarItem>
-            </MenubarSubContent>
-          </MenubarSub>
-          <MenubarSeparator />
-          <MenubarItem>
-            Print... <MenubarShortcut>⌘P</MenubarShortcut>
+          <MenubarItem
+            onClick={() => {
+              supabase.auth.signOut()
+            }}
+          >
+            Sign Out <UserRoundX className={iconClassName} />
           </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
@@ -134,6 +128,9 @@ export default function NavMenu({ collectives }: MenuBarProps) {
         <MenubarTrigger>Resources</MenubarTrigger>
         <MenubarContent>
           <MenubarItem onClick={() => router.push('/resources')}>
+            Resources
+          </MenubarItem>
+          <MenubarItem onClick={() => router.push('/resources/all')}>
             All Resources
           </MenubarItem>
           <MenubarItem

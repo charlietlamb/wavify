@@ -11,6 +11,7 @@ export async function getFoldersLibrary(path: Path[]) {
       .from('folders')
       .select('*, users(*)')
       .eq('parent', parent)
+      .eq('system', true)
       .order('createdAt', { ascending: false })
     if (error) throw error
     toReturn = data

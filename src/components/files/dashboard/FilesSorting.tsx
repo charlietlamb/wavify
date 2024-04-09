@@ -13,7 +13,7 @@ export default function FilesSorting() {
   const { setSorting } = useFilesContext()
   return (
     <Select onValueChange={(e) => setSorting(e as SortingType)}>
-      <SelectTrigger className="w-auto border border-zinc-700 ring-0 transition-all hover:border-zinc-200 focus:border-zinc-200 focus:ring-0">
+      <SelectTrigger className="rounded-0 w-auto border-0 ring-0  focus:ring-0">
         <SelectValue placeholder="Sort by..." />
       </SelectTrigger>
       <SelectContent>

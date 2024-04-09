@@ -14,6 +14,7 @@ import { getUserFromUsername } from '../functions/getUserFromUsername'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cn } from '@/lib/utils'
 import { useUser } from '@/state/user/useUser'
+import getFileUrlS3 from '../functions/getFileUrlS3'
 interface FilePlayerProps {
   file: FileAndSender
   className?: string
@@ -35,7 +36,7 @@ export default function FilePlayButton({
   //const audioFile = new Audio(file.fileUrl); add s3 to get file
   const user = useUser()
   const supabase = createClientComponentClient()
-  const [audioFile, setAudioFile] = useState(new Audio('/audio.mp3'))
+  const [audioFile, setAudioFile] = useState<HTMLAudioElement>()
   const [isPlaying, setIsPlaying] = useState(false)
   const [progress, setProgress] = useState(preview && file ? file.preview : 0)
   const [timeRemaining, setTimeRemaining] = useState(0)
@@ -44,6 +45,14 @@ export default function FilePlayButton({
   const progressRef = useRef<HTMLDivElement | null>(null)
   const dispatch = useDispatch()
   const [otherUser, setOtherUser] = useState<User>()
+
+  useEffect(() => {
+    async function getData() {
+      if (!file) return
+      if (!audioFile) setAudioFile(new Audio(await getFileUrlS3(file.url)))
+    }
+    getData()
+  }, [])
 
   useEffect(() => {
     async function getUser() {
@@ -69,7 +78,7 @@ export default function FilePlayButton({
   }, [isDragging])
 
   useEffect(() => {
-    if (!file) return
+    if (!file || !audioFile) return
     if (audio.fileData && audio.fileData.id !== file.id) {
       audioFile.pause()
       setIsPlaying(false)
@@ -92,7 +101,7 @@ export default function FilePlayButton({
   }, [audio])
 
   useEffect(() => {
-    if (!file) return
+    if (!file || !audioFile) return
     audioFile.addEventListener('loadedmetadata', () => {
       setTimeRemaining(audioFile.duration)
       if (audio.fileData && audio.fileData.id === file.id) {
@@ -102,7 +111,7 @@ export default function FilePlayButton({
   }, [audioFile])
 
   useEffect(() => {
-    if (!file) return
+    if (!file || !audioFile) return
     if (preview) {
       const onCanPlayThrough = () => {
         audioFile.currentTime = audioFile.duration * (file.preview / 100)
@@ -136,19 +145,20 @@ export default function FilePlayButton({
     <button
       onClick={() => {
         if (otherUser) {
-          handlePlay(
-            audio,
-            dispatch,
-            isPlaying,
-            setIsPlaying,
-            otherUser,
-            file,
-            progress,
-            audioFile,
-            'https://github.com/shadcn.png', //user.imageUrl
-            timeRemaining,
-            audioFile.duration
-          )
+          audioFile &&
+            handlePlay(
+              audio,
+              dispatch,
+              isPlaying,
+              setIsPlaying,
+              otherUser,
+              file,
+              progress,
+              audioFile,
+              'https://github.com/shadcn.png', //user.imageUrl
+              timeRemaining,
+              audioFile.duration
+            )
         }
       }}
     >

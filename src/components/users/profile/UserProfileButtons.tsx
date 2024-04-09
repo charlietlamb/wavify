@@ -1,13 +1,11 @@
 import { Button } from '@/components/ui/button'
 import { ActionTooltip } from '@/components/util/ActionTooltip'
-import { MessageSquare, UserMinus, UserPlus } from 'lucide-react'
-import { FaEllipsis } from 'react-icons/fa6'
+import { MessageSquare, MoreHorizontal, UserMinus, UserPlus } from 'lucide-react'
 import { useUserContext } from '../context/context'
 import { useUser } from '@/state/user/useUser'
 import { useRouter } from 'next/navigation'
 import { handleFollowClick } from './functions/handleFollowClick'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useState } from 'react'
 import { toast } from 'sonner'
 
 export default function UserProfileButtons() {
@@ -53,7 +51,7 @@ export default function UserProfileButtons() {
       </ActionTooltip>
       <ActionTooltip label="More Options">
         <Button variant="zinc_outline" onClick={() => supabase.auth.signOut()}>
-          <FaEllipsis />
+          <MoreHorizontal />
         </Button>
       </ActionTooltip>
     </div>
