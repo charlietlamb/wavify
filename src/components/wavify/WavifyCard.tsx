@@ -15,26 +15,27 @@ export default function WavifyCard({
   user,
   name,
   text,
-  loading,
   preview = null,
-  ellipsisComponent,
+  ellipsisComponent = <></>,
   className = '',
   smallBottom = false,
   noEllipsis = false,
+  style,
 }: {
   onClick: () => void
   imageUrl: string
   user: User
   name: string
   text: string
-  loading: boolean
   preview?: string | null
-  ellipsisComponent: React.ReactNode
+  ellipsisComponent?: React.ReactNode
   className?: string
   smallBottom?: boolean
   noEllipsis?: boolean
+  style?: React.CSSProperties
 }) {
   const [file, setFile] = useState<FileAndSender | null>(null)
+  const [loading, setLoading] = useState(false)
   const supabase = createClientComponentClient()
   useEffect(() => {
     async function setFileFunction() {
@@ -51,6 +52,7 @@ export default function WavifyCard({
         className
       )}
       onClick={onClick}
+      style={style}
     >
       <div className="relative aspect-square w-full">
         <Image
@@ -62,7 +64,9 @@ export default function WavifyCard({
         />
         {!loading ? (
           <div className="absolute inset-0 flex h-full w-full items-center justify-center bg-black/50 opacity-0 transition hover:opacity-100">
-            {preview && file && <WavifyPreviewButton file={file} />}
+            {preview && file && (
+              <WavifyPreviewButton file={file} setLoading={setLoading} />
+            )}
             {!noEllipsis && (
               <WavifyCardEllipsis ellipsisComponent={ellipsisComponent} />
             )}

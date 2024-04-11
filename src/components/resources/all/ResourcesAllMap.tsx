@@ -59,7 +59,6 @@ export default function ResourcesAllMap() {
             text={getFileSizeString(resource.size)}
             preview={resource.previewUrl || null}
             ellipsisComponent={<></>}
-            loading={false}
           />
         ))
       ) : (

@@ -30,7 +30,6 @@ export default function ResourcesManageMap() {
           onClick={() =>
             handleEdit(resource, uploadContext, setLoadingId, supabase)
           }
-          loading={loadingId === resource.id}
           preview={resource.previewId}
           ellipsisComponent={
             <ResourceEllipsisComponent

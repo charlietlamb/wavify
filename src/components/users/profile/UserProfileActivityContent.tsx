@@ -12,7 +12,7 @@ import UserProfileActivitySkeleton from './UserProfileActivitySkeleton'
 
 export default function UserProfileActivityContent() {
   const { otherUser } = useUserContext()
-  const [actions, setActions] = useState<Action[]>([])
+  const [actions, setActions] = useState<ActionAndUser[]>([])
   const router = useRouter()
   const mainRef = useRef<HTMLDivElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -24,7 +24,7 @@ export default function UserProfileActivityContent() {
     status,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ['collectionSingle'],
+    queryKey: ['userProfileActivity'],
     queryFn: ({ pageParam = 1 }) =>
       getUserActivityQuery({
         pageParam,

@@ -44,7 +44,7 @@ export default function FeaturedResourcesMap() {
   })
 
   return (
-    <div className="flex w-full flex-col divide-y divide-zinc-700">
+    <div className="relative z-10 flex w-full flex-col divide-y divide-zinc-700">
       <div ref={mainRef} className="flex gap-2 overflow-x-auto">
         {!!resources.length ? (
           resources.map((resource) => (
@@ -57,7 +57,6 @@ export default function FeaturedResourcesMap() {
               text={resource.users.username}
               preview={resource.previewId || null}
               ellipsisComponent={<></>}
-              loading={false}
               className="w-[20%] sm:w-[16%] md:w-[14%] lg:w-[12%] xl:w-[10%] 2xl:w-[8%]"
               noEllipsis
               smallBottom

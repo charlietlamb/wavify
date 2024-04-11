@@ -20,6 +20,7 @@ export type Database = {
           file: string | null
           folder: string | null
           id: string
+          parent: string
           parents: string[]
           product: string | null
           resource: string | null
@@ -36,6 +37,7 @@ export type Database = {
           file?: string | null
           folder?: string | null
           id?: string
+          parent: string
           parents?: string[]
           product?: string | null
           resource?: string | null
@@ -52,6 +54,7 @@ export type Database = {
           file?: string | null
           folder?: string | null
           id?: string
+          parent?: string
           parents?: string[]
           product?: string | null
           resource?: string | null
@@ -64,6 +67,13 @@ export type Database = {
             columns: ["collection"]
             isOneToOne: false
             referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_actions_parent_fkey"
+            columns: ["parent"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
@@ -285,7 +295,15 @@ export type Database = {
           type?: string | null
           unique?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "public_collectives_founder_fkey"
+            columns: ["founder"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       colUsers: {
         Row: {
@@ -548,6 +566,7 @@ export type Database = {
           id: string
           name: string
           parent: string | null
+          system: boolean
           user: string | null
         }
         Insert: {
@@ -555,6 +574,7 @@ export type Database = {
           id?: string
           name: string
           parent?: string | null
+          system?: boolean
           user?: string | null
         }
         Update: {
@@ -562,6 +582,7 @@ export type Database = {
           id?: string
           name?: string
           parent?: string | null
+          system?: boolean
           user?: string | null
         }
         Relationships: [
@@ -782,6 +803,71 @@ export type Database = {
           },
         ]
       }
+      packages: {
+        Row: {
+          collective: string
+          cost: number
+          createdAt: string
+          description: string
+          id: string
+          name: string
+          role: string
+          space: string
+          user: string
+        }
+        Insert: {
+          collective: string
+          cost?: number
+          createdAt?: string
+          description: string
+          id?: string
+          name?: string
+          role: string
+          space: string
+          user: string
+        }
+        Update: {
+          collective?: string
+          cost?: number
+          createdAt?: string
+          description?: string
+          id?: string
+          name?: string
+          role?: string
+          space?: string
+          user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_packages_collective_fkey"
+            columns: ["collective"]
+            isOneToOne: false
+            referencedRelation: "collectives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_packages_role_fkey"
+            columns: ["role"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_packages_space_fkey"
+            columns: ["space"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_packages_user_fkey"
+            columns: ["user"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       postboxes: {
         Row: {
           created_at: string
@@ -914,6 +1000,8 @@ export type Database = {
           name: string
           previewId: string | null
           previewUrl: string
+          showcase: boolean
+          showcaseImageUrl: string
           size: number
           tags: string[]
           type: string
@@ -938,6 +1026,8 @@ export type Database = {
           name?: string
           previewId?: string | null
           previewUrl?: string
+          showcase?: boolean
+          showcaseImageUrl?: string
           size?: number
           tags?: string[]
           type?: string
@@ -962,6 +1052,8 @@ export type Database = {
           name?: string
           previewId?: string | null
           previewUrl?: string
+          showcase?: boolean
+          showcaseImageUrl?: string
           size?: number
           tags?: string[]
           type?: string
@@ -1236,6 +1328,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      subscriptions: {
+        Row: {
+          createdAt: string
+          id: string
+          package: string
+          recurring: boolean
+          user: string
+        }
+        Insert: {
+          createdAt?: string
+          id?: string
+          package: string
+          recurring?: boolean
+          user: string
+        }
+        Update: {
+          createdAt?: string
+          id?: string
+          package?: string
+          recurring?: boolean
+          user?: string
+        }
+        Relationships: []
       }
       transients: {
         Row: {

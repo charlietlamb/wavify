@@ -2,7 +2,7 @@ import { FastForward, Pause, Play } from 'lucide-react'
 import isObject from '@/lib/isObject'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '@/state/store'
-import { useEffect, useRef, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import { AudioState } from '@/state/audio/audioSlice'
 import {
   setTimeRemaining as setTimeRemainingAction,
@@ -16,11 +16,13 @@ import { useUser } from '@/state/user/useUser'
 import { getUserFromUsername } from '../files/functions/getUserFromUsername'
 interface FilePlayerProps {
   file: FileAndSender
+  setLoading: Dispatch<SetStateAction<boolean>>
   className?: string
 }
 
 export default function WavifyPreviewButton({
   file: initFile,
+  setLoading,
   className,
 }: FilePlayerProps) {
   const audio: AudioState = useSelector((state: RootState) => state.audio)
@@ -132,6 +134,7 @@ export default function WavifyPreviewButton({
       onClick={(e) => {
         e.stopPropagation()
         if (otherUser) {
+          setLoading(true)
           handlePlay(
             audio,
             dispatch,
@@ -145,6 +148,7 @@ export default function WavifyPreviewButton({
             timeRemaining,
             audioFile.duration
           )
+          setLoading(false)
         }
       }}
     >

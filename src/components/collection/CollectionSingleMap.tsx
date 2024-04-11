@@ -75,6 +75,7 @@ export default function CollectionSingleMap() {
             user={item.users}
             name={item.name}
             text={item.text}
+            preview={null}
           />
         ))
       ) : status === 'pending' ? (

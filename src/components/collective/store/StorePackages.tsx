@@ -25,7 +25,7 @@ export default function StorePackages() {
     status,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ['collectionSingle'],
+    queryKey: ['storePackages'],
     queryFn: ({ pageParam = 1 }) =>
       getStorePackages({
         pageParam,
